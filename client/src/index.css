@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+  }
+  body,
+  button,
+  input,
+  textarea,
+  select {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+  }
+  body {
+    @apply font-body text-ink bg-stone antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display font-extrabold tracking-[-0.02em];
+  }
+  .font-display,
+  .font-heading {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+  }
+  .font-body,
+  .font-serif,
+  .font-mono {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+  }
+  ::selection {
+    @apply bg-gold/30;
+  }
+  :focus-visible {
+    outline: 2px solid theme('colors.teal.DEFAULT');
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Structural, rectangular button — no pill shapes, no oversized padding */
+  .btn {
+    @apply inline-flex items-center gap-2 font-body text-[13px] tracking-wide uppercase
+           px-6 py-3.5 transition-colors duration-200;
+  }
+  .btn-fill {
+    @apply btn bg-navy text-stone hover:bg-ink;
+  }
+  .btn-line {
+    @apply btn border border-current text-current hover:bg-ink/[0.04];
+  }
+  .btn-line-invert {
+    @apply btn border border-stone/60 text-stone hover:bg-stone hover:text-navy;
+  }
+
+  /* Mono eyebrow label used as a structural device, not decoration */
+  .eyebrow {
+    @apply font-body text-[11px] tracking-widest2 uppercase text-teal;
+  }
+  .eyebrow-invert {
+    @apply font-body text-[11px] tracking-widest2 uppercase text-gold-light;
+  }
+
+  .rule {
+    @apply border-t border-line;
+  }
+  .rule-invert {
+    @apply border-t border-linedark;
+  }
+
+  .container-wide {
+    @apply max-w-[1400px] mx-auto px-6 md:px-10;
+  }
+
+  /* --- Legacy shims: kept flat/hairline rather than heavy shadow+pill so
+     pages outside this redesign pass (admin panel, a few interior pages)
+     still read as part of the same restrained system --- */
+  .section {
+    @apply container-wide py-16 md:py-20;
+  }
+  .card {
+    @apply bg-paper border border-line;
+  }
+  .btn-primary {
+    @apply btn-fill;
+  }
+  .btn-outline {
+    @apply btn-line-invert;
+  }
+
+  /* Underline that draws in on hover — used for nav + inline links only */
+  .link-underline {
+    @apply relative;
+  }
+  .link-underline::after {
+    content: "";
+    @apply absolute left-0 -bottom-1 h-px w-0 bg-current transition-all duration-300;
+  }
+  .link-underline:hover::after {
+    @apply w-full;
+  }
+
+  /* Minimal styling for Tiptap's editable area — no typography plugin
+     installed, so headings/lists/quotes need explicit rules here. */
+  .editor-content .ProseMirror {
+    outline: none;
+  }
+  .editor-content h2 {
+    @apply text-xl font-bold mt-3 mb-2;
+  }
+  .editor-content h3 {
+    @apply text-lg font-bold mt-3 mb-2;
+  }
+  .editor-content ul {
+    @apply list-disc pl-6 mb-2;
+  }
+  .editor-content ol {
+    @apply list-decimal pl-6 mb-2;
+  }
+  .editor-content blockquote {
+    @apply border-l-2 border-current pl-3 italic opacity-80;
+  }
+  .editor-content p {
+    @apply mb-2;
+  }
+}
