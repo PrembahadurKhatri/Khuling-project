@@ -39,9 +39,6 @@ const Services = () => {
                 key={service._id}
                 className={`py-9 flex flex-col sm:flex-row gap-6 sm:gap-10 ${i > 0 ? "border-t border-line" : ""}`}
               >
-                <span className="font-mono text-[13px] text-teal shrink-0 sm:w-10">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
                 {service.heroImage && (
                   <img
                     src={service.heroImage}

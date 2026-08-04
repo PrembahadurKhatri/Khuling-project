@@ -64,10 +64,10 @@
 
   /* Mono eyebrow label used as a structural device, not decoration */
   .eyebrow {
-    @apply font-body text-[11px] tracking-widest2 uppercase text-teal;
+    @apply font-body font-semibold text-sm tracking-widest2 uppercase text-teal;
   }
   .eyebrow-invert {
-    @apply font-body text-[11px] tracking-widest2 uppercase text-gold-light;
+    @apply font-body font-semibold text-sm tracking-widest2 uppercase text-gold-light;
   }
 
   .rule {

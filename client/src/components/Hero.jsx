@@ -15,12 +15,6 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-transparent to-transparent" />
 
       <div className="relative h-full container-wide flex flex-col justify-end pb-20 md:pb-24">
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 0.9, ease }}
-          className="h-px w-24 bg-gold origin-left mb-6"
-        />
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

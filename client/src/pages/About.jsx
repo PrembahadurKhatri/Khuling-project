@@ -1,10 +1,10 @@
 import PageHeader from "../components/PageHeader.jsx";
 
 const values = [
-  ["Safety First", "Every site operates under documented safety protocols and monthly audits."],
-  ["Quality Craftsmanship", "Engineering sign-off at every structural milestone, not just at handover."],
-  ["On-Time Delivery", "Weekly schedule reporting keeps clients ahead of risk, not surprised by it."],
-  ["Sustainability", "Material sourcing and site runoff planned with the surrounding community in mind."],
+  ["No shortcuts on site safety", "Every site operates under documented safety protocols and monthly audits — not a poster in the site office."],
+  ["Engineering sign-off, not spot checks", "A qualified engineer signs off at every structural milestone, not just at handover."],
+  ["We report before you have to ask", "Weekly schedule reporting against the baseline keeps clients ahead of risk instead of surprised by it."],
+  ["Building with the neighborhood in mind", "Material sourcing and site runoff are planned around the communities our sites sit in, not just the property line."],
 ];
 
 const About = () => {
@@ -29,15 +29,15 @@ const About = () => {
           </p>
           <div className="mt-8 grid sm:grid-cols-2 gap-8 border-t border-line pt-8">
             <div>
-              <p className="font-mono text-[11px] tracking-widest2 uppercase text-teal mb-2">Mission</p>
+              <p className="eyebrow mb-2">Mission</p>
               <p className="text-navy/70 text-sm leading-relaxed">
                 Build durable, safe infrastructure that serves communities for generations, not just contract terms.
               </p>
             </div>
             <div>
-              <p className="font-mono text-[11px] tracking-widest2 uppercase text-teal mb-2">Vision</p>
+              <p className="eyebrow mb-2">Vision</p>
               <p className="text-navy/70 text-sm leading-relaxed">
-                Be the most trusted construction firm in the region — known first for integrity, then for scale.
+                Become the contractor government agencies call first when the deadline can't slip.
               </p>
             </div>
           </div>

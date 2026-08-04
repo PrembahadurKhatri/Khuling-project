@@ -63,19 +63,69 @@ const run = async () => {
   await Project.create(projects);
 
   console.log("Seeding services...");
-  const serviceNames = [
-    "Construction", "Infrastructure", "Road", "Bridge", "Building",
-    "Commercial", "Residential", "Consultancy", "Project Management", "Equipment Rental",
+  const serviceDefs = [
+    {
+      title: "Construction",
+      shortDescription: "General contracting for structures of every scale, run by one site team from groundbreaking through final inspection.",
+      description: "We take on the full contracting scope — site mobilization, structural work, MEP coordination, and finishing — under a single accountable site office, so clients aren't managing handoffs between trades.",
+      benefits: ["Single point of accountability", "In-house trade coordination", "Documented QA at every phase"],
+    },
+    {
+      title: "Infrastructure",
+      shortDescription: "Water, drainage, and utility works engineered to hold up against monsoon loads and decades of public use.",
+      description: "From stormwater systems to utility corridors, our infrastructure work is designed for the terrain and traffic it has to survive, not just the day it opens.",
+      benefits: ["Terrain-specific engineering", "Government-panel standing", "Monsoon-tested drainage design"],
+    },
+    {
+      title: "Road",
+      shortDescription: "Highways and feeder roads built to the load specification, not just the paving schedule.",
+      description: "Road construction and rehabilitation, from subgrade compaction through final surfacing, delivered against public-sector tender specifications.",
+      benefits: ["Load-tested subgrade work", "Public tender compliance", "Progress reporting by kilometer"],
+    },
+    {
+      title: "Bridge",
+      shortDescription: "Span design and heavy structural work carried through from feasibility to load testing.",
+      description: "Bridge and structural crossing projects, coordinated across structural engineering, formwork, and load testing, with a government-panel track record on public crossings.",
+      benefits: ["Load-tested structural work", "Feasibility-to-handover scope", "Government-panel track record"],
+    },
+    {
+      title: "Building",
+      shortDescription: "Structural shell and core work for buildings that need to carry real design loads for decades.",
+      description: "Foundation, structural frame, and core work for commercial and institutional buildings, sequenced against the finishing trades that follow.",
+      benefits: ["Structural frame expertise", "Sequenced trade handoffs", "Decades-rated materials"],
+    },
+    {
+      title: "Commercial",
+      shortDescription: "Office, retail, and mixed-use developments coordinated across structural, MEP, and finishing trades under one project office.",
+      description: "Commercial builds run under a single project office covering structural work, MEP, and finishing, so occupancy dates hold even as scope evolves.",
+      benefits: ["One project office, all trades", "Occupancy-date discipline", "Mixed-use scheduling experience"],
+    },
+    {
+      title: "Residential",
+      shortDescription: "Housing developments built to the same QA process as our public infrastructure work.",
+      description: "Residential and housing projects, from individual builds to multi-unit developments, run against the same documented QA process as our government contracts.",
+      benefits: ["Same QA process as public work", "Multi-unit scheduling", "Direct client reporting"],
+    },
+    {
+      title: "Consultancy",
+      shortDescription: "Feasibility studies, structural review, and engineering advisory for clients planning before they break ground.",
+      description: "Independent engineering advisory — feasibility studies, structural review, and cost estimation — for clients who need a second set of eyes before committing to a design.",
+      benefits: ["Independent structural review", "Feasibility & cost estimation", "Pre-construction advisory"],
+    },
+    {
+      title: "Project Management",
+      shortDescription: "Schedule, budget, and multi-contractor coordination for clients who need one accountable manager, not a committee.",
+      description: "We manage schedule, budget, and multi-contractor coordination on behalf of the client, reporting against a fixed baseline rather than a moving target.",
+      benefits: ["Baseline schedule reporting", "Multi-contractor coordination", "Budget accountability"],
+    },
+    {
+      title: "Equipment Rental",
+      shortDescription: "Sixty-plus pieces of owned heavy equipment available for lease with operator, on and off our own sites.",
+      description: "Our in-house fleet — excavators, compactors, and heavy haul equipment — is available for rental with certified operators, reducing schedule risk on projects that need short-notice plant.",
+      benefits: ["60+ owned machines", "Certified operators included", "Short-notice availability"],
+    },
   ];
-  await Service.create(
-    serviceNames.map((name, idx) => ({
-      title: name,
-      shortDescription: `Professional ${name.toLowerCase()} services delivered to enterprise standards.`,
-      description: `Full details about our ${name} service offering, methodology, and past performance.`,
-      benefits: ["Certified engineers", "On-time delivery", "Transparent reporting"],
-      order: idx,
-    }))
-  );
+  await Service.create(serviceDefs.map((s, idx) => ({ ...s, order: idx })));
 
   console.log("Seeding testimonials...");
   await Testimonial.insertMany(
