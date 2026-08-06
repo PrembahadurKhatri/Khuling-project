@@ -22,6 +22,9 @@ import settingsRoutes from "./routes/settingsRoutes.js";
 import careerRoutes from "./routes/careerRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import testimonialRoutes from "./routes/testimonialRoutes.js";
+import galleryRoutes from "./routes/galleryRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.join(__dirname, "../client/dist");
@@ -71,6 +74,10 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
+// Locally-stored dev uploads (see middleware/upload.js) — production writes
+// straight to Cloudinary instead and never populates this directory.
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Health check
 app.get("/api/health", (req, res) => res.json({ success: true, message: "API is running" }));
 
@@ -84,6 +91,9 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/careers", careerRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/gallery", galleryRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/team", teamRoutes);
 
 // Serve the built React app in production so the frontend and API share one
 // origin/deployment (no CORS or dev-proxy config needed). In local dev the

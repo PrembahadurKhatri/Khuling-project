@@ -5,29 +5,29 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
   }
   body,
   button,
   input,
   textarea,
   select {
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: 'poppins', 'Segoe UI', sans-serif;
   }
   body {
     @apply font-body text-ink bg-stone antialiased;
   }
   h1, h2, h3, h4 {
-    @apply font-display font-extrabold tracking-[-0.02em];
+    @apply font-display font-bold tracking-[-0.02em];
   }
   .font-display,
-  .font-heading {
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+  .font-heading,
+  .font-poppins {
+    font-family: 'Playfair Display', Georgia, serif;
   }
   .font-body,
-  .font-serif,
   .font-mono {
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
   }
   ::selection {
     @apply bg-gold/30;
@@ -47,27 +47,31 @@
 }
 
 @layer components {
-  /* Structural, rectangular button — no pill shapes, no oversized padding */
   .btn {
-    @apply inline-flex items-center gap-2 font-body text-[13px] tracking-wide uppercase
-           px-6 py-3.5 transition-colors duration-200;
+    @apply inline-flex items-center gap-2 font-body text-[13px] font-semibold tracking-wide uppercase
+           px-6 py-3.5 transition-all duration-300 shadow-soft;
   }
   .btn-fill {
-    @apply btn bg-navy text-stone hover:bg-ink;
-  }
+  @apply btn bg-gradient-to-r from-gold to-gold-light text-navy 
+  hover:from-gold-light hover:to-gold 
+  hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300;
+}
   .btn-line {
-    @apply btn border border-current text-current hover:bg-ink/[0.04];
+    @apply btn border border-navy/20 text-navy bg-paper/80 hover:bg-navy hover:text-stone hover:border-navy shadow-none;
   }
   .btn-line-invert {
-    @apply btn border border-stone/60 text-stone hover:bg-stone hover:text-navy;
+    @apply btn border border-stone/50 text-stone bg-transparent hover:bg-stone hover:text-navy hover:border-stone shadow-none;
   }
 
-  /* Mono eyebrow label used as a structural device, not decoration */
   .eyebrow {
-    @apply font-body font-semibold text-sm tracking-widest2 uppercase text-teal;
+    @apply font-body font-semibold text-xs tracking-widest2 uppercase text-teal;
   }
   .eyebrow-invert {
-    @apply font-body font-semibold text-sm tracking-widest2 uppercase text-gold-light;
+    @apply font-body font-semibold text-xs tracking-widest2 uppercase text-gold-light;
+  }
+
+  .section-title {
+    @apply font-display text-4xl md:text-5xl text-navy leading-tight;
   }
 
   .rule {
@@ -81,15 +85,17 @@
     @apply max-w-[1400px] mx-auto px-6 md:px-10;
   }
 
-  /* --- Legacy shims: kept flat/hairline rather than heavy shadow+pill so
-     pages outside this redesign pass (admin panel, a few interior pages)
-     still read as part of the same restrained system --- */
   .section {
     @apply container-wide py-16 md:py-20;
   }
+
   .card {
-    @apply bg-paper border border-line;
+    @apply bg-paper border border-line/80 shadow-soft rounded-sm;
   }
+  .card-hover {
+    @apply card transition-all duration-300 hover:shadow-card hover:-translate-y-1;
+  }
+
   .btn-primary {
     @apply btn-fill;
   }
@@ -97,20 +103,58 @@
     @apply btn-line-invert;
   }
 
-  /* Underline that draws in on hover — used for nav + inline links only */
   .link-underline {
     @apply relative;
   }
   .link-underline::after {
     content: "";
-    @apply absolute left-0 -bottom-1 h-px w-0 bg-current transition-all duration-300;
+    @apply absolute left-0 -bottom-1 h-0.5 w-0 bg-teal transition-all duration-300;
   }
   .link-underline:hover::after {
     @apply w-full;
   }
 
-  /* Minimal styling for Tiptap's editable area — no typography plugin
-     installed, so headings/lists/quotes need explicit rules here. */
+  .img-frame {
+    @apply overflow-hidden shadow-soft;
+  }
+  .img-frame img {
+    @apply w-full h-full object-cover transition-transform duration-700 ease-out;
+  }
+  .img-frame:hover img {
+    @apply scale-[1.04];
+  }
+
+  .input-field {
+    @apply w-full border border-line bg-paper px-4 py-3 text-navy placeholder:text-navy/40
+           focus:border-teal focus:ring-2 focus:ring-teal/10 outline-none transition-all duration-200 rounded-sm;
+  }
+  .input-field-underline {
+    @apply w-full border-b border-line bg-transparent px-0 py-2.5 text-navy placeholder:text-navy/40
+           focus:border-teal outline-none transition-colors;
+  }
+
+  .badge {
+    @apply inline-flex items-center font-body text-[11px] font-semibold tracking-wide uppercase
+           px-3 py-1 rounded-sm;
+  }
+  .badge-gold {
+    @apply badge bg-gold/15 text-gold-dark;
+  }
+  .badge-teal {
+    @apply badge bg-teal/10 text-teal-dark;
+  }
+  .badge-navy {
+    @apply badge bg-navy/10 text-navy;
+  }
+
+  .gold-accent {
+    @apply relative;
+  }
+  .gold-accent::before {
+    content: "";
+    @apply absolute left-0 top-0 w-12 h-1 bg-gold;
+  }
+
   .editor-content .ProseMirror {
     outline: none;
   }
@@ -131,5 +175,27 @@
   }
   .editor-content p {
     @apply mb-2;
+  }
+
+  .prose-content {
+    @apply text-navy/80 leading-relaxed;
+  }
+  .prose-content h2 {
+    @apply font-body text-2xl text-navy mt-8 mb-4;
+  }
+  .prose-content h3 {
+    @apply font-body text-xl text-navy mt-6 mb-3;
+  }
+  .prose-content p {
+    @apply mb-4;
+  }
+  .prose-content ul {
+    @apply list-disc pl-6 mb-4 space-y-1;
+  }
+  .prose-content ol {
+    @apply list-decimal pl-6 mb-4 space-y-1;
+  }
+  .prose-content blockquote {
+    @apply border-l-4 border-teal pl-4 italic text-navy/70 my-6;
   }
 }

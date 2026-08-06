@@ -9,7 +9,9 @@ const teamSchema = new mongoose.Schema(
     bio: { type: String },
     social: {
       linkedin: String,
-      twitter: String,
+      facebook: String,
+      whatsapp: String,
+      instagram: String,
       email: String,
     },
     order: { type: Number, default: 0 },

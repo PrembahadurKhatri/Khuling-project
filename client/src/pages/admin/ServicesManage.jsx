@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchServices, createService, updateService, deleteService } from "../../services/serviceService.js";
+import { fetchCategories } from "../../services/categoryService.js";
+import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
 
 const emptyForm = {
-  title: "", shortDescription: "", description: "", benefits: "", order: 0, heroImage: "",
+  title: "", category: "", shortDescription: "", description: "", benefits: "",
+  heroImage: "", heroImageFile: null,
 };
 
 // Service.benefits is an array in the schema; the form edits it as one
@@ -24,6 +27,12 @@ const ServicesManage = () => {
     queryKey: ["admin-services"],
     queryFn: () => fetchServices(),
   });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
+  const categories = categoriesData?.data || [];
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-services"] });
 
@@ -49,13 +58,18 @@ const ServicesManage = () => {
 
   const openEdit = (service) => {
     setEditing(service);
-    setForm({ ...service, benefits: toFormBenefits(service.benefits) });
+    setForm({ ...emptyForm, ...service, benefits: toFormBenefits(service.benefits), heroImageFile: null });
     setShowForm(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = { ...form, benefits: toPayloadBenefits(form.benefits), order: Number(form.order) };
+    const { heroImageFile, ...rest } = form;
+    const payload = {
+      ...rest,
+      benefits: toPayloadBenefits(form.benefits),
+      heroImage: heroImageFile || form.heroImage,
+    };
     if (editing) {
       await updateMutation.mutateAsync({ id: editing._id, payload });
     } else {
@@ -87,8 +101,8 @@ const ServicesManage = () => {
               <tr>
                 <th className="px-4 py-3">Image</th>
                 <th className="px-4 py-3">Title</th>
+                <th className="px-4 py-3">Category</th>
                 <th className="px-4 py-3">Short Description</th>
-                <th className="px-4 py-3">Order</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -103,8 +117,8 @@ const ServicesManage = () => {
                     )}
                   </td>
                   <td className="px-4 py-3">{service.title}</td>
+                  <td className="px-4 py-3">{service.category || "—"}</td>
                   <td className="px-4 py-3 max-w-sm truncate">{service.shortDescription}</td>
-                  <td className="px-4 py-3">{service.order}</td>
                   <td className="px-4 py-3 text-right space-x-3">
                     <button onClick={() => openEdit(service)} className="text-primary hover:underline">Edit</button>
                     <button onClick={() => handleDelete(service._id)} className="text-red-400 hover:underline">Delete</button>
@@ -118,21 +132,38 @@ const ServicesManage = () => {
       )}
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <form onSubmit={handleSubmit} className={`w-full max-w-lg space-y-3 rounded-xl border p-6 ${panelClass}`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
+          <form onSubmit={handleSubmit} className={`w-full max-w-lg space-y-3 rounded-xl border p-6 my-8 ${panelClass}`}>
             <h2 className="font-heading font-semibold text-lg mb-2">{editing ? "Edit Service" : "New Service"}</h2>
             <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputClass} />
+
             <div>
-              <label className={`mb-1 block text-xs font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Image URL</label>
-              <input placeholder="https://..." value={form.heroImage} onChange={(e) => setForm({ ...form, heroImage: e.target.value })} className={inputClass} />
-              {form.heroImage && (
-                <img src={form.heroImage} alt="Preview" className="mt-2 h-32 w-full rounded-lg object-cover" onError={(e) => { e.target.style.display = "none"; }} />
-              )}
+              <label className={`mb-1 block text-xs font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                Related project category (optional)
+              </label>
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
+                <option value="">None</option>
+                {categories.map((c) => (
+                  <option key={c._id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
+              <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                Powers the "Related Projects" button on the public Services page — links to Projects filtered by this category.
+              </p>
             </div>
+
+            <ImageSourceField
+              theme={theme}
+              label="Image"
+              urlValue={form.heroImage}
+              fileValue={form.heroImageFile}
+              onUrlChange={(v) => setForm((prev) => ({ ...prev, heroImage: v }))}
+              onFileChange={(f) => setForm((prev) => ({ ...prev, heroImageFile: f }))}
+            />
+
             <input placeholder="Short Description" value={form.shortDescription} onChange={(e) => setForm({ ...form, shortDescription: e.target.value })} className={inputClass} />
             <textarea required placeholder="Description" rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
             <textarea placeholder="Benefits (one per line)" rows={4} value={form.benefits} onChange={(e) => setForm({ ...form, benefits: e.target.value })} className={inputClass} />
-            <input type="number" placeholder="Display order" value={form.order} onChange={(e) => setForm({ ...form, order: e.target.value })} className={inputClass} />
 
             <div className="flex justify-end gap-3 pt-2">
               <button type="button" onClick={() => setShowForm(false)} className={`px-4 py-2 rounded-lg ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Cancel</button>

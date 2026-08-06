@@ -7,13 +7,14 @@ import {
   deleteService,
 } from "../controllers/serviceController.js";
 import { protect, authorize } from "../middleware/auth.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
 router.get("/", getServices);
 router.get("/:slug", getServiceBySlug);
-router.post("/", protect, authorize("admin", "editor"), createService);
-router.put("/:id", protect, authorize("admin", "editor"), updateService);
+router.post("/", protect, authorize("admin", "editor"), upload.single("heroImage"), createService);
+router.put("/:id", protect, authorize("admin", "editor"), upload.single("heroImage"), updateService);
 router.delete("/:id", protect, authorize("admin"), deleteService);
 
 export default router;

@@ -9,6 +9,10 @@ const serviceSchema = new mongoose.Schema(
     heroImage: { type: String },
     shortDescription: { type: String, maxlength: 300 },
     description: { type: String, required: true },
+    // Links this service to a Project category (see models/Category.js) so
+    // the public Service page can offer a "Related Projects" button that
+    // deep-links to /projects?category=<this>.
+    category: { type: String },
     benefits: [{ type: String }],
     gallery: [{ type: String }],
     faq: [

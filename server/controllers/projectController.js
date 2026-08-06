@@ -1,5 +1,15 @@
 import asyncHandler from "express-async-handler";
 import Project from "../models/Project.js";
+import { isFallbackAdminId } from "../utils/fallbackAdmin.js";
+
+// A manually uploaded file takes precedence over a pasted thumbnail URL —
+// the admin form only ever sends one or the other (see ProjectsManage.jsx).
+const applyThumbnail = (body, files) => {
+  const payload = { ...body };
+  const uploaded = files?.thumbnail?.[0];
+  if (uploaded) payload.thumbnail = uploaded.path;
+  return payload;
+};
 
 // @desc   Get all projects with filter, search, sort, pagination
 // @route  GET /api/projects
@@ -60,14 +70,17 @@ export const getProjectBySlug = asyncHandler(async (req, res) => {
 // @desc   Create project
 // @route  POST /api/projects
 export const createProject = asyncHandler(async (req, res) => {
-  const project = await Project.create({ ...req.body, createdBy: req.user._id });
+  const project = await Project.create({
+    ...applyThumbnail(req.body, req.files),
+    ...(isFallbackAdminId(req.user._id) ? {} : { createdBy: req.user._id }),
+  });
   res.status(201).json({ success: true, data: project });
 });
 
 // @desc   Update project
 // @route  PUT /api/projects/:id
 export const updateProject = asyncHandler(async (req, res) => {
-  const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
+  const project = await Project.findByIdAndUpdate(req.params.id, applyThumbnail(req.body, req.files), {
     new: true,
     runValidators: true,
   });

@@ -27,7 +27,18 @@ router.post(
   createProject
 );
 
-router.put("/:id", protect, authorize("admin", "editor"), updateProject);
+router.put(
+  "/:id",
+  protect,
+  authorize("admin", "editor"),
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "gallery", maxCount: 20 },
+    { name: "videos", maxCount: 5 },
+    { name: "documents", maxCount: 5 },
+  ]),
+  updateProject
+);
 router.delete("/:id", protect, authorize("admin"), deleteProject);
 
 export default router;

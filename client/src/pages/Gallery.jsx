@@ -1,56 +1,109 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import PageHeader from "../components/PageHeader.jsx";
-
-const demoImages = Array.from({ length: 12 }).map((_, i) => ({
-  id: i,
-  src: `https://placehold.co/600x400?text=Gallery+${i + 1}`,
-}));
-
-// Deliberate mosaic rhythm instead of a uniform grid — a couple of tiles run
-// large, the rest fall into a regular rhythm around them, like a contact sheet.
-const spanForIndex = (i) => {
-  if (i === 0) return "sm:col-span-2 sm:row-span-2";
-  if (i === 5) return "sm:row-span-2";
-  if (i === 8) return "sm:col-span-2";
-  return "";
-};
+import { fetchGallery } from "../services/galleryService.js";
+import { HiX, HiOutlinePhotograph } from "react-icons/hi";
 
 const Gallery = () => {
   const [active, setActive] = useState(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["gallery"],
+    queryFn: () => fetchGallery(),
+  });
+
+  const images = data?.data || [];
 
   return (
     <div>
       <PageHeader
         eyebrow="Site Record"
-        title="Progress, documented as it happens."
+        title="Captured moments from our ongoing work."
         crumb="Home / Gallery"
       />
 
-      <section className="container-wide py-24 md:py-28">
-        <div className="grid grid-cols-2 sm:grid-cols-4 auto-rows-[140px] sm:auto-rows-[160px] md:auto-rows-[190px] gap-3">
-          {demoImages.map((img, i) => (
-            <button
-              key={img.id}
-              onClick={() => setActive(img)}
-              className={`overflow-hidden group ${spanForIndex(i)}`}
-            >
-              <img
-                src={img.src}
-                alt={`Gallery ${img.id}`}
-                loading="lazy"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-            </button>
-          ))}
-        </div>
+      <section className="container-wide py-24 md:py-32 relative">
+        {/* Background Glow */}
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(16,42,76,0.06),transparent_40%),radial-gradient(circle_at_80%_60%,rgba(11,31,58,0.06),transparent_40%)]" />
+
+        {isLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="aspect-[4/3] rounded-2xl bg-stone animate-pulse" />
+            ))}
+          </div>
+        ) : images.length ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            {images.map((img, i) => (
+              <button
+                key={img._id}
+                onClick={() => setActive(img)}
+                className="relative overflow-hidden rounded-2xl group aspect-[4/3] border border-navy/5 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+              >
+                {/* Image */}
+                <img
+                  src={img.image}
+                  alt={img.caption || `Gallery ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+
+                {/* Caption */}
+                <div className="absolute bottom-3 left-3 right-3 text-white opacity-0 group-hover:opacity-100 transition duration-500 translate-y-1 group-hover:translate-y-0">
+                  <p className="font-body text-sm font-medium line-clamp-2">
+                    {img.caption || "View image"}
+                  </p>
+                </div>
+
+                {/* Icon */}
+                <div className="absolute top-3 right-3 text-white opacity-0 group-hover:opacity-100 transition duration-500">
+                  <HiOutlinePhotograph size={18} />
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-24 rounded-2xl border border-dashed border-navy/15 bg-navy/[0.02]">
+            <h2 className="font-display text-2xl text-navy mb-2">No images yet</h2>
+            <p className="font-body text-navy/60">
+              We'll be adding project visuals soon. Stay tuned.
+            </p>
+          </div>
+        )}
       </section>
 
+      {/* PREMIUM MODAL */}
       {active && (
         <div
-          className="fixed inset-0 z-50 bg-ink/95 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setActive(null)}
         >
-          <img src={active.src} alt="Enlarged" className="max-h-[90vh] max-w-full" />
+          {/* Close */}
+          <button
+            className="absolute top-6 right-6 text-white/70 hover:text-white text-3xl transition"
+            onClick={() => setActive(null)}
+          >
+            <HiX />
+          </button>
+
+          {/* Image */}
+          <div className="max-w-5xl w-full relative" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={active.image}
+              alt={active.caption || "Preview"}
+              className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
+            />
+
+            {/* Caption */}
+            {active.caption && (
+              <div className="mt-4 text-center font-body text-white/80 text-sm">
+                {active.caption}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

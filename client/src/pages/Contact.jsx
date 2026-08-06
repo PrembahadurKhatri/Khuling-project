@@ -4,14 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../services/api.js";
 import { fetchSettings } from "../services/settingsService.js";
 import PageHeader from "../components/PageHeader.jsx";
-
-const fieldClass =
-  "w-full border-b border-line bg-transparent px-0 py-2.5 text-navy placeholder:text-navy/40 focus:border-teal outline-none transition-colors";
-
+import { HiLocationMarker, HiPhone, HiMail } from "react-icons/hi";
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
 const Contact = () => {
   const [mode, setMode] = useState("contact");
   const [status, setStatus] = useState(null);
-  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm();
+  const { register, handleSubmit, reset, setValue, formState: { isSubmitting } } = useForm();
   const { data } = useQuery({ queryKey: ["public-settings"], queryFn: fetchSettings });
   const settings = data?.data || {};
 
@@ -20,6 +19,7 @@ const Contact = () => {
       await api.post("/contact", { ...values, type: mode });
       setStatus("success");
       reset();
+      setValue("phone","");
     } catch {
       setStatus("error");
     }
@@ -33,76 +33,131 @@ const Contact = () => {
         crumb="Home / Contact"
       />
 
-      {/* Split: a plain mono contact list on the left, the form on the right —
-          no matching icon-cards down the left rail. */}
-      <section className="container-wide py-24 md:py-28 grid lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-4">
+      <section className="container-wide py-24 md:py-28 grid lg:grid-cols-12 gap-14 md:gap-16">
+
+        {/* LEFT */}
+        <div className="lg:col-span-4 space-y-6">
           <p className="eyebrow mb-6">Reach Us</p>
-          <div>
-            <div className="py-5 border-t border-line">
-              <p className="font-mono text-[11px] tracking-widest2 uppercase text-teal mb-2">Office</p>
-              <p className="text-navy/70">{settings.address || "Kathmandu, Nepal"}</p>
+
+          <div className="space-y-5">
+
+            <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
+                <HiLocationMarker className="text-teal text-lg" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-teal">Office</p>
+                <p className="text-navy/70 text-sm leading-relaxed">{settings.address || "Kathmandu, Nepal"}</p>
+              </div>
             </div>
-            <div className="py-5 border-t border-line">
-              <p className="font-mono text-[11px] tracking-widest2 uppercase text-teal mb-2">Phone</p>
-              <p className="text-navy/70">{settings.phone || "+977-1-XXXXXXX"}</p>
-              {settings.emergencyContact && (
-                <p className="text-xs text-gold-dark mt-1">Emergency: {settings.emergencyContact}</p>
-              )}
+
+            <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
+                <HiPhone className="text-teal text-lg" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-teal">Phone</p>
+                <p className="text-navy/70 text-sm">{settings.phone || "+977-1-XXXXXXX"}</p>
+                {settings.emergencyContact && (
+                  <p className="text-xs text-gold-dark mt-1 font-semibold">{settings.emergencyContact}</p>
+                )}
+              </div>
             </div>
-            <div className="py-5 border-t border-b border-line">
-              <p className="font-mono text-[11px] tracking-widest2 uppercase text-teal mb-2">Email</p>
-              <p className="text-navy/70">{settings.email || "info@khilungkalika.com"}</p>
+
+            <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
+                <HiMail className="text-teal text-lg" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-teal">Email</p>
+                <p className="text-navy/70 text-sm">{settings.email || "info@khilungkalika.com"}</p>
+              </div>
             </div>
+
           </div>
         </div>
 
+        {/* RIGHT */}
         <div className="lg:col-span-8">
-          <div className="flex gap-3 mb-8">
-            <button
-              onClick={() => setMode("contact")}
-              className={mode === "contact" ? "btn-fill !py-2.5" : "btn-line !py-2.5"}
-            >
-              General Inquiry
-            </button>
-            <button
-              onClick={() => setMode("quote")}
-              className={mode === "quote" ? "btn-fill !py-2.5" : "btn-line !py-2.5"}
-            >
-              Request a Quote
-            </button>
-          </div>
+          <div className="card p-8 md:p-10 rounded-2xl shadow-soft hover:shadow-card transition-all duration-500">
 
-          <form onSubmit={handleSubmit(onSubmit)} className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
-            <input {...register("name", { required: true })} placeholder="Full Name" className={fieldClass} />
-            <input {...register("email", { required: true })} type="email" placeholder="Email" className={fieldClass} />
-            <input {...register("phone")} placeholder="Phone" className={fieldClass} />
-            {mode === "quote" ? (
-              <input {...register("projectType")} placeholder="Project Type" className={fieldClass} />
-            ) : (
-              <input {...register("subject")} placeholder="Subject" className={fieldClass} />
+            {/* TOGGLE */}
+            <div className="flex flex-wrap gap-3 mb-8">
+              <button
+                onClick={() => setMode("contact")}
+                className={`${mode === "contact" ? "btn-fill" : "btn-line"} !py-2.5 !text-xs rounded-full transition-all duration-300 hover:scale-105`}
+              >
+                General Inquiry
+              </button>
+              <button
+                onClick={() => setMode("quote")}
+                className={`${mode === "quote" ? "btn-fill" : "btn-line"} !py-2.5 !text-xs rounded-full transition-all duration-300 hover:scale-105`}
+              >
+                Request a Quote
+              </button>
+            </div>
+
+            {/* FORM */}
+            <form onSubmit={handleSubmit(onSubmit)} className="grid sm:grid-cols-2 gap-x-6 gap-y-5">
+
+              <input {...register("name", { required: true })} placeholder="Full Name" className="input-field focus:shadow-md transition-all duration-300" />
+              <input {...register("email", { required: true })} type="email" placeholder="Email" className="input-field focus:shadow-md transition-all duration-300" />
+              <input type="hidden" {...register("phone")} />
+
+              <div className="sm:col-span-1">
+                <PhoneInput
+                  country={"np"}
+                  enableSearch
+                  onChange={(phone) => setValue("phone", phone)}
+                  inputClass="!w-full !h-[48px] !pl-[52px] !rounded-lg !border !border-line !bg-white"
+                  buttonClass="!border-line"
+                />
+              </div>
+              {mode === "quote" ? (
+                <input {...register("projectType")} placeholder="Project Type" className="input-field focus:shadow-md transition-all duration-300" />
+              ) : (
+                <input {...register("subject")} placeholder="Subject" className="input-field focus:shadow-md transition-all duration-300" />
+              )}
+
+              <textarea
+                {...register("message", { required: true })}
+                placeholder="Message"
+                rows={5}
+                className="sm:col-span-2 input-field resize-none focus:shadow-md transition-all duration-300"
+              />
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-fill sm:col-span-2 justify-center mt-3 rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </button>
+
+            </form>
+
+            {/* STATUS */}
+            {status === "success" && (
+              <div className="mt-5 p-4 bg-teal/10 border border-teal/20 rounded-lg text-teal-dark text-sm font-semibold">
+                Thank you! We'll be in touch shortly.
+              </div>
             )}
-            <textarea
-              {...register("message", { required: true })}
-              placeholder="Message"
-              rows={5}
-              className={`sm:col-span-2 mt-4 ${fieldClass}`}
-            />
-            <button type="submit" disabled={isSubmitting} className="btn-fill sm:col-span-2 justify-center mt-8">
-              {isSubmitting ? "Sending..." : "Send Message"}
-            </button>
-          </form>
 
-          {status === "success" && <p className="text-teal-dark mt-4">Thank you! We'll be in touch shortly.</p>}
-          {status === "error" && <p className="text-red-600 mt-4">Something went wrong. Please try again.</p>}
+            {status === "error" && (
+              <div className="mt-5 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-semibold">
+                Something went wrong. Please try again.
+              </div>
+            )}
+
+          </div>
         </div>
       </section>
 
-      <section className="h-96 border-t border-line">
+      <section className="h-96 border-t border-line relative overflow-hidden">
         <iframe
           title="office-location"
           src={settings.mapEmbedUrl || "https://www.google.com/maps?q=Kathmandu,Nepal&output=embed"}
-          className="w-full h-full border-0 grayscale-[40%]"
+          className="w-full h-full border-0 grayscale-[20%] contrast-[1.1] hover:grayscale-0 transition duration-500"
           loading="lazy"
         />
       </section>

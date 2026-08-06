@@ -3,11 +3,14 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   HiOutlineViewGrid,
   HiOutlineOfficeBuilding,
+  HiOutlineTag,
   HiOutlineBriefcase,
   HiOutlineNewspaper,
   HiOutlineUserGroup,
+  HiOutlineUsers,
   HiOutlineClipboardList,
   HiOutlineChatAlt2,
+  HiOutlinePhotograph,
   HiOutlineCog,
   HiOutlineLogout,
   HiOutlineMoon,
@@ -20,11 +23,14 @@ import useAuth from "../hooks/useAuth.js";
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: HiOutlineViewGrid, end: true },
   { to: "/admin/projects", label: "Projects", icon: HiOutlineOfficeBuilding },
+  { to: "/admin/categories", label: "Categories", icon: HiOutlineTag },
   { to: "/admin/services", label: "Services", icon: HiOutlineBriefcase },
   { to: "/admin/blogs", label: "Journal / Blog", icon: HiOutlineNewspaper },
+  { to: "/admin/team", label: "Team", icon: HiOutlineUsers },
   { to: "/admin/careers", label: "Careers", icon: HiOutlineUserGroup },
   { to: "/admin/applications", label: "Applications", icon: HiOutlineClipboardList },
   { to: "/admin/testimonials", label: "Testimonials", icon: HiOutlineChatAlt2 },
+  { to: "/admin/gallery", label: "Gallery", icon: HiOutlinePhotograph },
   { to: "/admin/settings", label: "Settings", icon: HiOutlineCog },
 ];
 

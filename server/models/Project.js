@@ -5,11 +5,10 @@ const projectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, unique: true },
-    category: {
-      type: String,
-      enum: ["Construction", "Infrastructure", "Road", "Bridge", "Building", "Commercial", "Residential"],
-      required: true,
-    },
+    // Free-text but sourced from the admin-managed Category collection
+    // (see models/Category.js) rather than a hardcoded enum, so new
+    // categories can be added without a code change.
+    category: { type: String, required: true },
     status: { type: String, enum: ["Completed", "Ongoing", "Upcoming"], default: "Ongoing" },
     location: { type: String, required: true },
     client: { type: String },

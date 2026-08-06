@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchProjects, createProject, updateProject, deleteProject } from "../../services/projectService.js";
+import { fetchCategories } from "../../services/categoryService.js";
+import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
 
 const emptyForm = {
-  title: "", category: "Construction", status: "Ongoing", location: "",
-  client: "", budget: "", description: "", thumbnail: "",
+  title: "", category: "", status: "Ongoing", location: "",
+  client: "", budget: "", description: "", thumbnail: "", thumbnailFile: null,
 };
 
 const ProjectsManage = () => {
@@ -19,6 +21,12 @@ const ProjectsManage = () => {
     queryKey: ["admin-projects"],
     queryFn: () => fetchProjects({ limit: 50 }),
   });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
+  const categories = categoriesData?.data || [];
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
 
@@ -38,22 +46,29 @@ const ProjectsManage = () => {
 
   const openCreate = () => {
     setEditing(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, category: categories[0]?.name || "" });
     setShowForm(true);
   };
 
   const openEdit = (project) => {
     setEditing(project);
-    setForm(project);
+    setForm({ ...emptyForm, ...project, thumbnailFile: null });
     setShowForm(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { thumbnailFile, ...rest } = form;
+    const finalThumbnail = thumbnailFile || form.thumbnail;
+    if (!finalThumbnail) {
+      alert("Please provide a thumbnail — paste an image URL or upload a file.");
+      return;
+    }
+    const payload = { ...rest, thumbnail: finalThumbnail };
     if (editing) {
-      await updateMutation.mutateAsync({ id: editing._id, payload: form });
+      await updateMutation.mutateAsync({ id: editing._id, payload });
     } else {
-      await createMutation.mutateAsync(form);
+      await createMutation.mutateAsync(payload);
     }
     setShowForm(false);
   };
@@ -106,22 +121,42 @@ const ProjectsManage = () => {
       )}
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <form onSubmit={handleSubmit} className={`w-full max-w-lg space-y-3 rounded-xl border p-6 ${panelClass}`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
+          <form onSubmit={handleSubmit} className={`w-full max-w-lg space-y-3 rounded-xl border p-6 my-8 ${panelClass}`}>
             <h2 className="font-heading font-semibold text-lg mb-2">{editing ? "Edit Project" : "New Project"}</h2>
             <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputClass} />
-            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
-              {['Construction', 'Infrastructure', 'Road', 'Bridge', 'Building', 'Commercial', 'Residential'].map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+
+            <div>
+              <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
+                <option value="" disabled>Select a category</option>
+                {categories.map((c) => (
+                  <option key={c._id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
+              {categories.length === 0 && (
+                <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                  No categories yet — add one under Admin → Categories first.
+                </p>
+              )}
+            </div>
+
             <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className={inputClass}>
               {['Completed', 'Ongoing', 'Upcoming'].map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
             <input required placeholder="Location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className={inputClass} />
             <input placeholder="Client" value={form.client} onChange={(e) => setForm({ ...form, client: e.target.value })} className={inputClass} />
             <input placeholder="Budget" value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} className={inputClass} />
-            <input required placeholder="Thumbnail URL" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} className={inputClass} />
+
+            <ImageSourceField
+              theme={theme}
+              label="Thumbnail"
+              required={!editing}
+              urlValue={form.thumbnail}
+              fileValue={form.thumbnailFile}
+              onUrlChange={(v) => setForm((prev) => ({ ...prev, thumbnail: v }))}
+              onFileChange={(f) => setForm((prev) => ({ ...prev, thumbnailFile: f }))}
+            />
+
             <textarea required placeholder="Description" rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
 
             <div className="flex justify-end gap-3 pt-2">

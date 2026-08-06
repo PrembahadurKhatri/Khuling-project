@@ -1,8 +1,30 @@
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProjectBySlug } from "../services/projectService.js";
 import ProjectCard from "../components/ProjectCard.jsx";
-import { HiLocationMarker, HiCalendar, HiUserGroup, HiCurrencyDollar } from "react-icons/hi";
+import {
+  HiLocationMarker,
+  HiCalendar,
+  HiUserGroup,
+  HiCurrencyRupee,
+  HiArrowLeft,
+  HiArrowRight,
+  HiX,
+  HiOutlineArrowRight,
+} from "react-icons/hi";
+
+const DetailRow = ({ icon: Icon, label, value }) => (
+  <div className="flex items-start gap-4 group">
+    <span className="flex items-center justify-center w-10 h-10 rounded-full bg-teal/10 text-teal shrink-0 transition-colors duration-300 group-hover:bg-teal group-hover:text-white">
+      <Icon className="text-lg" />
+    </span>
+    <div>
+      <p className="font-body text-xs font-bold uppercase tracking-wider text-navy mb-0.5">{label}</p>
+      <p className="font-body text-sm text-navy/90 font-medium leading-snug">{value}</p>
+    </div>
+  </div>
+);
 
 const ProjectDetail = () => {
   const { slug } = useParams();
@@ -10,65 +32,230 @@ const ProjectDetail = () => {
     queryKey: ["project", slug],
     queryFn: () => fetchProjectBySlug(slug),
   });
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
-  if (isLoading) return <p className="section text-center text-gray-500">Loading...</p>;
-  if (!data?.data) return <p className="section text-center text-gray-500">Project not found.</p>;
+  if (isLoading) {
+    return (
+      <div className="section text-center">
+        <div className="inline-block w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <p className="font-body text-navy/60 mt-4">Loading...</p>
+      </div>
+    );
+  }
+  if (!data?.data) {
+    return (
+      <div className="section text-center">
+        <p className="font-body text-navy/60 text-lg">Project not found.</p>
+        <Link to="/projects" className="font-body inline-flex items-center gap-2 text-teal font-medium mt-4 hover:underline">
+          <HiArrowLeft /> Back to projects
+        </Link>
+      </div>
+    );
+  }
 
   const project = data.data;
+  const gallery = project.gallery ?? [];
+
+  const showPrev = () => setLightboxIndex((i) => (i === 0 ? gallery.length - 1 : i - 1));
+  const showNext = () => setLightboxIndex((i) => (i === gallery.length - 1 ? 0 : i + 1));
 
   return (
     <div>
-      <div className="relative h-[50vh] min-h-[400px]">
-        <img src={project.thumbnail} alt={project.title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/50 flex items-end">
-          <div className="section !py-8 text-white">
-            <p className="text-primary font-semibold uppercase text-sm">{project.category}</p>
-            <h1 className="text-3xl md:text-5xl font-heading font-bold">{project.title}</h1>
+      {/* ---------- Hero ---------- */}
+      <div className="relative h-[58vh] min-h-[440px] overflow-hidden">
+        <img
+          src={project.thumbnail}
+          alt={project.title}
+          className="w-full h-full object-cover scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-navy/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-hero-pattern opacity-20" />
+
+    
+
+        <div className="absolute bottom-0 left-0 right-0">
+          <div className="container-wide pb-10 pt-20">
+            <span className="badge-gold font-body mb-5 inline-block ">{project.category}</span>
+            <h1 className="font-body text-3xl md:text-5xl text-stone leading-[1.1] max-w-3xl">
+              {project.title}
+            </h1>
+            <div className="font-body flex flex-wrap gap-x-8 gap-y-2 mt-6 text-stone/80 text-sm">
+              <span className="flex items-center gap-2">
+                <HiLocationMarker className="text-gold font-body" /> {project.location}
+              </span>
+              {project.startDate && (
+                <span className="flex items-center gap-2">
+                  <HiCalendar className="text-gold" />
+                  {new Date(project.startDate).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                  })}
+                  {" — "}
+                  {project.endDate
+                    ? new Date(project.endDate).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                      })
+                    : "Ongoing"}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* ---------- Body ---------- */}
       <section className="section grid lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
-          <h2 className="text-2xl font-heading font-bold text-secondary mb-4">Project Overview</h2>
-          <p className="text-gray-600 leading-relaxed">{project.description}</p>
+          <div className=" pt-4 mb-6">
+            <h2 className="font-body text-2xl md:text-3xl text-navy">Project Overview</h2>
+          </div>
+          <p className="font-body text-navy/70 leading-relaxed text-lg first-letter:font-display first-letter:text-5xl first-letter:text-teal first-letter:font-medium first-letter:mr-1 first-letter:float-left first-letter:leading-[0.85]">
+            {project.description}
+          </p>
 
-          {project.gallery?.length > 0 && (
+          {gallery.length > 0 && (
             <>
-              <h3 className="text-xl font-heading font-semibold text-secondary mt-10 mb-4">Gallery</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {project.gallery.map((img, i) => (
-                  <img key={i} src={img} alt={`Gallery ${i + 1}`} className="rounded-lg object-cover h-48 w-full" />
+              <div className="flex items-center gap-4 mt-14 mb-6">
+                <h3 className="font-body text-xl text-navy">Gallery</h3>
+                <span className="h-px flex-1 bg-line" />
+                <span className="font-body text-xs uppercase tracking-wider text-navy/40">
+                  {gallery.length} photo{gallery.length !== 1 && "s"}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-4 grid-rows-2 gap-3 auto-rows-[140px] sm:auto-rows-[160px]">
+                {gallery.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setLightboxIndex(i)}
+                    className={`img-frame relative overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-teal ${
+                      i === 0 ? "col-span-2 row-span-2" : "col-span-2 sm:col-span-1"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${project.title} — photo ${i + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <span className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-colors duration-300" />
+                  </button>
                 ))}
               </div>
             </>
           )}
         </div>
 
-        <aside className="card p-6 h-fit space-y-4">
-          <h3 className="font-heading font-semibold text-secondary">Project Details</h3>
-          <div className="flex items-center gap-2 text-sm text-gray-600"><HiLocationMarker className="text-primary" /> {project.location}</div>
-          {project.client && <div className="flex items-center gap-2 text-sm text-gray-600"><HiUserGroup className="text-primary" /> {project.client}</div>}
-          {project.budget && <div className="flex items-center gap-2 text-sm text-gray-600"><HiCurrencyDollar className="text-primary" /> {project.budget}</div>}
-          {project.startDate && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <HiCalendar className="text-primary" />
-              {new Date(project.startDate).toLocaleDateString()} - {project.endDate ? new Date(project.endDate).toLocaleDateString() : "Ongoing"}
-            </div>
+        {/* ---------- Details card ---------- */}
+        <aside className="card p-8 h-fit space-y-6 lg:sticky lg:top-28">
+          <div className="flex items-center justify-between border-b border-line pb-4">
+            <h3 className="font-body text-xl text-navy">Project Details</h3>
+            <span className="badge-gold font-body text-xs">{project.status}</span>
+          </div>
+
+          <DetailRow icon={HiLocationMarker} label="Location" value={project.location} />
+          {project.client && (
+            <DetailRow icon={HiUserGroup} label="Client" value={project.client} />
           )}
-          <span className="inline-block mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-700">
-            {project.status}
-          </span>
+          {project.budget && (
+            <DetailRow icon={HiCurrencyRupee} label="Budget" value={project.budget} />
+          )}
+          {project.startDate && (
+            <DetailRow
+              icon={HiCalendar}
+              label="Timeline"
+              value={`${new Date(project.startDate).toLocaleDateString()} – ${
+                project.endDate ? new Date(project.endDate).toLocaleDateString() : "Ongoing"
+              }`}
+            />
+          )}
+
+          <Link
+            to="/contact"
+                   className="group/btn inline-flex items-center gap-2.5 mt-6 md:mt-8
+            px-5 py-2.5 rounded-full
+            bg-navy text-white
+            text-[11px] md:text-[12px] font-body font-semibold tracking-wide uppercase
+            border border-navy/80 shadow-sm
+            whitespace-nowrap
+            transition-all duration-300 ease-out
+            hover:shadow-[0_6px_20px_rgba(10,25,47,0.35)]
+            hover:-translate-y-0.5
+            hover:bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)]"
+          >
+            Discuss a similar project <HiOutlineArrowRight />
+          </Link>
         </aside>
       </section>
 
+      {/* ---------- Related ---------- */}
       {data.related?.length > 0 && (
-        <section className="section bg-gray-50">
-          <h2 className="text-2xl font-heading font-bold text-secondary mb-8">Related Projects</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.related.map((p) => <ProjectCard key={p._id} project={p} />)}
+        <section className="section bg-paper border-t border-line relative">
+          <div className="absolute inset-0 bg-hero-pattern opacity-30 pointer-events-none" />
+          <div className="relative">
+            <div className=" pt-4 mb-10">
+              <h2 className="font-body text-2xl md:text-3xl text-navy">Related Projects</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {data.related.map((p) => (
+                <ProjectCard key={p._id} project={p} />
+              ))}
+            </div>
           </div>
         </section>
+      )}
+
+      {/* ---------- Lightbox ---------- */}
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-navy/95 flex items-center justify-center p-4"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <button
+            className="absolute top-6 right-6 text-stone/80 hover:text-gold transition-colors"
+            onClick={() => setLightboxIndex(null)}
+            aria-label="Close"
+          >
+            <HiX className="text-3xl" />
+          </button>
+
+          {gallery.length > 1 && (
+            <>
+              <button
+                className="absolute left-4 md:left-10 text-stone/70 hover:text-gold transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  showPrev();
+                }}
+                aria-label="Previous photo"
+              >
+                <HiArrowLeft className="text-3xl" />
+              </button>
+              <button
+                className="absolute right-4 md:right-10 text-stone/70 hover:text-gold transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  showNext();
+                }}
+                aria-label="Next photo"
+              >
+                <HiArrowRight className="text-3xl" />
+              </button>
+            </>
+          )}
+
+          <img
+            src={gallery[lightboxIndex]}
+            alt={`${project.title} — photo ${lightboxIndex + 1}`}
+            className="max-h-[85vh] max-w-[90vw] object-contain rounded-sm shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          <span className="font-body absolute bottom-6 text-stone/60 text-sm">
+            {lightboxIndex + 1} / {gallery.length}
+          </span>
+        </div>
       )}
     </div>
   );

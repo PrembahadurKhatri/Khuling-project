@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
-// size: "lg" for the flagship stat, "md" for the rest — stats should not all
-// carry equal visual weight; one number is the headline of the group.
 const Counter = ({ value, label, suffix = "+", size = "md" }) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -26,11 +24,12 @@ const Counter = ({ value, label, suffix = "+", size = "md" }) => {
       initial={{ opacity: 0, y: 16 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6 }}
+      className="text-center sm:text-left"
     >
-      <div className={`font-display text-gold-light leading-none ${size === "lg" ? "text-6xl md:text-7xl" : "text-4xl md:text-5xl"}`}>
+      <div className={`font-display text-gold-light leading-none ${size === "lg" ? "text-5xl sm:text-6xl md:text-7xl" : "text-3xl sm:text-4xl md:text-5xl"}`}>
         {count}{suffix}
       </div>
-      <p className="mt-3 font-mono text-[11px] tracking-widest2 uppercase text-stone/60">{label}</p>
+      <p className="mt-3 font-body text-[11px] font-semibold tracking-widest2 uppercase text-stone/60">{label}</p>
     </motion.div>
   );
 };

@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import { jwtSecret } from "../utils/generateToken.js";
+import { FALLBACK_ADMIN_ID, fallbackAdminUser } from "../utils/fallbackAdmin.js";
 
 // Verify access token and attach user to req
 export const protect = asyncHandler(async (req, res, next) => {
@@ -20,6 +21,14 @@ export const protect = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, jwtSecret);
+
+    // The fallback admin isn't a Mongo document (see utils/fallbackAdmin.js) —
+    // looking it up via findById would throw a CastError on the bad ObjectId.
+    if (decoded.id === FALLBACK_ADMIN_ID) {
+      req.user = fallbackAdminUser;
+      return next();
+    }
+
     req.user = await User.findById(decoded.id).select("-password");
     if (!req.user) {
       res.status(401);
@@ -46,7 +55,9 @@ export const optionalAuth = asyncHandler(async (req, res, next) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, jwtSecret);
-      req.user = await User.findById(decoded.id).select("-password");
+      req.user = decoded.id === FALLBACK_ADMIN_ID
+        ? fallbackAdminUser
+        : await User.findById(decoded.id).select("-password");
     } catch {
       // invalid/expired token on an optional route — proceed unauthenticated
     }

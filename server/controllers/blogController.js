@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Blog from "../models/Blog.js";
+import { isFallbackAdminId } from "../utils/fallbackAdmin.js";
 
 // @route GET /api/blogs (public: published only, unless authenticated admin)
 export const getBlogs = asyncHandler(async (req, res) => {
@@ -52,7 +53,10 @@ const normalizePayload = (body, file) => {
 };
 
 export const createBlog = asyncHandler(async (req, res) => {
-  const blog = await Blog.create({ ...normalizePayload(req.body, req.file), author: req.user._id });
+  const blog = await Blog.create({
+    ...normalizePayload(req.body, req.file),
+    ...(isFallbackAdminId(req.user._id) ? {} : { author: req.user._id }),
+  });
   res.status(201).json({ success: true, data: blog });
 });
 

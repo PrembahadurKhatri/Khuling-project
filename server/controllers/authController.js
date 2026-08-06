@@ -4,18 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { generateAccessToken, generateRefreshToken, setAuthCookies, jwtRefreshSecret } from "../utils/generateToken.js";
 import sendEmail from "../utils/sendEmail.js";
-
-const fallbackAdminCredentials = {
-  email: process.env.FALLBACK_ADMIN_EMAIL || "admin@khilungkalika.com",
-  password: process.env.FALLBACK_ADMIN_PASSWORD || "ChangeMe123!",
-};
-
-const isFallbackAdminLogin = (email, password) => {
-  return (
-    email?.toLowerCase() === fallbackAdminCredentials.email.toLowerCase() &&
-    password === fallbackAdminCredentials.password
-  );
-};
+import { FALLBACK_ADMIN_ID, isFallbackAdminLogin, fallbackAdminUser } from "../utils/fallbackAdmin.js";
 
 // @desc   Register a new admin/editor user (admin-only in production)
 // @route  POST /api/auth/register
@@ -50,23 +39,16 @@ export const login = asyncHandler(async (req, res) => {
 
   if (!user) {
     if (isFallbackAdminLogin(email, password)) {
-      const fallbackUser = {
-        _id: "local-fallback-admin",
-        name: "Admin",
-        email: fallbackAdminCredentials.email,
-        role: "admin",
-        isActive: true,
-      };
-      const accessToken = generateAccessToken(fallbackUser._id);
-      const refreshToken = generateRefreshToken(fallbackUser._id);
+      const accessToken = generateAccessToken(fallbackAdminUser._id);
+      const refreshToken = generateRefreshToken(fallbackAdminUser._id);
       setAuthCookies(res, accessToken, refreshToken);
       return res.json({
         success: true,
         data: {
-          id: fallbackUser._id,
-          name: fallbackUser.name,
-          email: fallbackUser.email,
-          role: fallbackUser.role,
+          id: fallbackAdminUser._id,
+          name: fallbackAdminUser.name,
+          email: fallbackAdminUser.email,
+          role: fallbackAdminUser.role,
         },
         accessToken,
       });
@@ -78,23 +60,16 @@ export const login = asyncHandler(async (req, res) => {
 
   if (!(await user.matchPassword(password))) {
     if (isFallbackAdminLogin(email, password)) {
-      const fallbackUser = {
-        _id: "local-fallback-admin",
-        name: "Admin",
-        email: fallbackAdminCredentials.email,
-        role: "admin",
-        isActive: true,
-      };
-      const accessToken = generateAccessToken(fallbackUser._id);
-      const refreshToken = generateRefreshToken(fallbackUser._id);
+      const accessToken = generateAccessToken(fallbackAdminUser._id);
+      const refreshToken = generateRefreshToken(fallbackAdminUser._id);
       setAuthCookies(res, accessToken, refreshToken);
       return res.json({
         success: true,
         data: {
-          id: fallbackUser._id,
-          name: fallbackUser.name,
-          email: fallbackUser.email,
-          role: fallbackUser.role,
+          id: fallbackAdminUser._id,
+          name: fallbackAdminUser.name,
+          email: fallbackAdminUser.email,
+          role: fallbackAdminUser.role,
         },
         accessToken,
       });
@@ -142,6 +117,15 @@ export const refresh = asyncHandler(async (req, res) => {
     throw new Error("Refresh token invalid or expired");
   }
 
+  // The fallback admin isn't a Mongo document — nothing to look up or revoke,
+  // just re-issue tokens for it directly (see utils/fallbackAdmin.js).
+  if (decoded.id === FALLBACK_ADMIN_ID) {
+    const newAccessToken = generateAccessToken(FALLBACK_ADMIN_ID);
+    const newRefreshToken = generateRefreshToken(FALLBACK_ADMIN_ID);
+    setAuthCookies(res, newAccessToken, newRefreshToken);
+    return res.json({ success: true, accessToken: newAccessToken });
+  }
+
   const user = await User.findById(decoded.id);
   if (!user || !user.refreshTokens.includes(token)) {
     res.status(401);
@@ -165,7 +149,7 @@ export const logout = asyncHandler(async (req, res) => {
   const token = req.cookies?.refreshToken;
   if (token) {
     const decoded = jwt.decode(token);
-    if (decoded?.id) {
+    if (decoded?.id && decoded.id !== FALLBACK_ADMIN_ID) {
       await User.findByIdAndUpdate(decoded.id, { $pull: { refreshTokens: token } });
     }
   }
