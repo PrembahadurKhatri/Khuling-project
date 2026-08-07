@@ -5,10 +5,13 @@ const api = axios.create({
   withCredentials: true, // send httpOnly cookies (refreshToken)
 });
 */
-const API = import.meta.env.VITE_API_TARGET;
+// Strip any trailing slash so this can't produce a double slash regardless
+// of how VITE_API_TARGET is set (e.g. "https://x.onrender.com/" -> still
+// resolves to ".../api", not ".../api" with a stray extra slash).
+const API = (import.meta.env.VITE_API_TARGET || "").replace(/\/+$/, "");
 
 const api = axios.create({
-  baseURL: `${API}/api`,   // 🔥 FIX
+  baseURL: `${API}/api`,
   withCredentials: true,
 });
 let accessToken = null;

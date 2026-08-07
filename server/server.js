@@ -49,9 +49,21 @@ app.use(
     },
   })
 );
+// CLIENT_URL may be a single origin or a comma-separated list (useful while
+// running multiple frontend deployments — e.g. a Render one and a Vercel
+// one — against the same backend).
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      // No Origin header (curl, server-to-server, same-origin) — allow.
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   })
 );
