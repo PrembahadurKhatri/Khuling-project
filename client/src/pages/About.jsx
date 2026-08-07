@@ -118,7 +118,7 @@ const About = () => {
               </h3>
             </div>
 
-            <p className="text-navy/70 leading-relaxed text-[15px] md:text-base font-body pl-9 md:pl-9">
+            <p className="text-navy/70 leading-relaxed text-[15px] md:text-base font-body ">
               {desc}
             </p>
           </div>

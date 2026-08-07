@@ -50,49 +50,76 @@ const Projects = () => {
 
       <section className="section relative">
         {/* 🔵 Background Glow */}
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(16,42,76,0.05),transparent_40%),radial-gradient(circle_at_80%_60%,rgba(11,31,58,0.05),transparent_40%)]" />
+  <div className="mb-10 md:mb-14 backdrop-blur-xl bg-white/60 border border-white/40 rounded-2xl p-4 md:p-6 shadow-lg flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center">
 
-        {/*  Filter Bar */}
-        <div className="mb-14 backdrop-blur-md bg-white/70 border border-line rounded-xl p-6 shadow-soft flex flex-wrap gap-4 items-center">
-          
-          {/* Search */}
-          <input
-            type="text"
-            placeholder=" Search projects ..."
-            value={filters.search}
-            onChange={(e) => update("search", e.target.value)}
-            className="flex-1 min-w-[220px] px-4 py-3 rounded-lg border border-line bg-white/80 focus:outline-none focus:ring-2 focus:ring-navy/30 transition"
-          />
+  {/* Search */}
+  <div className="relative w-full group">
+    <svg
+      className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/40 group-focus-within:text-gold transition-colors duration-300 pointer-events-none"
+      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
 
-          {/* Status */}
-          <select
-            value={filters.status}
-            onChange={(e) => update("status", e.target.value)}
-            className="min-w-[170px] px-4 py-3 rounded-lg border border-line bg-white/80 focus:outline-none focus:ring-2 focus:ring-navy/30 transition"
-          >
-            <option value="">All Status</option>
-            {statuses.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+    <input
+      type="text"
+      placeholder="Search projects..."
+      value={filters.search}
+      onChange={(e) => update("search", e.target.value)}
+      className="w-full pl-10 pr-9 py-3 rounded-xl border border-line/70 bg-white/80
+                 font-body text-sm md:text-base text-navy placeholder:text-navy/35
+                 shadow-sm transition-all duration-300
+                 focus:outline-none focus:border-gold/60 focus:ring-4 focus:ring-gold/10
+                 hover:border-navy/20"
+    />
 
-          {/* Category */}
-          <select
-            value={filters.category}
-            onChange={(e) => update("category", e.target.value)}
-            className="min-w-[170px] px-4 py-3 rounded-lg border border-line bg-white/80 focus:outline-none focus:ring-2 focus:ring-navy/30 transition"
-          >
-            <option value="">All Categories</option>
-            {categories.map((c) => (
-              <option key={c._id} value={c.name}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+    {filters.search && (
+      <button
+        type="button"
+        onClick={() => update("search", "")}
+        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-navy/30 hover:text-navy transition-colors"
+        aria-label="Clear search"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    )}
+  </div>
 
+  {/* Filters Row */}
+  <div className="flex gap-3 w-full md:w-auto">
+    
+    {/* Status */}
+    <select
+      value={filters.status}
+      onChange={(e) => update("status", e.target.value)}
+      className="flex-1 md:flex-none min-w-0 md:min-w-[160px] px-4 py-3 rounded-xl border border-line bg-white/80 focus:outline-none focus:ring-2 focus:ring-navy/30 transition text-sm md:text-base"
+    >
+      <option value="">All Status</option>
+      {statuses.map((s) => (
+        <option key={s} value={s}>
+          {s}
+        </option>
+      ))}
+    </select>
+
+    {/* Category */}
+    <select
+      value={filters.category}
+      onChange={(e) => update("category", e.target.value)}
+      className="flex-1 md:flex-none min-w-0 md:min-w-[160px] px-4 py-3 rounded-xl border border-line bg-white/80 focus:outline-none focus:ring-2 focus:ring-navy/30 transition text-sm md:text-base"
+    >
+      <option value="">All Categories</option>
+      {categories.map((c) => (
+        <option key={c._id} value={c.name}>
+          {c.name}
+        </option>
+      ))}
+    </select>
+
+  </div>
+</div>
         {/* 🔄 Loading Skeleton */}
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">

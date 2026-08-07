@@ -78,7 +78,7 @@ const GalleryManage = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold">Gallery</h1>
+        <h1 className="text-2xl font-body font-bold">Gallery</h1>
         <button onClick={openCreate} className="btn-primary !py-2">+ Upload Image</button>
       </div>
 

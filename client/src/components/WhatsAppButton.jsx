@@ -4,7 +4,7 @@ import { fetchSettings } from "../services/settingsService.js";
 
 const WhatsAppButton = () => {
   const { data } = useQuery({ queryKey: ["public-settings"], queryFn: fetchSettings });
-  const phone = data?.data?.phone?.replace(/[^\d]/g, "") || "9770000000000";
+  const phone = data?.data?.phone?.replace(/[^\d]/g, "") || "9779846022453";
 
   return (
     <a

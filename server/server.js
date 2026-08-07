@@ -25,6 +25,7 @@ import testimonialRoutes from "./routes/testimonialRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
+import visitRoutes from "./routes/visitRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.join(__dirname, "../client/dist");
@@ -96,6 +97,7 @@ app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/team", teamRoutes);
+app.use("/api/visits", visitRoutes);
 
 // Serve the built React app in production so the frontend and API share one
 // origin/deployment (no CORS or dev-proxy config needed). In local dev the

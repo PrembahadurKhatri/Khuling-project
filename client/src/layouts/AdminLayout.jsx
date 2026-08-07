@@ -10,6 +10,7 @@ import {
   HiOutlineUsers,
   HiOutlineClipboardList,
   HiOutlineChatAlt2,
+  HiOutlineMail,
   HiOutlinePhotograph,
   HiOutlineCog,
   HiOutlineLogout,
@@ -30,6 +31,7 @@ const navItems = [
   { to: "/admin/careers", label: "Careers", icon: HiOutlineUserGroup },
   { to: "/admin/applications", label: "Applications", icon: HiOutlineClipboardList },
   { to: "/admin/testimonials", label: "Testimonials", icon: HiOutlineChatAlt2 },
+  { to: "/admin/inquiries", label: "Inquiries", icon: HiOutlineMail },
   { to: "/admin/gallery", label: "Gallery", icon: HiOutlinePhotograph },
   { to: "/admin/settings", label: "Settings", icon: HiOutlineCog },
 ];
@@ -56,8 +58,8 @@ const AdminLayout = () => {
     <>
       <div className="p-6 border-b border-line flex items-center gap-3 dark:border-gray-800">
         <img src="/logo.png" alt="Khilung Kalika Construction" className="h-9 w-9" />
-        <span className="font-heading font-bold text-lg leading-tight">
-          Khilung Kalika <span className="text-primary block text-sm">Admin</span>
+        <span className="font-body font-bold text-lg leading-tight">
+          Khilung Kalika <span className="text-primary block font-body text-sm">Admin</span>
         </span>
       </div>
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -81,7 +83,7 @@ const AdminLayout = () => {
       </nav>
       <div className="p-4 border-t border-line dark:border-gray-800">
         <div className="text-xs text-gray-500 mb-3 dark:text-gray-400">
-          Signed in as <span className="font-semibold text-ink dark:text-gray-100">{user?.name}</span> ({user?.role})
+          Signed in as <span className="font-semibold font-body text-ink dark:text-gray-100">{user?.name}</span> ({user?.role})
         </div>
         <button
           onClick={toggleTheme}
@@ -133,7 +135,7 @@ const AdminLayout = () => {
           >
             <HiMenu />
           </button>
-          <span className="font-heading font-bold">Khilung Kalika Admin</span>
+          <span className="font-body font-bold">Khilung Kalika Admin</span>
           <button
             onClick={toggleTheme}
             aria-label="Toggle theme"

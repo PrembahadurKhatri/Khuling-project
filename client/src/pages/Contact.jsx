@@ -36,46 +36,87 @@ const Contact = () => {
       <section className="container-wide py-24 md:py-28 grid lg:grid-cols-12 gap-14 md:gap-16">
 
         {/* LEFT */}
-        <div className="lg:col-span-4 space-y-6">
-          <p className="eyebrow mb-6">Reach Us</p>
+    <div className="lg:col-span-4 space-y-6">
+  <p className="eyebrow mb-6">Reach Us</p>
 
-          <div className="space-y-5">
+  <div className="space-y-5">
 
-            <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
-                <HiLocationMarker className="text-navy text-lg" />
-              </div>
-              <div className="space-y-1">
-                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Office</p>
-                <p className="text-navy/70 text-sm leading-relaxed">{settings.address || "Kathmandu, Nepal"}</p>
-              </div>
-            </div>
+    {/* Office */}
+    <div className="card group relative p-6 flex gap-4 items-start rounded-xl overflow-hidden
+                     transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      {/* left accent bar on hover */}
+      <span className="absolute left-0 top-0 h-full w-[3px] bg-navy
+                        scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-300" />
 
-            <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
-                <HiPhone className="text-navy text-lg" />
-              </div>
-              <div className="space-y-1">
-                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Phone</p>
-                <p className="text-navy/70 text-sm">{settings.phone || "+977-1-XXXXXXX"}</p>
-                {settings.emergencyContact && (
-                  <p className="text-xs text-red-600 mt-1 font-semibold">{settings.emergencyContact}</p>
-                )}
-              </div>
-            </div>
+      <div className="relative w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0
+                       ring-1 ring-teal/20 group-hover:ring-gold/40 group-hover:bg-gold/10
+                       transition-all duration-300">
+        <HiLocationMarker className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
+      </div>
+      <div className="space-y-1">
+        <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy/70
+                       group-hover:text-navy transition-colors duration-300">
+          Office
+        </p>
+        <p className="text-navy/70 text-sm leading-relaxed font-body">
+          {settings.address || "Kathmandu, Nepal"}
+        </p>
+      </div>
+    </div>
 
-            <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
-                <HiMail className="text-navy text-lg" />
-              </div>
-              <div className="space-y-1">
-                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Email</p>
-                <p className="text-navy/70 text-sm">{settings.email || "info@khilungkalika.com"}</p>
-              </div>
-            </div>
+    {/* Phone */}
+    <div className="card group relative p-6 flex gap-4 items-start rounded-xl overflow-hidden
+                     transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <span className="absolute left-0 top-0 h-full w-[3px] bg-navy
+                        scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-300" />
 
-          </div>
-        </div>
+      <div className="relative w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0
+                       ring-1 ring-teal/20 group-hover:ring-gold/40 group-hover:bg-gold/10
+                       transition-all duration-300">
+        <HiPhone className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
+      </div>
+      <div className="space-y-1">
+        <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy/70
+                       group-hover:text-navy transition-colors duration-300">
+          Phone
+        </p>
+        <p className="text-navy/70 text-sm font-body">
+          {settings.phone || "+977-1-XXXXXXX"}
+        </p>
+        {settings.emergencyContact && (
+          <p className="inline-flex items-center gap-1.5 text-xs text-red-600 mt-1.5 font-semibold
+                         bg-red-50 border border-red-100 px-2 py-1 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            {settings.emergencyContact}
+          </p>
+        )}
+      </div>
+    </div>
+
+    {/* Email */}
+    <div className="card group relative p-6 flex gap-4 items-start rounded-xl overflow-hidden
+                     transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <span className="absolute left-0 top-0 h-full w-[3px] bg-navy
+                        scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-300" />
+
+      <div className="relative w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0
+                       ring-1 ring-teal/20 group-hover:ring-gold/40 group-hover:bg-gold/10
+                       transition-all duration-300">
+        <HiMail className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
+      </div>
+      <div className="space-y-1">
+        <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy/70
+                       group-hover:text-navy transition-colors duration-300">
+          Email
+        </p>
+        <p className="text-navy/70 text-sm font-body">
+          {settings.email || "info@khilungkalika.com"}
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
 
         {/* RIGHT */}
         <div className="lg:col-span-8">
@@ -138,13 +179,13 @@ const Contact = () => {
 
             {/* STATUS */}
             {status === "success" && (
-              <div className="mt-5 p-4 bg-teal/10 border border-teal/20 rounded-lg text-teal-dark text-sm font-semibold">
+              <div className="mt-5 p-4 bg-teal/10 border border-teal/20 rounded-lg text-teal-dark text-sm font-body font-semibold">
                 Thank you! We'll be in touch shortly.
               </div>
             )}
 
             {status === "error" && (
-              <div className="mt-5 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-semibold">
+              <div className="mt-5 p-4 bg-red-50 border border-red-200 rounded-lg font-body text-red-600 text-sm font-semibold">
                 Something went wrong. Please try again.
               </div>
             )}

@@ -13,6 +13,7 @@ import Blog from "./pages/Blog.jsx";
 import BlogDetail from "./pages/BlogDetail.jsx";
 import Gallery from "./pages/Gallery.jsx";
 import Team from "./pages/Team.jsx";
+import Testimonials from "./pages/Testimonials.jsx";
 import Careers from "./pages/Careers.jsx";
 import CareerDetail from "./pages/CareerDetail.jsx";
 import GeneralApplication from "./pages/GeneralApplication.jsx";
@@ -28,6 +29,7 @@ import BlogsManage from "./pages/admin/BlogsManage.jsx";
 import CareersManage from "./pages/admin/CareersManage.jsx";
 import ApplicationsManage from "./pages/admin/ApplicationsManage.jsx";
 import TestimonialsManage from "./pages/admin/TestimonialsManage.jsx";
+import ContactManage from "./pages/admin/ContactManage.jsx";
 import GalleryManage from "./pages/admin/GalleryManage.jsx";
 import TeamManage from "./pages/admin/TeamManage.jsx";
 import SettingsManage from "./pages/admin/SettingsManage.jsx";
@@ -48,6 +50,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogDetail />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/careers/general" element={<GeneralApplication />} />
           <Route path="/careers/:slug" element={<CareerDetail />} />
@@ -73,6 +76,7 @@ function App() {
           <Route path="careers" element={<CareersManage />} />
           <Route path="applications" element={<ApplicationsManage />} />
           <Route path="testimonials" element={<TestimonialsManage />} />
+          <Route path="inquiries" element={<ContactManage />} />
           <Route path="gallery" element={<GalleryManage />} />
           <Route path="team" element={<TeamManage />} />
           <Route path="settings" element={<SettingsManage />} />

@@ -45,7 +45,7 @@ const Login = () => {
       <form onSubmit={handleSubmit} className={`w-full max-w-md rounded-2xl border p-8 shadow-xl ${theme === "dark" ? "border-gray-800 bg-gray-900" : "border-line bg-paper"}`}>
         <div className="flex flex-col items-center mb-6">
           <img src="/logo.png" alt="Khilung Kalika Construction" className="h-16 w-16 mb-3" />
-          <h1 className="text-2xl font-heading font-bold text-secondary">Admin Login</h1>
+          <h1 className="text-2xl font-body font-bold text-secondary">Admin Login</h1>
           <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>Khilung Kalika Construction Dashboard</p>
         </div>
 

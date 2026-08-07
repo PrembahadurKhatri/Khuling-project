@@ -67,13 +67,13 @@ const SettingsManage = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold">Site Settings</h1>
+        <h1 className="text-2xl font-body font-bold">Site Settings</h1>
         {saved && <span className="text-sm text-green-500">Saved</span>}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
         <section className={`rounded-xl border p-6 space-y-3 ${panelClass}`}>
-          <h2 className="font-heading font-semibold mb-1">Company Info</h2>
+          <h2 className="font-body font-semibold mb-1">Company Info</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             <label className="space-y-1">
               <span className={`text-xs ${labelClass}`}>Company name</span>
@@ -107,7 +107,7 @@ const SettingsManage = () => {
         </section>
 
         <section className={`rounded-xl border p-6 space-y-3 ${panelClass}`}>
-          <h2 className="font-heading font-semibold mb-1">Social Links</h2>
+          <h2 className="font-body font-semibold mb-1">Social Links</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {["facebook", "instagram", "linkedin", "youtube", "twitter"].map((key) => (
               <label key={key} className="space-y-1">
@@ -119,7 +119,7 @@ const SettingsManage = () => {
         </section>
 
         <section className={`rounded-xl border p-6 space-y-3 ${panelClass}`}>
-          <h2 className="font-heading font-semibold mb-1">Homepage Stats</h2>
+          <h2 className="font-body font-semibold mb-1">Homepage Stats</h2>
           <div className="grid sm:grid-cols-3 gap-3">
             {[
               ["projectsCompleted", "Projects completed"],
@@ -142,7 +142,7 @@ const SettingsManage = () => {
         </section>
 
         <section className={`rounded-xl border p-6 space-y-3 ${panelClass}`}>
-          <h2 className="font-heading font-semibold mb-1">SEO</h2>
+          <h2 className="font-body font-semibold mb-1">SEO</h2>
           <div className="grid gap-3">
             <label className="space-y-1">
               <span className={`text-xs ${labelClass}`}>Meta title</span>
@@ -157,8 +157,8 @@ const SettingsManage = () => {
 
         <section className={`rounded-xl border p-6 flex items-center justify-between ${panelClass}`}>
           <div>
-            <h2 className="font-heading font-semibold">Maintenance mode</h2>
-            <p className={`text-xs ${labelClass}`}>Reserved for future use — not yet enforced by the public site.</p>
+            <h2 className="font-body font-semibold">Maintenance mode</h2>
+            <p className={`text-xs ${labelClass}`}>When on, visitors see a "back soon" screen instead of the site. Admin login still works.</p>
           </div>
           <input
             type="checkbox"
