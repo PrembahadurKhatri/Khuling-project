@@ -80,7 +80,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Health check
 app.get("/api/health", (req, res) => res.json({ success: true, message: "API is running" }));
-
+app.get("/", (req, res) => {
+  res.send("Server is running 🚀");
+});
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
