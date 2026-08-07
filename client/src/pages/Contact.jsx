@@ -43,20 +43,20 @@ const Contact = () => {
 
             <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
-                <HiLocationMarker className="text-teal text-lg" />
+                <HiLocationMarker className="text-navy text-lg" />
               </div>
               <div className="space-y-1">
-                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-teal">Office</p>
+                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Office</p>
                 <p className="text-navy/70 text-sm leading-relaxed">{settings.address || "Kathmandu, Nepal"}</p>
               </div>
             </div>
 
             <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
-                <HiPhone className="text-teal text-lg" />
+                <HiPhone className="text-navy text-lg" />
               </div>
               <div className="space-y-1">
-                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-teal">Phone</p>
+                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Phone</p>
                 <p className="text-navy/70 text-sm">{settings.phone || "+977-1-XXXXXXX"}</p>
                 {settings.emergencyContact && (
                   <p className="text-xs text-gold-dark mt-1 font-semibold">{settings.emergencyContact}</p>
@@ -66,10 +66,10 @@ const Contact = () => {
 
             <div className="card p-6 flex gap-4 items-start rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="w-11 h-11 rounded-md bg-teal/10 flex items-center justify-center shrink-0">
-                <HiMail className="text-teal text-lg" />
+                <HiMail className="text-navy text-lg" />
               </div>
               <div className="space-y-1">
-                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-teal">Email</p>
+                <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Email</p>
                 <p className="text-navy/70 text-sm">{settings.email || "info@khilungkalika.com"}</p>
               </div>
             </div>

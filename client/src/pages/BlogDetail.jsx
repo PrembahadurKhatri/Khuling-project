@@ -79,11 +79,11 @@ const BlogDetail = () => {
               </span>
             </div>
             <span className="w-1 h-1 bg-navy/25 rounded-full" />
-            <span className="font-body text-navy/50 text-sm">
+            <span className="font-body text-navy/80 text-sm">
               {formatDate(post.publishedAt)}
             </span>
             <span className="w-1 h-1 bg-navy/25 rounded-full" />
-            <span className="font-body text-navy/50 text-sm">
+            <span className="font-body text-navy/80 text-sm">
               {post.views} views
             </span>
           </div>

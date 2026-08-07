@@ -92,13 +92,13 @@ const CareerDetail = () => {
         <div className="lg:col-span-2 space-y-10">
           <div>
             <h2 className="font-body text-xl text-navy mb-4">Job Description</h2>
-            <p className="text-navy/70 leading-relaxed whitespace-pre-line">{job.description}</p>
+            <p className="text-navy/80 leading-relaxed whitespace-pre-line">{job.description}</p>
           </div>
 
           {job.qualifications?.length > 0 && (
             <div>
               <h2 className="font-body text-xl text-navy mb-4">Qualifications</h2>
-              <ul className="list-disc pl-5 space-y-2 text-navy/70">
+              <ul className="list-disc pl-5 space-y-2 text-navy/80">
                 {job.qualifications.map((q, i) => <li key={i}>{q}</li>)}
               </ul>
             </div>
@@ -107,7 +107,7 @@ const CareerDetail = () => {
           {job.requirements?.length > 0 && (
             <div>
               <h2 className="font-body text-xl text-navy mb-4">Other Requirements</h2>
-              <ul className="list-disc pl-5 space-y-2 text-navy/70">
+              <ul className="list-disc pl-5 space-y-2 text-navy/80">
                 {job.requirements.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
             </div>
@@ -139,43 +139,43 @@ const CareerDetail = () => {
         <aside className="card p-8 h-fit space-y-5 lg:sticky lg:top-28">
           <h3 className="font-body text-xl text-navy border-b border-line pb-4">Position Details</h3>
 
-          <div className="flex items-start gap-3 text-sm text-navy/70">
-            <HiOutlineUserGroup className="text-teal text-lg shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 text-sm text-navy/80">
+            <HiOutlineUserGroup className="text-navy text-lg shrink-0 mt-0.5" />
             {job.positionsAvailable} position{job.positionsAvailable === 1 ? "" : "s"} open
           </div>
           {job.department && (
-            <div className="flex items-start gap-3 text-sm text-navy/70">
-              <HiOfficeBuilding className="text-teal text-lg shrink-0 mt-0.5" /> {job.department}
+            <div className="flex items-start gap-3 text-sm text-navy/80">
+              <HiOfficeBuilding className="text-navy text-lg shrink-0 mt-0.5" /> {job.department}
             </div>
           )}
           {job.location && (
-            <div className="flex items-start gap-3 text-sm text-navy/70">
-              <HiLocationMarker className="text-teal text-lg shrink-0 mt-0.5" /> {job.location}
+            <div className="flex items-start gap-3 text-sm text-navy/80">
+              <HiLocationMarker className="text-navy text-lg shrink-0 mt-0.5" /> {job.location}
             </div>
           )}
           {job.type && (
-            <div className="flex items-start gap-3 text-sm text-navy/70">
-              <HiBriefcase className="text-teal text-lg shrink-0 mt-0.5" /> {job.type}
+            <div className="flex items-start gap-3 text-sm text-navy/80">
+              <HiBriefcase className="text-navy text-lg shrink-0 mt-0.5" /> {job.type}
             </div>
           )}
           {job.experience && (
-            <div className="flex items-start gap-3 text-sm text-navy/70">
-              <HiUserGroup className="text-teal text-lg shrink-0 mt-0.5" /> {job.experience} experience
+            <div className="flex items-start gap-3 text-sm text-navy/80">
+              <HiUserGroup className="text-navy text-lg shrink-0 mt-0.5" /> {job.experience} experience
             </div>
           )}
           {job.ageRequirement && (
-            <div className="flex items-start gap-3 text-sm text-navy/70">
-              <HiCalendar className="text-teal text-lg shrink-0 mt-0.5" /> Age: {job.ageRequirement}
+            <div className="flex items-start gap-3 text-sm text-navy/80">
+              <HiCalendar className="text-navy text-lg shrink-0 mt-0.5" /> Age: {job.ageRequirement}
             </div>
           )}
           {job.salary && (
-            <div className="flex items-start gap-3 text-sm text-navy/70">
-              <HiCurrencyRupee className="text-teal text-lg shrink-0 mt-0.5" /> {job.salary}
+            <div className="flex items-start gap-3 text-sm text-navy/80">
+              <HiCurrencyRupee className="text-navy l text-lg shrink-0 mt-0.5" /> {job.salary}
             </div>
           )}
           {job.deadline && (
-            <div className="flex items-start gap-3 text-sm text-navy/70 pt-4 border-t border-line">
-              Apply before <span className="font-semibold text-navy">{new Date(job.deadline).toLocaleDateString()}</span>
+            <div className="flex items-start gap-3 text-sm text-navy/80 pt-4 border-t border-line">
+              Apply before <span className="font-semibold text-red-600">{new Date(job.deadline).toLocaleDateString()}</span>
             </div>
           )}
         </aside>

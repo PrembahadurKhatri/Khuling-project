@@ -30,12 +30,20 @@ careerSchema.pre("save", function (next) {
 
 const applicationSchema = new mongoose.Schema(
   {
-    job: { type: mongoose.Schema.Types.ObjectId, ref: "Career", required: true },
+    // Omitted entirely for a general application (not tied to a specific
+    // posting) — see submitGeneralApplication in applicationController.js.
+    job: { type: mongoose.Schema.Types.ObjectId, ref: "Career" },
     name: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String },
     resumeUrl: { type: String, required: true },
-    coverLetter: { type: String },
+    // Uploaded PDF/image, not typed text — matches resumeUrl's pattern.
+    coverLetterUrl: { type: String },
+    links: {
+      github: String,
+      linkedin: String,
+      other: String,
+    },
     status: {
       type: String,
       enum: ["received", "shortlisted", "interviewing", "rejected", "hired"],
