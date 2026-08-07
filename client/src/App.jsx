@@ -15,6 +15,7 @@ import Gallery from "./pages/Gallery.jsx";
 import Team from "./pages/Team.jsx";
 import Careers from "./pages/Careers.jsx";
 import CareerDetail from "./pages/CareerDetail.jsx";
+import GeneralApplication from "./pages/GeneralApplication.jsx";
 import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/team" element={<Team />} />
           <Route path="/careers" element={<Careers />} />
+          <Route path="/careers/general" element={<GeneralApplication />} />
           <Route path="/careers/:slug" element={<CareerDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />

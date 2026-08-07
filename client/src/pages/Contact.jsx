@@ -59,7 +59,7 @@ const Contact = () => {
                 <p className="font-body text-[11px] font-semibold tracking-widest2 uppercase text-navy">Phone</p>
                 <p className="text-navy/70 text-sm">{settings.phone || "+977-1-XXXXXXX"}</p>
                 {settings.emergencyContact && (
-                  <p className="text-xs text-gold-dark mt-1 font-semibold">{settings.emergencyContact}</p>
+                  <p className="text-xs text-red-600 mt-1 font-semibold">{settings.emergencyContact}</p>
                 )}
               </div>
             </div>
@@ -153,14 +153,16 @@ const Contact = () => {
         </div>
       </section>
 
-      <section className="h-96 border-t border-line relative overflow-hidden">
-        <iframe
-          title="office-location"
-          src={settings.mapEmbedUrl || "https://www.google.com/maps?q=Kathmandu,Nepal&output=embed"}
-          className="w-full h-full border-0 grayscale-[20%] contrast-[1.1] hover:grayscale-0 transition duration-500"
-          loading="lazy"
-        />
-      </section>
+ <section className="h-96 border-t border-line relative overflow-hidden">
+  <iframe
+    title="office-location"
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4266.22708516312!2d83.9949601117577!3d28.22196547579089!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3995943668ae901d%3A0x2fa2e2b8cd013728!2sSoch%20College%20of%20IT!5e1!3m2!1sen!2snp!4v1786094140786!5m2!1sen!2snp"
+    className="w-full h-full border-0 grayscale-[20%] contrast-[1.1] hover:grayscale-0 transition duration-500"
+    loading="lazy"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allowFullScreen
+  />
+</section>
     </div>
   );
 };

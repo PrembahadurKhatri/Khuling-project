@@ -16,7 +16,14 @@ router.get("/", getCareers);
 router.get("/:slug", getCareerBySlug);
 
 router.post("/", protect, authorize("admin", "editor"), createCareer);
-router.post("/:id/apply", upload.single("resume"), applyToCareer);
+router.post(
+  "/:id/apply",
+  upload.fields([
+    { name: "resume", maxCount: 1 },
+    { name: "coverLetter", maxCount: 1 },
+  ]),
+  applyToCareer
+);
 router.put("/:id", protect, authorize("admin", "editor"), updateCareer);
 router.delete("/:id", protect, authorize("admin"), deleteCareer);
 

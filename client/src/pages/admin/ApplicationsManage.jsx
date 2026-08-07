@@ -22,15 +22,17 @@ const ApplicationsManage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const jobFilter = searchParams.get("job") || "";
   const statusFilter = searchParams.get("status") || "";
+  const generalFilter = searchParams.get("general") || "";
   const [scheduling, setScheduling] = useState(null); // { app, status } being scheduled
   const [scheduleForm, setScheduleForm] = useState({ interviewDate: "", visitDate: "" });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-applications", { job: jobFilter, status: statusFilter }],
+    queryKey: ["admin-applications", { job: jobFilter, status: statusFilter, general: generalFilter }],
     queryFn: () => fetchApplications({
       limit: 50,
       ...(jobFilter && { job: jobFilter }),
       ...(statusFilter && { status: statusFilter }),
+      ...(generalFilter && { general: generalFilter }),
     }),
   });
 
@@ -94,18 +96,32 @@ const ApplicationsManage = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-heading font-bold">Applications</h1>
-        <select
-          value={statusFilter}
-          onChange={(e) => {
-            const next = new URLSearchParams(searchParams);
-            if (e.target.value) next.set("status", e.target.value); else next.delete("status");
-            setSearchParams(next);
-          }}
-          className={selectClass}
-        >
-          <option value="">All statuses</option>
-          {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
+        <div className="flex gap-2">
+          <select
+            value={generalFilter}
+            onChange={(e) => {
+              const next = new URLSearchParams(searchParams);
+              if (e.target.value) next.set("general", e.target.value); else next.delete("general");
+              setSearchParams(next);
+            }}
+            className={selectClass}
+          >
+            <option value="">All applications</option>
+            <option value="true">General only</option>
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              const next = new URLSearchParams(searchParams);
+              if (e.target.value) next.set("status", e.target.value); else next.delete("status");
+              setSearchParams(next);
+            }}
+            className={selectClass}
+          >
+            <option value="">All statuses</option>
+            {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
       </div>
 
       {jobFilter && (
@@ -143,20 +159,27 @@ const ApplicationsManage = () => {
                 <tr key={app._id} className={`border-t ${rowClass}`}>
                   <td className="px-4 py-3">
                     <div className="font-medium">{app.name}</div>
-                    {app.coverLetter && (
-                      <div className={`text-xs mt-0.5 max-w-xs truncate ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`} title={app.coverLetter}>
-                        {app.coverLetter}
+                    {(app.links?.github || app.links?.linkedin || app.links?.other) && (
+                      <div className="mt-1 flex flex-wrap gap-2 text-xs">
+                        {app.links.github && <a href={app.links.github} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">GitHub</a>}
+                        {app.links.linkedin && <a href={app.links.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">LinkedIn</a>}
+                        {app.links.other && <a href={app.links.other} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Portfolio</a>}
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3">{app.job?.title || "—"}</td>
+                  <td className="px-4 py-3">
+                    {app.job?.title || <span className="text-teal font-medium">General Application</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <div>{app.email}</div>
                     {app.phone && <div className={theme === "dark" ? "text-gray-500" : "text-gray-400"}>{app.phone}</div>}
                   </td>
                   <td className="px-4 py-3">{new Date(app.createdAt).toLocaleDateString()}</td>
-                  <td className="px-4 py-3">
-                    <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">View CV</a>
+                  <td className="px-4 py-3 space-x-2">
+                    <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">CV</a>
+                    {app.coverLetterUrl && (
+                      <a href={app.coverLetterUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Cover Letter</a>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <select

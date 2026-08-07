@@ -14,30 +14,47 @@ const sendApplicationEmail = async ({ to, subject, html }) => {
   }
 };
 
+// multipart/form-data sends links.* as flat "links.github" etc keys — nest
+// them back into an object. Only resume is required; coverLetter and every
+// link are optional (see ApplicationFormFields.jsx on the frontend).
+const buildApplicationPayload = (body, files) => {
+  const { "links.github": github, "links.linkedin": linkedin, "links.other": other, ...rest } = body;
+  const payload = { ...rest };
+  if ([github, linkedin, other].some((v) => v !== undefined)) {
+    payload.links = { github, linkedin, other };
+  }
+  if (files?.resume?.[0]) payload.resumeUrl = files.resume[0].path;
+  if (files?.coverLetter?.[0]) payload.coverLetterUrl = files.coverLetter[0].path;
+  return payload;
+};
+
 // One notification per status, sent whenever the admin sets an application to
 // that status. Returns null for statuses that don't have a notification.
+// jobTitle is null for a general application (not tied to a specific posting).
 const buildStatusEmail = (application, jobTitle) => {
   const name = application.name;
-  const title = jobTitle || "the position";
+  const isGeneral = !jobTitle;
+  const positionPhrase = isGeneral ? "your general application" : `the <strong>${jobTitle}</strong> position`;
+  const rolePhrase = isGeneral ? "your general application" : `the <strong>${jobTitle}</strong> role`;
 
   switch (application.status) {
     case "received":
       return {
-        subject: `Application Received - ${title}`,
+        subject: isGeneral ? "General Application Received" : `Application Received - ${jobTitle}`,
         html: `
           <p>Hi ${name},</p>
-          <p>Thank you for applying for the <strong>${title}</strong> position at ${COMPANY_NAME}.
-          We've received your application and our team will review it shortly.</p>
-          <p>We'll be in touch if your profile matches our requirements.</p>
+          <p>Thank you for submitting ${positionPhrase} to ${COMPANY_NAME}.
+          We've received it and our team will review it shortly.</p>
+          <p>${isGeneral ? "We'll reach out if an opening matches your profile." : "We'll be in touch if your profile matches our requirements."}</p>
           <p>${COMPANY_NAME}</p>
         `,
       };
     case "shortlisted":
       return {
-        subject: `You've Been Shortlisted - ${title}`,
+        subject: isGeneral ? "You've Been Shortlisted" : `You've Been Shortlisted - ${jobTitle}`,
         html: `
           <p>Hi ${name},</p>
-          <p>Congrats! You've been shortlisted for the <strong>${title}</strong> role at ${COMPANY_NAME}.</p>
+          <p>Congrats! You've been shortlisted for ${rolePhrase} at ${COMPANY_NAME}.</p>
           ${application.interviewDate ? `<p><strong>Interview Date:</strong> ${new Date(application.interviewDate).toLocaleString()}</p>` : ""}
           ${application.visitDate ? `<p><strong>Site Visit Date:</strong> ${new Date(application.visitDate).toLocaleString()}</p>` : ""}
           <p>We look forward to meeting you. If you have any questions, feel free to reply to this email.</p>
@@ -46,10 +63,10 @@ const buildStatusEmail = (application, jobTitle) => {
       };
     case "interviewing":
       return {
-        subject: `Interview Update - ${title}`,
+        subject: isGeneral ? "Interview Update" : `Interview Update - ${jobTitle}`,
         html: `
           <p>Hi ${name},</p>
-          <p>Your application for the <strong>${title}</strong> position at ${COMPANY_NAME} is moving forward
+          <p>${isGeneral ? "Your general application" : `Your application for ${positionPhrase}`} at ${COMPANY_NAME} is moving forward
           to the interview stage.</p>
           ${application.interviewDate ? `<p><strong>Interview Date:</strong> ${new Date(application.interviewDate).toLocaleString()}</p>` : ""}
           ${application.visitDate ? `<p><strong>Site Visit Date:</strong> ${new Date(application.visitDate).toLocaleString()}</p>` : ""}
@@ -58,20 +75,20 @@ const buildStatusEmail = (application, jobTitle) => {
       };
     case "rejected":
       return {
-        subject: `Application Update - ${title}`,
+        subject: isGeneral ? "Application Update" : `Application Update - ${jobTitle}`,
         html: `
           <p>Hi ${name},</p>
-          <p>Sorry, you have been rejected for the <strong>${title}</strong> position at ${COMPANY_NAME}.
+          <p>Sorry, we won't be moving forward with ${positionPhrase} at this time.
           We appreciate the time you took to apply and encourage you to apply again for future openings.</p>
           <p>${COMPANY_NAME}</p>
         `,
       };
     case "hired":
       return {
-        subject: `Congratulations - You've Been Selected - ${title}`,
+        subject: isGeneral ? "Congratulations - You've Been Selected" : `Congratulations - You've Been Selected - ${jobTitle}`,
         html: `
           <p>Hi ${name},</p>
-          <p>Congratulations! You have been selected for the <strong>${title}</strong> position at ${COMPANY_NAME}.
+          <p>Congratulations! You have been selected ${isGeneral ? "for a role" : `for ${positionPhrase.replace("the ", "the ")}`} at ${COMPANY_NAME}.
           Our team will reach out shortly with next steps.</p>
           <p>${COMPANY_NAME}</p>
         `,
@@ -81,7 +98,7 @@ const buildStatusEmail = (application, jobTitle) => {
   }
 };
 
-// @desc   Submit a job application (multipart: resume file + fields)
+// @desc   Submit a job application (multipart: resume + optional cover letter files, links)
 // @route  POST /api/careers/:id/apply
 export const applyToCareer = asyncHandler(async (req, res) => {
   const career = await Career.findById(req.params.id);
@@ -93,18 +110,14 @@ export const applyToCareer = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("This position is no longer accepting applications");
   }
-  if (!req.file) {
+  if (!req.files?.resume?.[0]) {
     res.status(400);
     throw new Error("A CV/resume file is required");
   }
 
   const application = await Application.create({
+    ...buildApplicationPayload(req.body, req.files),
     job: career._id,
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    resumeUrl: req.file.path,
-    coverLetter: req.body.coverLetter,
   });
 
   const email = buildStatusEmail(application, career.title);
@@ -113,14 +126,31 @@ export const applyToCareer = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, data: application });
 });
 
-// @desc   Get all applications, optionally filtered by job/status
+// @desc   Submit a general application, not tied to a specific posting
+// @route  POST /api/applications/general
+export const submitGeneralApplication = asyncHandler(async (req, res) => {
+  if (!req.files?.resume?.[0]) {
+    res.status(400);
+    throw new Error("A CV/resume file is required");
+  }
+
+  const application = await Application.create(buildApplicationPayload(req.body, req.files));
+
+  const email = buildStatusEmail(application, null);
+  if (email) await sendApplicationEmail({ to: application.email, ...email });
+
+  res.status(201).json({ success: true, data: application });
+});
+
+// @desc   Get all applications, optionally filtered by job/status, or general-only
 // @route  GET /api/applications
 export const getApplications = asyncHandler(async (req, res) => {
-  const { job, status, page = 1, limit = 20 } = req.query;
+  const { job, status, general, page = 1, limit = 20 } = req.query;
 
   const query = {};
   if (job) query.job = job;
   if (status) query.status = status;
+  if (general === "true") query.job = null;
 
   const pageNum = Math.max(Number(page), 1);
   const limitNum = Math.min(Number(limit), 50);

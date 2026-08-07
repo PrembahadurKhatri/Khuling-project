@@ -1,10 +1,16 @@
 import axios from "axios";
-
+/*
 const api = axios.create({
   baseURL: "/api",
   withCredentials: true, // send httpOnly cookies (refreshToken)
 });
+*/
+const API = import.meta.env.VITE_API_TARGET;
 
+const api = axios.create({
+  baseURL: `${API}/api`,   // 🔥 FIX
+  withCredentials: true,
+});
 let accessToken = null;
 export const setAccessToken = (token) => {
   accessToken = token;

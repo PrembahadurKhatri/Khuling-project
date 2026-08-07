@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { fetchCareerBySlug, applyToCareer } from "../services/careerService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import ApplicationFormFields from "../components/ApplicationFormFields.jsx";
 import {
   HiLocationMarker,
   HiOfficeBuilding,
@@ -57,8 +58,11 @@ const CareerDetail = () => {
       formData.append("name", values.name);
       formData.append("email", values.email);
       if (values.phone) formData.append("phone", values.phone);
-      if (values.coverLetter) formData.append("coverLetter", values.coverLetter);
       formData.append("resume", values.resume[0]);
+      if (values.coverLetter?.[0]) formData.append("coverLetter", values.coverLetter[0]);
+      if (values.links?.github) formData.append("links.github", values.links.github);
+      if (values.links?.linkedin) formData.append("links.linkedin", values.links.linkedin);
+      if (values.links?.other) formData.append("links.other", values.links.other);
 
       await applyToCareer(job._id, formData);
       reset();
@@ -120,14 +124,7 @@ const CareerDetail = () => {
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-sm text-sm text-red-600">{applyError}</div>
               )}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <input {...register("name", { required: true })} placeholder="Full Name" className="input-field" />
-                <input {...register("email", { required: true })} type="email" placeholder="Email" className="input-field" />
-                <input {...register("phone")} placeholder="Phone" className="input-field" />
-                <div>
-                  <label className="mb-2 block text-xs font-body font-semibold uppercase tracking-wide text-navy/60">CV / Resume (PDF, JPG or PNG)</label>
-                  <input {...register("resume", { required: true })} type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" className="input-field file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-navy file:text-stone file:text-xs file:font-semibold file:uppercase" />
-                </div>
-                <textarea {...register("coverLetter")} placeholder="Cover Letter (optional)" rows={4} className="input-field resize-none" />
+                <ApplicationFormFields register={register} />
                 <button type="submit" disabled={isSubmitting} className="btn-fill w-full justify-center">
                   {isSubmitting ? "Submitting..." : "Submit Application"}
                 </button>

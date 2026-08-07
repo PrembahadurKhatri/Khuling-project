@@ -120,13 +120,13 @@ useEffect(() => {
           className="flex items-center gap-1.5 px-2.5 py-1 
           sm:px-4 sm:py-2 sm:gap-2
           rounded-full bg-white border border-line shadow-sm
-          text-[10px] sm:text-[12px] font-body font-semibold tracking-wide uppercase text-navy/80"
+          text-[7px] sm:text-[12px] font-body font-semibold tracking-wide uppercase text-navy/80"
         >
           {/* indicator */}
           <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-teal shrink-0" />
 
           {/* text */}
-          <span className="whitespace-nowrap font-body">{c}</span>
+          <span className="whitespace-nowrap font-body ">{c}</span>
         </span>
       ))}
 
@@ -387,7 +387,7 @@ useEffect(() => {
               </h3>
             </div>
 
-            <p className="text-navy/70 leading-relaxed text-[15px] md:text-base font-body pl-9 md:pl-9">
+            <p className="text-navy/70 leading-relaxed text-[15px] md:text-base font-body  ">
               {desc}
             </p>
           </div>
