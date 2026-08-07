@@ -50,18 +50,32 @@ app.use(
   })
 );
 // CLIENT_URL may be a single origin or a comma-separated list (useful while
-// running multiple frontend deployments — e.g. a Render one and a Vercel
-// one — against the same backend).
+// running multiple frontend deployments against the same backend). On top of
+// that explicit list, any *.vercel.app or *.onrender.com origin is trusted
+// automatically — Vercel/Render both mint a fresh subdomain on many deploys,
+// so pinning to one exact URL in CLIENT_URL breaks again on the next deploy.
+// This is safe here: the admin panel still requires real login credentials,
+// this only controls which sites are allowed to *attempt* API calls at all.
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
   .map((o) => o.trim())
   .filter(Boolean);
+const trustedHostSuffixes = [".vercel.app", ".onrender.com"];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // No Origin header (curl, server-to-server, same-origin) — allow.
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      try {
+        const { hostname } = new URL(origin);
+        if (trustedHostSuffixes.some((suffix) => hostname.endsWith(suffix))) {
+          return callback(null, true);
+        }
+      } catch {
+        // Malformed Origin header — fall through to rejection below.
+      }
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
