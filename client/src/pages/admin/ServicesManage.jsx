@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { fetchServices, createService, updateService, deleteService } from "../../services/serviceService.js";
 import { fetchCategories } from "../../services/categoryService.js";
 import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   title: "", category: "", shortDescription: "", description: "", benefits: "",
@@ -19,6 +20,7 @@ const toPayloadBenefits = (text) =>
 const ServicesManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -35,13 +37,23 @@ const ServicesManage = () => {
   const categories = categoriesData?.data || [];
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-services"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
-  const createMutation = useMutation({ mutationFn: createService, onSuccess: invalidate });
+  const createMutation = useMutation({
+    mutationFn: createService,
+    onSuccess: () => { invalidate(); toast.success("Service created."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateService(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Service updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteService, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteService,
+    onSuccess: () => { invalidate(); toast.success("Service deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";

@@ -82,9 +82,9 @@ const Footer = () => {
         <div className="lg:col-span-2">
           <p className="eyebrow-invert mb-6 font-body">Services</p>
           <ul className="space-y-3 text-sm text-stone/70">
-            <li className="hover:text-gold transition-colors font-body">Infrastructure</li>
-            <li className="hover:text-gold transition-colors font-body">Road &amp; Bridge</li>
-            <li className="hover:text-gold transition-colors font-body">Commercial Building</li>
+            <li> <Link to="/services" className="hover:text-gold transition-colors font-body">Infrastructure</Link></li>
+            <li ><Link to="/services" className="hover:text-gold transition-colors font-body">Road &amp; Bridge</Link></li>
+            <li ><Link to="/services" className="hover:text-gold transition-colors font-body">Commercial Building</Link></li>
             <li className="hover:text-gold transition-colors font-body">Project Management</li>
           </ul>
         </div>

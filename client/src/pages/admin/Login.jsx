@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import useAuth from "../../hooks/useAuth.js";
 
@@ -72,6 +72,13 @@ const Login = () => {
         <button type="submit" disabled={loading} className="btn-primary w-full justify-center">
           {loading ? "Signing in..." : "Sign In"}
         </button>
+
+        <Link
+          to="/admin/forgot-password"
+          className={`mt-4 block text-center text-sm hover:underline ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+        >
+          Forgot password?
+        </Link>
       </form>
     </div>
   );

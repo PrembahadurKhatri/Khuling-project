@@ -7,6 +7,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "../../services/categoryService.js";
+import useToast from "../../hooks/useToast.js";
 
 // Categories feed the dropdown on both Projects and Services (see
 // ProjectsManage.jsx / ServicesManage.jsx) — a Service's category links it to
@@ -15,6 +16,7 @@ import {
 const CategoriesManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [name, setName] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState("");
@@ -29,12 +31,23 @@ const CategoriesManage = () => {
     queryClient.invalidateQueries({ queryKey: ["categories"] });
   };
 
-  const createMutation = useMutation({ mutationFn: createCategory, onSuccess: invalidate });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
+
+  const createMutation = useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => { invalidate(); toast.success("Category added."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, name }) => updateCategory(id, name),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Category renamed."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteCategory, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteCategory,
+    onSuccess: () => { invalidate(); toast.success("Category deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const rowClass = theme === "dark" ? "border-gray-800" : "border-line";

@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { Career, Application } from "../models/Career.js";
 import sendEmail from "../utils/sendEmail.js";
+import wrapEmail from "../utils/emailTemplate.js";
 
 const COMPANY_NAME = "Khilung Kalika Construction";
 
@@ -37,61 +38,70 @@ const buildStatusEmail = (application, jobTitle) => {
   const positionPhrase = isGeneral ? "your general application" : `the <strong>${jobTitle}</strong> position`;
   const rolePhrase = isGeneral ? "your general application" : `the <strong>${jobTitle}</strong> role`;
 
+  const scheduleLines = `
+    ${application.interviewDate ? `<p><strong>Interview Date:</strong> ${new Date(application.interviewDate).toLocaleString()}</p>` : ""}
+    ${application.visitDate ? `<p><strong>Site Visit Date:</strong> ${new Date(application.visitDate).toLocaleString()}</p>` : ""}
+  `;
+
   switch (application.status) {
     case "received":
       return {
         subject: isGeneral ? "General Application Received" : `Application Received - ${jobTitle}`,
-        html: `
-          <p>Hi ${name},</p>
-          <p>Thank you for submitting ${positionPhrase} to ${COMPANY_NAME}.
-          We've received it and our team will review it shortly.</p>
-          <p>${isGeneral ? "We'll reach out if an opening matches your profile." : "We'll be in touch if your profile matches our requirements."}</p>
-          <p>${COMPANY_NAME}</p>
-        `,
+        html: wrapEmail({
+          title: "Application received",
+          bodyHtml: `
+            <p>Hi ${name},</p>
+            <p>Thank you for submitting ${positionPhrase} to ${COMPANY_NAME}. We've received it and our team will review it shortly.</p>
+            <p>${isGeneral ? "We'll reach out if an opening matches your profile." : "We'll be in touch if your profile matches our requirements."}</p>
+          `,
+        }),
       };
     case "shortlisted":
       return {
         subject: isGeneral ? "You've Been Shortlisted" : `You've Been Shortlisted - ${jobTitle}`,
-        html: `
-          <p>Hi ${name},</p>
-          <p>Congrats! You've been shortlisted for ${rolePhrase} at ${COMPANY_NAME}.</p>
-          ${application.interviewDate ? `<p><strong>Interview Date:</strong> ${new Date(application.interviewDate).toLocaleString()}</p>` : ""}
-          ${application.visitDate ? `<p><strong>Site Visit Date:</strong> ${new Date(application.visitDate).toLocaleString()}</p>` : ""}
-          <p>We look forward to meeting you. If you have any questions, feel free to reply to this email.</p>
-          <p>${COMPANY_NAME}</p>
-        `,
+        html: wrapEmail({
+          title: "You've been shortlisted",
+          bodyHtml: `
+            <p>Hi ${name},</p>
+            <p>Congrats! You've been shortlisted for ${rolePhrase} at ${COMPANY_NAME}.</p>
+            ${scheduleLines}
+            <p>We look forward to meeting you. If you have any questions, feel free to reply to this email.</p>
+          `,
+        }),
       };
     case "interviewing":
       return {
         subject: isGeneral ? "Interview Update" : `Interview Update - ${jobTitle}`,
-        html: `
-          <p>Hi ${name},</p>
-          <p>${isGeneral ? "Your general application" : `Your application for ${positionPhrase}`} at ${COMPANY_NAME} is moving forward
-          to the interview stage.</p>
-          ${application.interviewDate ? `<p><strong>Interview Date:</strong> ${new Date(application.interviewDate).toLocaleString()}</p>` : ""}
-          ${application.visitDate ? `<p><strong>Site Visit Date:</strong> ${new Date(application.visitDate).toLocaleString()}</p>` : ""}
-          <p>${COMPANY_NAME}</p>
-        `,
+        html: wrapEmail({
+          title: "Moving to interview stage",
+          bodyHtml: `
+            <p>Hi ${name},</p>
+            <p>${isGeneral ? "Your general application" : `Your application for ${positionPhrase}`} at ${COMPANY_NAME} is moving forward to the interview stage.</p>
+            ${scheduleLines}
+          `,
+        }),
       };
     case "rejected":
       return {
         subject: isGeneral ? "Application Update" : `Application Update - ${jobTitle}`,
-        html: `
-          <p>Hi ${name},</p>
-          <p>Sorry, we won't be moving forward with ${positionPhrase} at this time.
-          We appreciate the time you took to apply and encourage you to apply again for future openings.</p>
-          <p>${COMPANY_NAME}</p>
-        `,
+        html: wrapEmail({
+          title: "Application update",
+          bodyHtml: `
+            <p>Hi ${name},</p>
+            <p>Sorry, we won't be moving forward with ${positionPhrase} at this time. We appreciate the time you took to apply and encourage you to apply again for future openings.</p>
+          `,
+        }),
       };
     case "hired":
       return {
         subject: isGeneral ? "Congratulations - You've Been Selected" : `Congratulations - You've Been Selected - ${jobTitle}`,
-        html: `
-          <p>Hi ${name},</p>
-          <p>Congratulations! You have been selected ${isGeneral ? "for a role" : `for ${positionPhrase.replace("the ", "the ")}`} at ${COMPANY_NAME}.
-          Our team will reach out shortly with next steps.</p>
-          <p>${COMPANY_NAME}</p>
-        `,
+        html: wrapEmail({
+          title: "Congratulations!",
+          bodyHtml: `
+            <p>Hi ${name},</p>
+            <p>Congratulations! You have been selected ${isGeneral ? "for a role" : `for ${positionPhrase}`} at ${COMPANY_NAME}. Our team will reach out shortly with next steps.</p>
+          `,
+        }),
       };
     default:
       return null;

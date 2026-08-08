@@ -20,6 +20,7 @@ import {
   HiX,
 } from "react-icons/hi";
 import useAuth from "../hooks/useAuth.js";
+import { ToastProvider } from "../contexts/ToastContext.jsx";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: HiOutlineViewGrid, end: true },
@@ -102,54 +103,56 @@ const AdminLayout = () => {
   );
 
   return (
-    <div className="min-h-screen flex bg-stone text-ink transition-colors duration-200 dark:bg-gray-950 dark:text-gray-100">
-      {/* Desktop sidebar — always visible at lg+ */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-paper/90 border-r border-line backdrop-blur-sm flex-col dark:bg-gray-900/90 dark:border-gray-800">
-        {sidebarContent}
-      </aside>
+    <ToastProvider>
+      <div className="min-h-screen flex bg-stone text-ink transition-colors duration-200 dark:bg-gray-950 dark:text-gray-100">
+        {/* Desktop sidebar — always visible at lg+ */}
+        <aside className="hidden lg:flex w-64 shrink-0 bg-paper/90 border-r border-line backdrop-blur-sm flex-col dark:bg-gray-900/90 dark:border-gray-800">
+          {sidebarContent}
+        </aside>
 
-      {/* Mobile sidebar — slide-in drawer with backdrop */}
-      {sidebarOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 flex">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
-          <aside className="relative z-50 w-72 max-w-[80vw] bg-paper border-r border-line flex flex-col dark:bg-gray-900 dark:border-gray-800">
+        {/* Mobile sidebar — slide-in drawer with backdrop */}
+        {sidebarOpen && (
+          <div className="lg:hidden fixed inset-0 z-40 flex">
+            <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
+            <aside className="relative z-50 w-72 max-w-[80vw] bg-paper border-r border-line flex flex-col dark:bg-gray-900 dark:border-gray-800">
+              <button
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Close menu"
+                className="absolute top-4 right-4 text-2xl text-gray-500 dark:text-gray-400"
+              >
+                <HiX />
+              </button>
+              {sidebarContent}
+            </aside>
+          </div>
+        )}
+
+        <div className="flex-1 min-w-0 flex flex-col">
+          {/* Mobile top bar */}
+          <div className="lg:hidden flex items-center justify-between p-4 border-b border-line bg-paper/90 backdrop-blur-sm dark:bg-gray-900/90 dark:border-gray-800">
             <button
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close menu"
-              className="absolute top-4 right-4 text-2xl text-gray-500 dark:text-gray-400"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+              className="text-2xl text-gray-700 dark:text-gray-300"
             >
-              <HiX />
+              <HiMenu />
             </button>
-            {sidebarContent}
-          </aside>
-        </div>
-      )}
+            <span className="font-body font-bold">Khilung Kalika Admin</span>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="text-xl text-gray-700 dark:text-gray-300"
+            >
+              {theme === "light" ? <HiOutlineMoon /> : <HiOutlineSun />}
+            </button>
+          </div>
 
-      <div className="flex-1 min-w-0 flex flex-col">
-        {/* Mobile top bar */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-line bg-paper/90 backdrop-blur-sm dark:bg-gray-900/90 dark:border-gray-800">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
-            className="text-2xl text-gray-700 dark:text-gray-300"
-          >
-            <HiMenu />
-          </button>
-          <span className="font-body font-bold">Khilung Kalika Admin</span>
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="text-xl text-gray-700 dark:text-gray-300"
-          >
-            {theme === "light" ? <HiOutlineMoon /> : <HiOutlineSun />}
-          </button>
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-stone/70 dark:bg-gray-950">
+            <Outlet context={{ theme, toggleTheme }} />
+          </main>
         </div>
-
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-stone/70 dark:bg-gray-950">
-          <Outlet context={{ theme, toggleTheme }} />
-        </main>
       </div>
-    </div>
+    </ToastProvider>
   );
 };
 

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchTeam, createTeamMember, updateTeamMember, deleteTeamMember } from "../../services/teamService.js";
 import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   name: "", designation: "", department: "", bio: "", isLeadership: false,
@@ -13,6 +14,7 @@ const emptyForm = {
 const TeamManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -26,13 +28,23 @@ const TeamManage = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-team"] });
     queryClient.invalidateQueries({ queryKey: ["team"] });
   };
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
-  const createMutation = useMutation({ mutationFn: createTeamMember, onSuccess: invalidate });
+  const createMutation = useMutation({
+    mutationFn: createTeamMember,
+    onSuccess: () => { invalidate(); toast.success("Team member added."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateTeamMember(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Team member updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteTeamMember, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteTeamMember,
+    onSuccess: () => { invalidate(); toast.success("Team member removed."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
@@ -71,7 +83,7 @@ const TeamManage = () => {
     const { imageFile, ...rest } = form;
     const finalImage = imageFile || form.image;
     if (!finalImage) {
-      alert("Please provide a photo — paste an image URL or upload a file.");
+      toast.error("Please provide a photo — paste an image URL or upload a file.");
       return;
     }
     const payload = { ...rest, image: finalImage };

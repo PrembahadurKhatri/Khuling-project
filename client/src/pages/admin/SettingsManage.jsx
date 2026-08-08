@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { fetchSettings, updateSettings } from "../../services/settingsService.js";
+import { changePassword } from "../../services/authService.js";
+import useToast from "../../hooks/useToast.js";
+import useAuth from "../../hooks/useAuth.js";
 
 const emptyForm = {
   companyName: "",
@@ -17,11 +20,18 @@ const emptyForm = {
   maintenanceMode: false,
 };
 
+const emptyPasswordForm = { currentPassword: "", newPassword: "", confirmPassword: "" };
+
 const SettingsManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState(emptyForm);
   const [saved, setSaved] = useState(false);
+  const [passwordForm, setPasswordForm] = useState(emptyPasswordForm);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   const { data, isLoading } = useQuery({ queryKey: ["admin-settings"], queryFn: fetchSettings });
 
@@ -42,7 +52,11 @@ const SettingsManage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-settings"] });
       setSaved(true);
+      toast?.success("Settings saved.");
       setTimeout(() => setSaved(false), 2500);
+    },
+    onError: (err) => {
+      toast?.error(err.response?.data?.message || "Failed to save settings.");
     },
   });
 
@@ -53,6 +67,32 @@ const SettingsManage = () => {
 
   const setField = (key, value) => setForm((f) => ({ ...f, [key]: value }));
   const setNested = (group, key, value) => setForm((f) => ({ ...f, [group]: { ...f[group], [key]: value } }));
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (passwordForm.newPassword.length < 8) {
+      toast?.error("New password must be at least 8 characters.");
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast?.error("New password and confirmation don't match.");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await changePassword(passwordForm.currentPassword, passwordForm.newPassword);
+      toast?.success("Password changed. Please log in again.");
+      setPasswordForm(emptyPasswordForm);
+      setTimeout(async () => {
+        await logout();
+        navigate("/admin/login");
+      }, 1500);
+    } catch (err) {
+      toast?.error(err.response?.data?.message || "Failed to change password.");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const labelClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
@@ -171,6 +211,50 @@ const SettingsManage = () => {
         <div className="flex justify-end">
           <button type="submit" disabled={mutation.isPending} className="btn-primary !py-2">
             {mutation.isPending ? "Saving..." : "Save Settings"}
+          </button>
+        </div>
+      </form>
+
+      <form onSubmit={handleChangePassword} className={`mt-8 max-w-3xl space-y-3 rounded-xl border p-6 ${panelClass}`}>
+        <h2 className="font-body font-semibold mb-1">Change Password</h2>
+        <p className={`text-xs mb-2 ${labelClass}`}>You'll be logged out and need to sign in again after changing it.</p>
+        <div className="grid sm:grid-cols-3 gap-3">
+          <label className="space-y-1">
+            <span className={`text-xs ${labelClass}`}>Current password</span>
+            <input
+              type="password"
+              required
+              className={inputClass}
+              value={passwordForm.currentPassword}
+              onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+            />
+          </label>
+          <label className="space-y-1">
+            <span className={`text-xs ${labelClass}`}>New password</span>
+            <input
+              type="password"
+              required
+              minLength={8}
+              className={inputClass}
+              value={passwordForm.newPassword}
+              onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+            />
+          </label>
+          <label className="space-y-1">
+            <span className={`text-xs ${labelClass}`}>Confirm new password</span>
+            <input
+              type="password"
+              required
+              minLength={8}
+              className={inputClass}
+              value={passwordForm.confirmPassword}
+              onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+            />
+          </label>
+        </div>
+        <div className="flex justify-end pt-2">
+          <button type="submit" disabled={changingPassword} className="btn-primary !py-2">
+            {changingPassword ? "Changing..." : "Change Password"}
           </button>
         </div>
       </form>

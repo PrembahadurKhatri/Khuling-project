@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSearchParams, useOutletContext } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchContactMessages, updateContactMessageStatus, deleteContactMessage } from "../../services/contactService.js";
+import useToast from "../../hooks/useToast.js";
 
 const statusOptions = ["new", "read", "replied", "archived"];
 
@@ -15,6 +16,7 @@ const statusTone = {
 const ContactManage = () => {
   const { theme } = useOutletContext();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const typeFilter = searchParams.get("type") || "";
   const statusFilter = searchParams.get("status") || "";
@@ -30,12 +32,20 @@ const ContactManage = () => {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-contact"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
+  // No success toast here — status also flips silently to "read" just from
+  // opening a message, and popping a toast on every click would be noisy.
   const statusMutation = useMutation({
     mutationFn: ({ id, status }) => updateContactMessageStatus(id, status),
     onSuccess: invalidate,
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteContactMessage, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteContactMessage,
+    onSuccess: () => { invalidate(); toast.success("Message deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";

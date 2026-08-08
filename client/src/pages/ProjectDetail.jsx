@@ -114,37 +114,6 @@ const ProjectDetail = () => {
           <p className="font-body text-navy/70 leading-relaxed text-lg first-letter:font-display first-letter:text-5xl first-letter:text-teal first-letter:font-medium first-letter:mr-1 first-letter:float-left first-letter:leading-[0.85]">
             {project.description}
           </p>
-
-          {gallery.length > 0 && (
-            <>
-              <div className="flex items-center gap-4 mt-14 mb-6">
-                <h3 className="font-body text-xl text-navy">Gallery</h3>
-                <span className="h-px flex-1 bg-line" />
-                <span className="font-body text-xs uppercase tracking-wider text-navy/40">
-                  {gallery.length} photo{gallery.length !== 1 && "s"}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-4 grid-rows-2 gap-3 auto-rows-[140px] sm:auto-rows-[160px]">
-                {gallery.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setLightboxIndex(i)}
-                    className={`img-frame relative overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-teal ${
-                      i === 0 ? "col-span-2 row-span-2" : "col-span-2 sm:col-span-1"
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`${project.title} — photo ${i + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <span className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-colors duration-300" />
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
         </div>
 
         {/* ---------- Details card ---------- */}

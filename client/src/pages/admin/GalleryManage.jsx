@@ -7,12 +7,14 @@ import {
   updateGalleryImage,
   deleteGalleryImage,
 } from "../../services/galleryService.js";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = { caption: "", category: "", image: null };
 
 const GalleryManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -24,13 +26,23 @@ const GalleryManage = () => {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-gallery"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
-  const createMutation = useMutation({ mutationFn: createGalleryImage, onSuccess: invalidate });
+  const createMutation = useMutation({
+    mutationFn: createGalleryImage,
+    onSuccess: () => { invalidate(); toast.success("Image uploaded."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateGalleryImage(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Image updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteGalleryImage, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteGalleryImage,
+    onSuccess: () => { invalidate(); toast.success("Image deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const inputClass = theme === "dark"

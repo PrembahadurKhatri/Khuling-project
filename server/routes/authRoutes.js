@@ -6,6 +6,7 @@ import {
   refresh,
   logout,
   getMe,
+  changePassword,
   forgotPassword,
   resetPassword,
 } from "../controllers/authController.js";
@@ -33,6 +34,13 @@ router.post(
 router.post("/refresh", refresh);
 router.post("/logout", logout);
 router.get("/me", protect, getMe);
+router.put(
+  "/change-password",
+  protect,
+  [body("currentPassword").notEmpty(), body("newPassword").isLength({ min: 8 })],
+  validate,
+  changePassword
+);
 router.post("/forgot-password", [body("email").isEmail()], validate, forgotPassword);
 router.post(
   "/reset-password/:token",

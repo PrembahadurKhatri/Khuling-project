@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSearchParams, useOutletContext } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApplications, updateApplicationStatus, deleteApplication } from "../../services/applicationService.js";
+import useToast from "../../hooks/useToast.js";
 
 const statusOptions = ["received", "shortlisted", "interviewing", "rejected", "hired"];
 
@@ -27,6 +28,7 @@ const initials = (name) =>
 const ApplicationsManage = () => {
   const { theme } = useOutletContext();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const jobFilter = searchParams.get("job") || "";
   const statusFilter = searchParams.get("status") || "";
@@ -46,12 +48,18 @@ const ApplicationsManage = () => {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
   const statusMutation = useMutation({
     mutationFn: ({ id, payload }) => updateApplicationStatus(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Status updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteApplication, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteApplication,
+    onSuccess: () => { invalidate(); toast.success("Application deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";

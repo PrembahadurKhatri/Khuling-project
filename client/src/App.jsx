@@ -21,6 +21,8 @@ import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 import Login from "./pages/admin/Login.jsx";
+import ForgotPassword from "./pages/admin/ForgotPassword.jsx";
+import ResetPassword from "./pages/admin/ResetPassword.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
 import ProjectsManage from "./pages/admin/ProjectsManage.jsx";
 import CategoriesManage from "./pages/admin/CategoriesManage.jsx";
@@ -60,6 +62,8 @@ function App() {
 
         {/* Admin */}
         <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin/reset-password/:token" element={<ResetPassword />} />
         <Route
           path="/admin"
           element={

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext, Link } from "react-router-dom";
 import { fetchCareers, createCareer, updateCareer, deleteCareer } from "../../services/careerService.js";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   title: "", department: "", location: "", type: "Full-time", status: "open",
@@ -30,6 +31,7 @@ const toPayload = (form) => ({
 const CareersManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -40,13 +42,23 @@ const CareersManage = () => {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-careers"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
-  const createMutation = useMutation({ mutationFn: createCareer, onSuccess: invalidate });
+  const createMutation = useMutation({
+    mutationFn: createCareer,
+    onSuccess: () => { invalidate(); toast.success("Position created."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateCareer(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Position updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteCareer, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteCareer,
+    onSuccess: () => { invalidate(); toast.success("Position deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchBlogs, createBlog, updateBlog, deleteBlog } from "../../services/blogService.js";
 import RichTextEditor from "../../components/admin/RichTextEditor.jsx";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   title: "", excerpt: "", content: "", category: "", tags: "", status: "draft", featuredImage: null,
@@ -17,6 +18,7 @@ const statusTone = {
 const BlogsManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -28,13 +30,23 @@ const BlogsManage = () => {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
-  const createMutation = useMutation({ mutationFn: createBlog, onSuccess: invalidate });
+  const createMutation = useMutation({
+    mutationFn: createBlog,
+    onSuccess: () => { invalidate(); toast.success("Post created."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateBlog(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Post updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteBlog, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteBlog,
+    onSuccess: () => { invalidate(); toast.success("Post deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";

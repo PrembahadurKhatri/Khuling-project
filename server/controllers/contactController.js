@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import ContactMessage from "../models/ContactMessage.js";
 import sendEmail from "../utils/sendEmail.js";
+import wrapEmail from "../utils/emailTemplate.js";
 
 // @route POST /api/contact  (public)
 export const createContactMessage = asyncHandler(async (req, res) => {
@@ -11,7 +12,18 @@ export const createContactMessage = asyncHandler(async (req, res) => {
     await sendEmail({
       to: process.env.EMAIL_FROM,
       subject: `New ${message.type === "quote" ? "Quote Request" : "Contact Message"} from ${message.name}`,
-      html: `<p><strong>Name:</strong> ${message.name}</p><p><strong>Email:</strong> ${message.email}</p><p><strong>Message:</strong> ${message.message}</p>`,
+      html: wrapEmail({
+        title: message.type === "quote" ? "New quote request" : "New contact message",
+        bodyHtml: `
+          <p><strong>Name:</strong> ${message.name}</p>
+          <p><strong>Email:</strong> <a href="mailto:${message.email}" style="color:#c99a3f;">${message.email}</a></p>
+          ${message.phone ? `<p><strong>Phone:</strong> ${message.phone}</p>` : ""}
+          ${message.projectType ? `<p><strong>Project Type:</strong> ${message.projectType}</p>` : ""}
+          ${message.budgetRange ? `<p><strong>Budget:</strong> ${message.budgetRange}</p>` : ""}
+          ${message.location ? `<p><strong>Location:</strong> ${message.location}</p>` : ""}
+          <p style="margin-top:16px;padding:14px;background:#f5f3ee;border-radius:6px;"><strong>Message:</strong><br />${message.message}</p>
+        `,
+      }),
     });
   } catch (err) {
     console.error("Email notification failed:", err.message);

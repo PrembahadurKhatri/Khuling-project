@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { generateAccessToken, generateRefreshToken, setAuthCookies, jwtRefreshSecret } from "../utils/generateToken.js";
 import sendEmail from "../utils/sendEmail.js";
-import { FALLBACK_ADMIN_ID, isFallbackAdminLogin, fallbackAdminUser } from "../utils/fallbackAdmin.js";
+import wrapEmail from "../utils/emailTemplate.js";
+import { FALLBACK_ADMIN_ID, isFallbackAdminLogin, fallbackAdminUser, fallbackAdminCredentials, isFallbackAdminId } from "../utils/fallbackAdmin.js";
 
 // @desc   Register a new admin/editor user (admin-only in production)
 // @route  POST /api/auth/register
@@ -164,6 +165,67 @@ export const getMe = asyncHandler(async (req, res) => {
   res.json({ success: true, data: req.user });
 });
 
+// @desc   Change the logged-in user's own password (verifies current password first)
+// @route  PUT /api/auth/change-password
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    res.status(400);
+    throw new Error("Current password and new password are required");
+  }
+  if (newPassword.length < 8) {
+    res.status(400);
+    throw new Error("New password must be at least 8 characters");
+  }
+
+  // The fallback admin isn't a real Mongo document (see utils/fallbackAdmin.js).
+  // Changing its password provisions a real User account with the new password
+  // so forgot-password, multi-device sessions, etc. all start working normally
+  // from here on instead of relying on the hardcoded env credentials.
+  if (isFallbackAdminId(req.user._id)) {
+    if (!isFallbackAdminLogin(fallbackAdminCredentials.email, currentPassword)) {
+      res.status(401);
+      throw new Error("Current password is incorrect");
+    }
+
+    const existing = await User.findOne({ email: fallbackAdminCredentials.email });
+    if (existing) {
+      existing.password = newPassword;
+      existing.refreshTokens = [];
+      await existing.save();
+    } else {
+      await User.create({
+        name: fallbackAdminUser.name,
+        email: fallbackAdminCredentials.email,
+        password: newPassword,
+        role: "admin",
+      });
+    }
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    return res.json({ success: true, message: "Password changed. Please log in again with your new password." });
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  if (!(await user.matchPassword(currentPassword))) {
+    res.status(401);
+    throw new Error("Current password is incorrect");
+  }
+
+  user.password = newPassword;
+  user.refreshTokens = []; // force re-login on all devices
+  await user.save();
+
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.json({ success: true, message: "Password changed. Please log in again with your new password." });
+});
+
 // @desc   Request password reset email
 // @route  POST /api/auth/forgot-password
 export const forgotPassword = asyncHandler(async (req, res) => {
@@ -178,11 +240,22 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 min
   await user.save();
 
-  const resetUrl = `${process.env.CLIENT_URL}/admin/reset-password/${resetToken}`;
+  const resetUrl = `${(process.env.CLIENT_URL || "").split(",")[0]?.trim()}/admin/reset-password/${resetToken}`;
   await sendEmail({
     to: user.email,
     subject: "Password Reset - Khilung Kalika Construction Admin",
-    html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link expires in 15 minutes.</p>`,
+    html: wrapEmail({
+      title: "Reset your password",
+      preheader: "This link expires in 15 minutes.",
+      bodyHtml: `
+        <p>Hi ${user.name},</p>
+        <p>We received a request to reset the password on your admin account. Click the button below to choose a new one — this link expires in <strong>15 minutes</strong>.</p>
+        <p style="text-align:center;margin:28px 0;">
+          <a href="${resetUrl}" style="background:#0b1f3a;color:#f5f3ee;text-decoration:none;padding:12px 28px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:0.03em;display:inline-block;">Reset Password</a>
+        </p>
+        <p style="color:#8a8578;font-size:12px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
+      `,
+    }),
   });
 
   res.json({ success: true, message: "If that email exists, a reset link has been sent." });

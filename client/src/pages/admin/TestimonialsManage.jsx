@@ -7,6 +7,7 @@ import {
   updateTestimonial,
   deleteTestimonial,
 } from "../../services/testimonialService.js";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   name: "", designation: "", company: "", message: "", avatar: "", rating: 5, featured: false,
@@ -23,6 +24,7 @@ const initials = (name) =>
 const TestimonialsManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -33,13 +35,23 @@ const TestimonialsManage = () => {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-testimonials"] });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
 
-  const createMutation = useMutation({ mutationFn: createTestimonial, onSuccess: invalidate });
+  const createMutation = useMutation({
+    mutationFn: createTestimonial,
+    onSuccess: () => { invalidate(); toast.success("Testimonial added."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateTestimonial(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Testimonial updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteTestimonial, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteTestimonial,
+    onSuccess: () => { invalidate(); toast.success("Testimonial deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";

@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { fetchProjects, createProject, updateProject, deleteProject } from "../../services/projectService.js";
 import { fetchCategories } from "../../services/categoryService.js";
 import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
+import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   title: "", category: "", status: "Ongoing", location: "",
@@ -23,6 +24,7 @@ const statusTone = {
 const ProjectsManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
+  const toast = useToast();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -40,12 +42,23 @@ const ProjectsManage = () => {
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
 
-  const createMutation = useMutation({ mutationFn: createProject, onSuccess: invalidate });
+  const onError = (err) => toast.error(err.response?.data?.message || "Something went wrong.");
+
+  const createMutation = useMutation({
+    mutationFn: createProject,
+    onSuccess: () => { invalidate(); toast.success("Project created."); },
+    onError,
+  });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateProject(id, payload),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success("Project updated."); },
+    onError,
   });
-  const deleteMutation = useMutation({ mutationFn: deleteProject, onSuccess: invalidate });
+  const deleteMutation = useMutation({
+    mutationFn: deleteProject,
+    onSuccess: () => { invalidate(); toast.success("Project deleted."); },
+    onError,
+  });
 
   const panelClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
   const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-paper border-line shadow-sm";
@@ -85,11 +98,11 @@ const ProjectsManage = () => {
     const { thumbnailFile, ...rest } = form;
     const finalThumbnail = thumbnailFile || form.thumbnail;
     if (!finalThumbnail) {
-      alert("Please provide a thumbnail — paste an image URL or upload a file.");
+      toast.error("Please provide a thumbnail — paste an image URL or upload a file.");
       return;
     }
     if (form.startDate && form.endDate && form.endDate < form.startDate) {
-      alert("End date can't be before the start date.");
+      toast.error("End date can't be before the start date.");
       return;
     }
     const payload = {
