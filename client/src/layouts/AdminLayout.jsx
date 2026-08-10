@@ -27,7 +27,7 @@ const navItems = [
   { to: "/admin/projects", label: "Projects", icon: HiOutlineOfficeBuilding },
   { to: "/admin/categories", label: "Categories", icon: HiOutlineTag },
   { to: "/admin/services", label: "Services", icon: HiOutlineBriefcase },
-  { to: "/admin/blogs", label: "Journal / Blog", icon: HiOutlineNewspaper },
+  { to: "/admin/blogs", label: "Blogs", icon: HiOutlineNewspaper },
   { to: "/admin/team", label: "Team", icon: HiOutlineUsers },
   { to: "/admin/careers", label: "Careers", icon: HiOutlineUserGroup },
   { to: "/admin/applications", label: "Applications", icon: HiOutlineClipboardList },

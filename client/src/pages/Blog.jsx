@@ -44,9 +44,9 @@ const Blog = () => {
   return (
     <div>
       <PageHeader
-        eyebrow="Journal"
+        eyebrow="Blogs"
         title="Insights, stories, and ideas shaping our projects."
-        crumb="Home / Journal"
+        crumb="Home / Blogs"
       />
 
       <section className="container-wide py-24 md:py-32 relative">

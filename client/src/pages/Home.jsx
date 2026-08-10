@@ -524,7 +524,7 @@ useEffect(() => {
     {/* Header */}
     <div className="flex items-end justify-between mb-14 flex-wrap gap-4 border-b border-line pb-8">
       <div className="pt-4">
-        <p className="eyebrow mb-3">From the Journal</p>
+        <p className="eyebrow mb-3">From the Blogs</p>
         <h2 className="section-title font-body">Latest news</h2>
       </div>
 

@@ -112,7 +112,7 @@ const BlogsManage = () => {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-body font-bold">Journal / Blog</h1>
+        <h1 className="text-2xl font-body font-bold">Blogs</h1>
         <button onClick={openCreate} className="btn-primary w-full !py-2.5 sm:w-auto sm:!py-2">+ New Post</button>
       </div>
 

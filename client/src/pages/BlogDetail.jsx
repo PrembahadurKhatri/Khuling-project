@@ -25,9 +25,33 @@ const BlogDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="section text-center py-32">
-        <div className="inline-block w-9 h-9 border-2 border-navy border-t-transparent rounded-full animate-spin" />
-        <p className="font-body text-navy/60 mt-5 text-sm tracking-wide">Loading article…</p>
+      <div>
+        {/* HERO skeleton */}
+        <div className="relative h-[48vh] min-h-[360px] max-h-[560px] overflow-hidden bg-stone animate-pulse" />
+
+        {/* CONTENT CARD skeleton */}
+        <div className="section max-w-3xl mx-auto -mt-24 md:-mt-28 relative pb-24">
+          <div className="card p-8 md:p-14 shadow-2xl ring-1 ring-navy/5 space-y-5">
+            <div className="h-5 w-24 bg-stone rounded-full animate-pulse" />
+            <div className="h-10 w-full bg-stone rounded animate-pulse" />
+            <div className="h-10 w-3/4 bg-stone rounded animate-pulse" />
+
+            <div className="flex items-center gap-3 pt-2 pb-6 border-b border-navy/10">
+              <div className="h-4 w-24 bg-stone rounded animate-pulse" />
+              <div className="h-4 w-28 bg-stone rounded animate-pulse" />
+              <div className="h-4 w-20 bg-stone rounded animate-pulse" />
+            </div>
+
+            <div className="space-y-3 pt-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-4 bg-stone rounded animate-pulse ${i % 3 === 2 ? "w-2/3" : "w-full"}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
