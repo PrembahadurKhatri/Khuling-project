@@ -241,7 +241,13 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   const resetUrl = `${(process.env.CLIENT_URL || "").split(",")[0]?.trim()}/admin/reset-password/${resetToken}`;
-  await sendEmail({
+
+  // Respond immediately — the reset token is already saved. Sending the
+  // email is fire-and-forget so a slow/unreachable SMTP server can't hang
+  // this request (see contactController.js for the same fix + rationale).
+  res.json({ success: true, message: "If that email exists, a reset link has been sent." });
+
+  sendEmail({
     to: user.email,
     subject: "Password Reset - Khilung Kalika Construction Admin",
     html: wrapEmail({
@@ -256,9 +262,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
         <p style="color:#8a8578;font-size:12px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
       `,
     }),
-  });
-
-  res.json({ success: true, message: "If that email exists, a reset link has been sent." });
+  }).catch((err) => console.error("Password reset email failed:", err.message));
 });
 
 // @desc   Reset password using token

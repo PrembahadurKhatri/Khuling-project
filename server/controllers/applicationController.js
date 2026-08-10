@@ -5,14 +5,16 @@ import wrapEmail from "../utils/emailTemplate.js";
 
 const COMPANY_NAME = "Khilung Kalika Construction";
 
-// Email delivery is best-effort: a broken SMTP config shouldn't fail the
-// application submission or status update itself, just skip the notification.
-const sendApplicationEmail = async ({ to, subject, html }) => {
-  try {
-    await sendEmail({ to, subject, html });
-  } catch (err) {
+// Email delivery is best-effort: a broken/slow SMTP config shouldn't fail —
+// or hang — the application submission or status update itself. This is
+// deliberately NOT awaited by its callers below (fire-and-forget); nodemailer
+// has no timeout configured by default, so awaiting it before responding
+// could leave the client's "Submitting..." state stuck for as long as 10
+// minutes if the SMTP server is unreachable.
+const sendApplicationEmail = ({ to, subject, html }) => {
+  sendEmail({ to, subject, html }).catch((err) => {
     console.warn("Failed to send application email:", err.message);
-  }
+  });
 };
 
 // multipart/form-data sends links.* as flat "links.github" etc keys — nest
@@ -130,10 +132,10 @@ export const applyToCareer = asyncHandler(async (req, res) => {
     job: career._id,
   });
 
-  const email = buildStatusEmail(application, career.title);
-  if (email) await sendApplicationEmail({ to: application.email, ...email });
-
   res.status(201).json({ success: true, data: application });
+
+  const email = buildStatusEmail(application, career.title);
+  if (email) sendApplicationEmail({ to: application.email, ...email });
 });
 
 // @desc   Submit a general application, not tied to a specific posting
@@ -146,10 +148,10 @@ export const submitGeneralApplication = asyncHandler(async (req, res) => {
 
   const application = await Application.create(buildApplicationPayload(req.body, req.files));
 
-  const email = buildStatusEmail(application, null);
-  if (email) await sendApplicationEmail({ to: application.email, ...email });
-
   res.status(201).json({ success: true, data: application });
+
+  const email = buildStatusEmail(application, null);
+  if (email) sendApplicationEmail({ to: application.email, ...email });
 });
 
 // @desc   Get all applications, optionally filtered by job/status, or general-only
@@ -204,10 +206,10 @@ export const updateApplicationStatus = asyncHandler(async (req, res) => {
     throw new Error("Application not found");
   }
 
-  const email = buildStatusEmail(application, application.job?.title);
-  if (email) await sendApplicationEmail({ to: application.email, ...email });
-
   res.json({ success: true, data: application });
+
+  const email = buildStatusEmail(application, application.job?.title);
+  if (email) sendApplicationEmail({ to: application.email, ...email });
 });
 
 // @desc   Delete an application

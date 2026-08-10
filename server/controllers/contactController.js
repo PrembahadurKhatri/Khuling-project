@@ -7,29 +7,30 @@ import wrapEmail from "../utils/emailTemplate.js";
 export const createContactMessage = asyncHandler(async (req, res) => {
   const message = await ContactMessage.create({ ...req.body, type: req.body.type || "contact" });
 
-  // Notify office (best-effort; failure shouldn't block the response)
-  try {
-    await sendEmail({
-      to: process.env.EMAIL_FROM,
-      subject: `New ${message.type === "quote" ? "Quote Request" : "Contact Message"} from ${message.name}`,
-      html: wrapEmail({
-        title: message.type === "quote" ? "New quote request" : "New contact message",
-        bodyHtml: `
-          <p><strong>Name:</strong> ${message.name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${message.email}" style="color:#c99a3f;">${message.email}</a></p>
-          ${message.phone ? `<p><strong>Phone:</strong> ${message.phone}</p>` : ""}
-          ${message.projectType ? `<p><strong>Project Type:</strong> ${message.projectType}</p>` : ""}
-          ${message.budgetRange ? `<p><strong>Budget:</strong> ${message.budgetRange}</p>` : ""}
-          ${message.location ? `<p><strong>Location:</strong> ${message.location}</p>` : ""}
-          <p style="margin-top:16px;padding:14px;background:#f5f3ee;border-radius:6px;"><strong>Message:</strong><br />${message.message}</p>
-        `,
-      }),
-    });
-  } catch (err) {
-    console.error("Email notification failed:", err.message);
-  }
-
+  // Respond immediately — the submission itself is already durable once the
+  // DB write above completes. Notifying the office by email is best-effort
+  // and must NOT block the response: a slow/unreachable SMTP server would
+  // otherwise hang the client's "Sending..." state for as long as
+  // nodemailer's default socket timeout (10 minutes), even though the
+  // message was saved in the first second. Fire-and-forget it instead.
   res.status(201).json({ success: true, message: "Thank you, we will get back to you shortly." });
+
+  sendEmail({
+    to: process.env.EMAIL_FROM,
+    subject: `New ${message.type === "quote" ? "Quote Request" : "Contact Message"} from ${message.name}`,
+    html: wrapEmail({
+      title: message.type === "quote" ? "New quote request" : "New contact message",
+      bodyHtml: `
+        <p><strong>Name:</strong> ${message.name}</p>
+        <p><strong>Email:</strong> <a href="mailto:${message.email}" style="color:#c99a3f;">${message.email}</a></p>
+        ${message.phone ? `<p><strong>Phone:</strong> ${message.phone}</p>` : ""}
+        ${message.projectType ? `<p><strong>Project Type:</strong> ${message.projectType}</p>` : ""}
+        ${message.budgetRange ? `<p><strong>Budget:</strong> ${message.budgetRange}</p>` : ""}
+        ${message.location ? `<p><strong>Location:</strong> ${message.location}</p>` : ""}
+        <p style="margin-top:16px;padding:14px;background:#f5f3ee;border-radius:6px;"><strong>Message:</strong><br />${message.message}</p>
+      `,
+    }),
+  }).catch((err) => console.error("Email notification failed:", err.message));
 });
 
 // @route GET /api/contact (admin)
