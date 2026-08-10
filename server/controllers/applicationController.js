@@ -5,12 +5,11 @@ import wrapEmail from "../utils/emailTemplate.js";
 
 const COMPANY_NAME = "Khilung Kalika Construction";
 
-// Email delivery is best-effort: a broken/slow SMTP config shouldn't fail —
-// or hang — the application submission or status update itself. This is
-// deliberately NOT awaited by its callers below (fire-and-forget); nodemailer
-// has no timeout configured by default, so awaiting it before responding
-// could leave the client's "Submitting..." state stuck for as long as 10
-// minutes if the SMTP server is unreachable.
+// Email delivery is best-effort: a broken/slow email provider shouldn't fail
+// — or hang — the application submission or status update itself. This is
+// deliberately NOT awaited by its callers below (fire-and-forget); even with
+// sendEmail.js's own timeout, awaiting it before responding could leave the
+// client's "Submitting..." state stuck for several seconds for no reason.
 const sendApplicationEmail = ({ to, subject, html }) => {
   sendEmail({ to, subject, html }).catch((err) => {
     console.warn("Failed to send application email:", err.message);

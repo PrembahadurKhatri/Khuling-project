@@ -9,10 +9,9 @@ export const createContactMessage = asyncHandler(async (req, res) => {
 
   // Respond immediately — the submission itself is already durable once the
   // DB write above completes. Notifying the office by email is best-effort
-  // and must NOT block the response: a slow/unreachable SMTP server would
-  // otherwise hang the client's "Sending..." state for as long as
-  // nodemailer's default socket timeout (10 minutes), even though the
-  // message was saved in the first second. Fire-and-forget it instead.
+  // and must NOT block the response: a slow/unreachable email provider would
+  // otherwise hang the client's "Sending..." state, even though the message
+  // was saved in the first second. Fire-and-forget it instead.
   res.status(201).json({ success: true, message: "Thank you, we will get back to you shortly." });
 
   sendEmail({
