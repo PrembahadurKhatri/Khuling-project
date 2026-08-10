@@ -1,47 +1,29 @@
 // Wraps any inner HTML in a branded card — logo header, navy/gold accents
 // matching the site palette, footer — instead of sending raw unstyled
 // snippets. Used by every outgoing email (auth, applications, contact).
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
 const COMPANY_NAME = "Khilung Kalika Construction";
 
 // CLIENT_URL may be a comma-separated list (see server.js CORS config) —
 // use the first one as the canonical public site link in the footer.
 const siteUrl = (process.env.CLIENT_URL || "").split(",")[0]?.trim() || "";
 
-// The logo is embedded as a real inline attachment (referenced via
-// "cid:khilung-logo" below), not linked by external URL and not a data:
-// URI. Two things ruled those out:
-//  - Linking to CLIENT_URL/logo.png is fragile — the frontend is on Vercel,
-//    whose subdomain changes on many redeploys, and there's no owned custom
-//    domain to pin to instead. A dead/stale URL just means a broken image
-//    forever until someone notices.
-//  - data: URI <img> tags have inconsistent support across email clients —
-//    several (Outlook desktop among them) simply don't render them at all.
-// A CID-referenced inline attachment is the standard, universally-supported
-// way transactional email systems embed a logo — sendEmail.js imports
-// getLogoAttachment() below and attaches it to every send.
-export const LOGO_CID = "khilung-logo";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-let logoAttachment = null;
-try {
-  const logoPath = path.join(__dirname, "../../client/public/logo.png");
-  const logoBuffer = fs.readFileSync(logoPath);
-  logoAttachment = {
-    content: logoBuffer.toString("base64"),
-    filename: "logo.png",
-    type: "image/png",
-    disposition: "inline",
-    content_id: LOGO_CID,
-  };
-} catch (err) {
-  console.warn("emailTemplate.js: couldn't load logo.png for embedding:", err.message);
-}
-
-export const getLogoAttachment = () => logoAttachment;
+// Logo hosting, in order of what was tried and why each was dropped:
+//  1. Linking to CLIENT_URL/logo.png — dead: that URL 404s, and even fixed,
+//     would go stale again as the frontend's Vercel subdomain keeps
+//     changing on redeploy.
+//  2. A base64 data: URI <img src> — sidesteps the dead link, but data URIs
+//     have inconsistent support across email clients.
+//  3. A CID inline attachment (the "standard" transactional-email way) —
+//     didn't render in testing either.
+// Landed on a plain hosted URL instead — the most universally compatible
+// option, since every email client supports a normal <img src="https://...">
+// with zero special handling. Cloudinary (already used elsewhere in this
+// project) is blocked on a 403 at the account level, so this points at
+// logo.png as served directly from GitHub instead: permanent as long as the
+// repo stays public, zero extra service/cost, and it's the actual real
+// logo file (unlike a temporary/expiring social-media CDN link, which would
+// just recreate this same bug within days).
+const logoUrl = "https://raw.githubusercontent.com/PrembahadurKhatri/Khuling-project/main/client/public/logo.png";
 
 const wrapEmail = ({ title, bodyHtml, preheader = "" }) => `
 <!DOCTYPE html>
@@ -56,7 +38,7 @@ const wrapEmail = ({ title, bodyHtml, preheader = "" }) => `
 
           <tr>
             <td style="background:linear-gradient(135deg,#0b1f3a 0%,#102a4c 50%,#0a192f 100%);padding:28px 32px;text-align:center;">
-              ${logoAttachment ? `<img src="cid:${LOGO_CID}" alt="${COMPANY_NAME}" width="44" height="44" style="display:block;margin:0 auto 10px;border-radius:8px;" />` : ""}
+              <img src="${logoUrl}" alt="${COMPANY_NAME}" width="44" height="44" style="display:block;margin:0 auto 10px;border-radius:8px;" />
               <span style="color:#f5f3ee;font-size:15px;font-weight:700;letter-spacing:0.04em;">${COMPANY_NAME}</span>
             </td>
           </tr>
