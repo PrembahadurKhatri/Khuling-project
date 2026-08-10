@@ -13,6 +13,8 @@ const contactMessageSchema = new mongoose.Schema(
     budgetRange: { type: String },
     location: { type: String },
     status: { type: String, enum: ["new", "read", "replied", "archived"], default: "new" },
+    adminReply: { type: String },
+    repliedAt: { type: Date },
   },
   { timestamps: true }
 );

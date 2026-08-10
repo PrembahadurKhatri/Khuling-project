@@ -10,6 +10,11 @@ export const updateContactMessageStatus = async (id, status) => {
   return data;
 };
 
+export const replyToContactMessage = async (id, message) => {
+  const { data } = await api.post(`/contact/${id}/reply`, { message });
+  return data;
+};
+
 export const deleteContactMessage = async (id) => {
   const { data } = await api.delete(`/contact/${id}`);
   return data;

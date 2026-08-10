@@ -66,6 +66,50 @@ export const updateContactMessageStatus = asyncHandler(async (req, res) => {
   res.json({ success: true, data: message });
 });
 
+// @desc   Reply to an inquiry — sends the reply straight to the sender's
+//         inbox (via SendGrid) and records it on the message.
+// @route  POST /api/contact/:id/reply
+export const replyToContactMessage = asyncHandler(async (req, res) => {
+  const { message: replyText } = req.body;
+  if (!replyText?.trim()) {
+    res.status(400);
+    throw new Error("Reply message is required");
+  }
+
+  const original = await ContactMessage.findById(req.params.id);
+  if (!original) {
+    res.status(404);
+    throw new Error("Message not found");
+  }
+
+  // Unlike the fire-and-forget notification emails elsewhere, this one is
+  // AWAITED and its result is what the admin's "Send Reply" click reports
+  // back — the whole point of the action is the email actually going out,
+  // so silently succeeding either way (like the public-form notifications
+  // do) would just recreate the "says sent, never arrived" bug this whole
+  // email system was rebuilt to fix.
+  await sendEmail({
+    to: original.email,
+    subject: `Re: ${original.subject || (original.type === "quote" ? "Your quote request" : "Your message")} — Khilung Kalika Construction`,
+    html: wrapEmail({
+      title: "We've replied to your message",
+      bodyHtml: `
+        <p>Hi ${original.name},</p>
+        <p>Thanks for reaching out to Khilung Kalika Construction. Here's our reply:</p>
+        <p style="margin:16px 0;padding:14px;background:#f5f3ee;border-radius:6px;">${replyText.replace(/\n/g, "<br />")}</p>
+        <p style="color:#8a8578;font-size:12px;margin-top:20px;">Your original message: "${original.message}"</p>
+      `,
+    }),
+  });
+
+  original.status = "replied";
+  original.adminReply = replyText;
+  original.repliedAt = new Date();
+  await original.save();
+
+  res.json({ success: true, message: "Reply sent.", data: original });
+});
+
 export const deleteContactMessage = asyncHandler(async (req, res) => {
   const message = await ContactMessage.findByIdAndDelete(req.params.id);
   if (!message) {

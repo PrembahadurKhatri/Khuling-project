@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useSearchParams, useOutletContext } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchContactMessages, updateContactMessageStatus, deleteContactMessage } from "../../services/contactService.js";
+import { fetchContactMessages, updateContactMessageStatus, replyToContactMessage, deleteContactMessage } from "../../services/contactService.js";
 import useToast from "../../hooks/useToast.js";
+import { HiPaperAirplane } from "react-icons/hi";
 
 const statusOptions = ["new", "read", "replied", "archived"];
 
@@ -21,6 +22,7 @@ const ContactManage = () => {
   const typeFilter = searchParams.get("type") || "";
   const statusFilter = searchParams.get("status") || "";
   const [viewing, setViewing] = useState(null);
+  const [replyText, setReplyText] = useState("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-contact", { type: typeFilter, status: statusFilter }],
@@ -44,6 +46,18 @@ const ContactManage = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteContactMessage,
     onSuccess: () => { invalidate(); toast.success("Message deleted."); },
+    onError,
+  });
+  const replyMutation = useMutation({
+    mutationFn: ({ id, message }) => replyToContactMessage(id, message),
+    onSuccess: (res) => {
+      invalidate();
+      toast.success("Reply sent.");
+      setReplyText("");
+      // Reflect the reply immediately in the still-open modal instead of
+      // waiting on a refetch, so the admin sees it landed right away.
+      setViewing((v) => (v?._id === res.data._id ? res.data : v));
+    },
     onError,
   });
 
@@ -80,7 +94,13 @@ const ContactManage = () => {
 
   const openView = (msg) => {
     setViewing(msg);
+    setReplyText("");
     if (msg.status === "new") handleStatusChange(msg._id, "read");
+  };
+
+  const handleSendReply = () => {
+    if (!replyText.trim() || !viewing) return;
+    replyMutation.mutate({ id: viewing._id, message: replyText.trim() });
   };
 
   const setParam = (key, value) => {
@@ -248,9 +268,41 @@ const ContactManage = () => {
               Received {new Date(viewing.createdAt).toLocaleString()}
             </p>
 
+            {viewing.adminReply && (
+              <div className={`rounded-lg border-l-4 border-emerald-500 p-3 text-sm ${theme === "dark" ? "bg-emerald-950/20" : "bg-emerald-50"}`}>
+                <p className={`mb-1 text-xs font-semibold uppercase tracking-wide ${mutedClass}`}>
+                  Your reply{viewing.repliedAt ? ` · ${new Date(viewing.repliedAt).toLocaleString()}` : ""}
+                </p>
+                <p className="whitespace-pre-line leading-relaxed">{viewing.adminReply}</p>
+              </div>
+            )}
+
+            {/* Compose box — sends straight from the app via the backend's
+                own email pipeline, already pre-addressed to whoever sent
+                this inquiry. No mail client hand-off, no manual "to" entry. */}
+            <div className="space-y-2 border-t pt-4" style={{ borderColor: "inherit" }}>
+              <label className={`text-xs font-semibold uppercase tracking-wide ${mutedClass}`}>
+                {viewing.adminReply ? "Send another reply" : "Reply"} to {viewing.email}
+              </label>
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder={`Type your reply to ${viewing.name}...`}
+                rows={4}
+                className={`w-full rounded-lg border p-3 text-sm ${theme === "dark" ? "border-gray-700 bg-gray-800 text-gray-100" : "border-line bg-paper text-ink"}`}
+              />
+            </div>
+
             <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
               <button onClick={() => setViewing(null)} className={`w-full rounded-lg px-4 py-2.5 text-center sm:w-auto ${mutedClass}`}>Close</button>
-              <a href={`mailto:${viewing.email}`} className="btn-primary w-full !py-2.5 text-center text-sm sm:w-auto sm:!px-4 sm:!py-2">Reply by Email</a>
+              <button
+                onClick={handleSendReply}
+                disabled={!replyText.trim() || replyMutation.isPending}
+                className="btn-primary flex w-full items-center justify-center gap-2 !py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:!px-4 sm:!py-2"
+              >
+                <HiPaperAirplane className="text-base" />
+                {replyMutation.isPending ? "Sending..." : "Send Reply"}
+              </button>
             </div>
           </div>
         </div>
