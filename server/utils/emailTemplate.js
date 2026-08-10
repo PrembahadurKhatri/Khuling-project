@@ -11,21 +11,37 @@ const COMPANY_NAME = "Khilung Kalika Construction";
 // use the first one as the canonical public site link in the footer.
 const siteUrl = (process.env.CLIENT_URL || "").split(",")[0]?.trim() || "";
 
-// The logo is embedded directly as a base64 data URI rather than linked by
-// URL. Linking to CLIENT_URL/logo.png is fragile here: the frontend is on
-// Vercel, whose subdomain changes on many redeploys (we've already seen it
-// shift 3+ times), and there's no owned custom domain yet to pin to instead
-// — a dead/stale URL just means a broken image forever until someone
-// notices. Embedding the actual bytes has no such dependency.
+// The logo is embedded as a real inline attachment (referenced via
+// "cid:khilung-logo" below), not linked by external URL and not a data:
+// URI. Two things ruled those out:
+//  - Linking to CLIENT_URL/logo.png is fragile — the frontend is on Vercel,
+//    whose subdomain changes on many redeploys, and there's no owned custom
+//    domain to pin to instead. A dead/stale URL just means a broken image
+//    forever until someone notices.
+//  - data: URI <img> tags have inconsistent support across email clients —
+//    several (Outlook desktop among them) simply don't render them at all.
+// A CID-referenced inline attachment is the standard, universally-supported
+// way transactional email systems embed a logo — sendEmail.js imports
+// getLogoAttachment() below and attaches it to every send.
+export const LOGO_CID = "khilung-logo";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-let logoDataUri = "";
+let logoAttachment = null;
 try {
   const logoPath = path.join(__dirname, "../../client/public/logo.png");
   const logoBuffer = fs.readFileSync(logoPath);
-  logoDataUri = `data:image/png;base64,${logoBuffer.toString("base64")}`;
+  logoAttachment = {
+    content: logoBuffer.toString("base64"),
+    filename: "logo.png",
+    type: "image/png",
+    disposition: "inline",
+    content_id: LOGO_CID,
+  };
 } catch (err) {
   console.warn("emailTemplate.js: couldn't load logo.png for embedding:", err.message);
 }
+
+export const getLogoAttachment = () => logoAttachment;
 
 const wrapEmail = ({ title, bodyHtml, preheader = "" }) => `
 <!DOCTYPE html>
@@ -40,7 +56,7 @@ const wrapEmail = ({ title, bodyHtml, preheader = "" }) => `
 
           <tr>
             <td style="background:linear-gradient(135deg,#0b1f3a 0%,#102a4c 50%,#0a192f 100%);padding:28px 32px;text-align:center;">
-              ${logoDataUri ? `<img src="${logoDataUri}" alt="${COMPANY_NAME}" width="44" height="44" style="display:block;margin:0 auto 10px;border-radius:8px;" />` : ""}
+              ${logoAttachment ? `<img src="cid:${LOGO_CID}" alt="${COMPANY_NAME}" width="44" height="44" style="display:block;margin:0 auto 10px;border-radius:8px;" />` : ""}
               <span style="color:#f5f3ee;font-size:15px;font-weight:700;letter-spacing:0.04em;">${COMPANY_NAME}</span>
             </td>
           </tr>

@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { getLogoAttachment } from "./emailTemplate.js";
 
 dotenv.config();
 
@@ -39,6 +40,12 @@ const sendEmail = async ({ to, subject, html }) => {
   const timeout = setTimeout(() => controller.abort(), 10_000);
   const from = parseFromAddress(process.env.EMAIL_FROM);
 
+  // Every outgoing email uses wrapEmail() (see emailTemplate.js), whose
+  // header references the logo via cid:khilung-logo — attach it here once,
+  // centrally, so every call site gets it automatically. Harmless to include
+  // even for the rare email that doesn't reference the cid.
+  const logoAttachment = getLogoAttachment();
+
   try {
     const res = await fetch(SENDGRID_ENDPOINT, {
       method: "POST",
@@ -51,6 +58,7 @@ const sendEmail = async ({ to, subject, html }) => {
         from,
         subject,
         content: [{ type: "text/html", value: html }],
+        ...(logoAttachment ? { attachments: [logoAttachment] } : {}),
       }),
       signal: controller.signal,
     });
