@@ -59,23 +59,14 @@ export const login = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 
+  // NOTE: deliberately no fallback-credential check here. The fallback exists
+  // solely to bootstrap access before any real admin User document exists —
+  // once one does (as it does here, since `user` was found above), that
+  // document's actual password is authoritative. Falling back to the
+  // hardcoded/env default in this branch would mean the default password
+  // stays permanently valid for this email even after it's changed, which
+  // defeats the entire point of changing it.
   if (!(await user.matchPassword(password))) {
-    if (isFallbackAdminLogin(email, password)) {
-      const accessToken = generateAccessToken(fallbackAdminUser._id);
-      const refreshToken = generateRefreshToken(fallbackAdminUser._id);
-      setAuthCookies(res, accessToken, refreshToken);
-      return res.json({
-        success: true,
-        data: {
-          id: fallbackAdminUser._id,
-          name: fallbackAdminUser.name,
-          email: fallbackAdminUser.email,
-          role: fallbackAdminUser.role,
-        },
-        accessToken,
-      });
-    }
-
     res.status(401);
     throw new Error("Invalid email or password");
   }
