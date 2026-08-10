@@ -10,13 +10,20 @@ dotenv.config();
 const SENDGRID_ENDPOINT = "https://api.sendgrid.com/v3/mail/send";
 
 // EMAIL_FROM is "Display Name <email@example.com>" (or a bare email) —
-// SendGrid's JSON API wants those as separate fields.
+// SendGrid's JSON API wants those as separate fields. Also strips one layer
+// of surrounding quotes: .env files conventionally write
+// EMAIL_FROM="Name <email>" with quotes, but a host's dashboard env-var UI
+// (Render included) wants the raw value — pasting the quoted form in
+// verbatim is an easy mistake, and left unhandled it makes the whole string
+// (quotes and all) get treated as a single malformed email address, which
+// SendGrid rejects with "Invalid from email address".
 const parseFromAddress = (raw) => {
-  const match = /^(.*)<(.+)>$/.exec(raw || "");
+  const cleaned = (raw || "").trim().replace(/^["']|["']$/g, "").trim();
+  const match = /^(.*)<(.+)>$/.exec(cleaned);
   if (match) {
-    return { name: match[1].trim().replace(/^"|"$/g, ""), email: match[2].trim() };
+    return { name: match[1].trim().replace(/^["']|["']$/g, ""), email: match[2].trim() };
   }
-  return { email: (raw || "").trim() };
+  return { email: cleaned };
 };
 
 const sendEmail = async ({ to, subject, html }) => {
@@ -30,6 +37,7 @@ const sendEmail = async ({ to, subject, html }) => {
   // longer than a few seconds even if SendGrid itself is unreachable.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10_000);
+  const from = parseFromAddress(process.env.EMAIL_FROM);
 
   try {
     const res = await fetch(SENDGRID_ENDPOINT, {
@@ -40,7 +48,7 @@ const sendEmail = async ({ to, subject, html }) => {
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: to }] }],
-        from: parseFromAddress(process.env.EMAIL_FROM),
+        from,
         subject,
         content: [{ type: "text/html", value: html }],
       }),
@@ -49,7 +57,10 @@ const sendEmail = async ({ to, subject, html }) => {
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      throw new Error(`SendGrid ${res.status}: ${body || res.statusText}`);
+      // Include the parsed "from" in the error — the most common failure
+      // (an unverified or malformed EMAIL_FROM) is otherwise invisible from
+      // the SendGrid response alone.
+      throw new Error(`SendGrid ${res.status} (from: ${JSON.stringify(from)}): ${body || res.statusText}`);
     }
   } finally {
     clearTimeout(timeout);
