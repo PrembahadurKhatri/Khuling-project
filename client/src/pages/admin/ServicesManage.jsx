@@ -203,7 +203,7 @@ const ServicesManage = () => {
             onSubmit={handleSubmit}
             className={`my-0 max-h-[92vh] w-full space-y-3 overflow-y-auto rounded-t-2xl border p-6 sm:my-8 sm:max-w-lg sm:rounded-2xl ${panelClass}`}
           >
-            <h2 className="mb-2 font-heading text-lg font-semibold">{editing ? "Edit Service" : "New Service"}</h2>
+            <h2 className="mb-2 font-body text-lg font-semibold">{editing ? "Edit Service" : "New Service"}</h2>
             <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputClass} />
 
             <div>

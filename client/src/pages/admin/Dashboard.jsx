@@ -41,7 +41,7 @@ const Dashboard = () => {
         <h1 className="text-2xl font-body font-bold">Dashboard</h1>
         <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>CMS overview</p>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 body-font">
         <StatCard label="Total Projects" value={projectsData?.total ?? "—"} theme={theme} />
         <StatCard label="Blog Posts" value={blogsData?.total ?? "—"} theme={theme} />
         <StatCard label="New Messages" value={messagesData?.total ?? "—"} theme={theme} />
