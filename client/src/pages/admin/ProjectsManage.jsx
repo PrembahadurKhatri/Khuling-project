@@ -177,7 +177,7 @@ const ProjectsManage = () => {
           {/* Mobile card list */}
           <div className="space-y-3 md:hidden">
             {data?.data?.length === 0 && (
-              <div className={`rounded-xl font-body border px-4 py-8 text-center text-sm ${cardClass} ${mutedClass}`}>
+              <div className={`rounded-xl border px-4 py-8 text-center text-sm ${cardClass} ${mutedClass}`}>
                 No projects yet.
               </div>
             )}
@@ -216,7 +216,7 @@ const ProjectsManage = () => {
             onSubmit={handleSubmit}
             className={`my-0 max-h-[92vh] w-full space-y-3 overflow-y-auto rounded-t-2xl border p-6 sm:my-8 sm:max-w-lg sm:rounded-2xl ${panelClass}`}
           >
-            <h2 className="mb-2 font-body text-lg font-semibold">{editing ? "Edit Project" : "New Project"}</h2>
+            <h2 className="mb-2 font-heading text-lg font-semibold">{editing ? "Edit Project" : "New Project"}</h2>
             <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputClass} />
 
             <div>

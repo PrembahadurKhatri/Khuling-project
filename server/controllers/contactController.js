@@ -67,7 +67,7 @@ export const updateContactMessageStatus = asyncHandler(async (req, res) => {
 });
 
 // @desc   Reply to an inquiry — sends the reply straight to the sender's
-//         inbox (via Resend) and records it on the message.
+//         inbox (via SendGrid) and records it on the message.
 // @route  POST /api/contact/:id/reply
 export const replyToContactMessage = asyncHandler(async (req, res) => {
   const { message: replyText } = req.body;
