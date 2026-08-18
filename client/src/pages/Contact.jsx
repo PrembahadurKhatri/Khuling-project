@@ -7,12 +7,28 @@ import PageHeader from "../components/PageHeader.jsx";
 import { HiLocationMarker, HiPhone, HiMail } from "react-icons/hi";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
+// The admin's "Google Maps embed URL" field expects a bare URL, but
+// Google's own "Share > Embed a map" panel hands people the *full*
+// <iframe> tag by default — pasting that whole tag in is a very natural
+// mistake. Extract just the src="..." out of it if that's what got saved,
+// so the field works either way instead of silently producing a broken map.
+const extractMapSrc = (value) => {
+  if (!value) return null;
+  const match = value.match(/src=["']([^"']+)["']/);
+  return match ? match[1] : value;
+};
+
+// Used whenever the admin hasn't set a map in Settings yet — KD Tower.
+const DEFAULT_MAP_SRC =
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4287.098976128644!2d85.31360889999999!3d27.695148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19fb918be951%3A0x7db479e01f649b!2sKD%20Tower!5e1!3m2!1sen!2snp!4v1787044540624!5m2!1sen!2snp";
+
 const Contact = () => {
   const [mode, setMode] = useState("contact");
   const [status, setStatus] = useState(null);
   const { register, handleSubmit, reset, setValue, formState: { isSubmitting } } = useForm();
   const { data } = useQuery({ queryKey: ["public-settings"], queryFn: fetchSettings });
   const settings = data?.data || {};
+  const mapSrc = extractMapSrc(settings.mapEmbedUrl) || DEFAULT_MAP_SRC;
 
   const onSubmit = async (values) => {
     try {
@@ -196,8 +212,9 @@ const Contact = () => {
 
  <section className="h-96 border-t border-line relative overflow-hidden">
   <iframe
+    key={mapSrc}
     title="office-location"
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4266.22708516312!2d83.9949601117577!3d28.22196547579089!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3995943668ae901d%3A0x2fa2e2b8cd013728!2sSoch%20College%20of%20IT!5e1!3m2!1sen!2snp!4v1786094140786!5m2!1sen!2snp"
+    src={mapSrc}
     className="w-full h-full border-0 grayscale-[20%] contrast-[1.1] hover:grayscale-0 transition duration-500"
     loading="lazy"
     referrerPolicy="strict-origin-when-cross-origin"

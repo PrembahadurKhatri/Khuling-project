@@ -14,6 +14,7 @@ const emptyForm = {
   emergencyContact: "",
   address: "",
   mapEmbedUrl: "",
+  credentials: [],
   social: { facebook: "", instagram: "", linkedin: "", youtube: "", twitter: "" },
   stats: { projectsCompleted: 0, yearsExperience: 0, clientsServed: 0, engineers: 0, machines: 0 },
   seo: { metaTitle: "", metaDescription: "" },
@@ -67,6 +68,11 @@ const SettingsManage = () => {
 
   const setField = (key, value) => setForm((f) => ({ ...f, [key]: value }));
   const setNested = (group, key, value) => setForm((f) => ({ ...f, [group]: { ...f[group], [key]: value } }));
+
+  const setCredential = (index, value) =>
+    setForm((f) => ({ ...f, credentials: f.credentials.map((c, i) => (i === index ? value : c)) }));
+  const addCredential = () => setForm((f) => ({ ...f, credentials: [...f.credentials, ""] }));
+  const removeCredential = (index) => setForm((f) => ({ ...f, credentials: f.credentials.filter((_, i) => i !== index) }));
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -142,8 +148,38 @@ const SettingsManage = () => {
             <label className="space-y-1 sm:col-span-2">
               <span className={`text-xs ${labelClass}`}>Google Maps embed URL</span>
               <input className={inputClass} value={form.mapEmbedUrl} onChange={(e) => setField("mapEmbedUrl", e.target.value)} />
+              <span className={`block text-[11px] ${labelClass}`}>
+                From Google Maps: Share → Embed a map → Copy HTML. Pasting either the full &lt;iframe&gt; code or just its src URL both work.
+              </span>
             </label>
           </div>
+        </section>
+
+        <section className={`rounded-xl border p-6 space-y-3 ${panelClass}`}>
+          <h2 className="font-body font-semibold mb-1">Credibility Strip (Homepage)</h2>
+          <p className={`text-xs ${labelClass}`}>Short badges shown right below the hero — e.g. "ISO 9001:2015 Certified".</p>
+          <div className="space-y-2">
+            {form.credentials.map((credential, i) => (
+              <div key={i} className="flex gap-2">
+                <input className={inputClass} value={credential} onChange={(e) => setCredential(i, e.target.value)} placeholder="e.g. 120+ Projects Delivered" />
+                <button
+                  type="button"
+                  onClick={() => removeCredential(i)}
+                  className={`shrink-0 rounded-lg border px-3 text-sm ${theme === "dark" ? "border-gray-700 text-gray-400 hover:text-red-400" : "border-line text-gray-500 hover:text-red-500"}`}
+                  aria-label="Remove"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addCredential}
+            className={`text-sm font-semibold ${theme === "dark" ? "text-gold" : "text-navy"} hover:underline`}
+          >
+            + Add credential
+          </button>
         </section>
 
         <section className={`rounded-xl border p-6 space-y-3 ${panelClass}`}>

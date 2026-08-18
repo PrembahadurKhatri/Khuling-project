@@ -11,6 +11,12 @@ const settingsSchema = new mongoose.Schema(
     emergencyContact: { type: String },
     address: { type: String },
     mapEmbedUrl: { type: String },
+    // Short badge-style claims shown in the homepage credibility strip right
+    // below the hero (e.g. "ISO 9001:2015 Certified") — admin-editable list.
+    credentials: {
+      type: [String],
+      default: ["ISO 9001:2015 Certified", "8+ Years in Practice", "Government Panel Listed", "120+ Projects Delivered"],
+    },
     social: {
       facebook: String,
       instagram: String,

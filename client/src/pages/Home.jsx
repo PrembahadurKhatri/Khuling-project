@@ -9,6 +9,15 @@ import api from "../services/api.js";
 import Hero from "../components/Hero.jsx";
 import ProjectCard from "../components/ProjectCard.jsx";
 import Counter from "../components/Counter.jsx";
+import { FaBullseye, FaEye, FaBuilding, FaUsers, FaHardHat, FaShieldAlt, FaThumbsUp, FaHandshake } from "react-icons/fa";
+
+// Below the story photo — short, scannable trust signals (icon + label).
+const trustBadges = [
+  [FaBuilding, "Trusted by", "Clients Across Nepal"],
+  [FaShieldAlt, "Commitment to", "Quality, Safety & Environment"],
+  [FaThumbsUp, "On-time", "Delivery Every Time"],
+  [FaHandshake, "Long-term", "Partnerships We Value"],
+];
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -17,9 +26,10 @@ const fadeUp = {
   transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
 };
 
-const credentials = [
+// Shown only until the admin sets their own list in Settings → Credibility Strip.
+const DEFAULT_CREDENTIALS = [
   "ISO 9001:2015 Certified",
-  "15+ Years in Practice",
+  "8+ Years in Practice",
   "Government Panel Listed",
   "120+ Projects Delivered",
 ];
@@ -91,6 +101,7 @@ const Home = () => {
   const projects = projectsData?.data || [];
   const posts = blogData?.data || [];
   const stats = settingsData?.data?.stats || {};
+  const credentials = settingsData?.data?.credentials?.length ? settingsData.data.credentials : DEFAULT_CREDENTIALS;
   const testimonials = testimonialsData?.data?.length
     ? testimonialsData.data.map((t) => ({ quote: t.message, name: t.name, org: [t.designation, t.company].filter(Boolean).join(", ") }))
     : fallbackTestimonials;
@@ -138,35 +149,44 @@ useEffect(() => {
 
   {/* LEFT CONTENT */}
   <div className="md:col-span-6 space-y-6">
-    
-    <div className=" pt-4 space-y-3">
-      <p className="eyebrow tracking-wider font-body">Our Story</p>
+
+    <div className="pt-4 space-y-3">
+      <div className="flex items-center gap-3">
+        <p className="eyebrow tracking-wider font-body">Our Story</p>
+   
+      </div>
 
       <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] max-w-xl">
-        Built for Nepal's infrastructure, one contract at a time.
+        Built for Nepal's infrastructure, <span className="text-gold">one contract</span> at a time.
       </h2>
+
+  
     </div>
 
     <p className="text-navy/70 leading-relaxed max-w-lg text-lg font-body">
-      Founded to help modernize Nepal's road and civil infrastructure, Khilung Kalika
-      Construction Pvt. Ltd. has grown into a trusted partner for government and private
-      clients — delivering roads, bridges, and commercial developments across the country.
+   Khilung Kalika Construction Pvt. Ltd. (KKCPL) was established in 2018 under the Companies Act 2063. The company provides civil and architectural construction services for projects such as hydropower, hospitals, buildings, roads, schools, colleges, and agricultural farms. With experienced engineers, skilled technicians, over 67 full-time staff and around 350 contract-based workers, KKCPL is committed to delivering high-quality, safe, and cost-effective construction projects on time while maintaining strong standards in quality, safety, and environmental management.
     </p>
 
     {/* MISSION / VISION */}
     <div className="mt-8 grid sm:grid-cols-2 gap-5">
-      
-      <div className="card p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <p className="text-navy font-bold mb-2 font-body text-lg hover:">Mission</p>
+
+      <div className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <div className="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center ring-1 ring-navy/10 group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
+          <FaBullseye className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
+        </div>
+        <p className="text-navy font-bold mt-4 mb-2 font-body text-lg">Our Mission</p>
         <p className="text-navy/70 text-sm leading-relaxed font-body">
-          Build durable, safe infrastructure that serves communities for generations, not just contract terms.
+         Our mission is to deliver high-quality construction services at competitive prices while ensuring customer satisfaction through timely project completion, attention to detail, and professional service. We uphold the highest standards of professionalism, integrity, honesty, and fairness in all our relationships.
         </p>
       </div>
 
-      <div className="card p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <p className="text-navy font-bold mb-2 text-lg">Vision</p>
-        <p className="text-navy/70 text-sm leading-relaxed">
-          Become the contractor government agencies call first when the deadline can't slip.
+      <div className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <div className="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center ring-1 ring-navy/10 group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
+          <FaEye className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
+        </div>
+        <p className="text-navy font-bold mt-4 mb-2 font-body text-lg">Our Vision</p>
+        <p className="text-navy/70 text-sm leading-relaxed font-body">
+          To become a reputable and preferred civil contractor who is well known for delivering beyond the client's and project's expectations.
         </p>
       </div>
 
@@ -176,7 +196,7 @@ useEffect(() => {
   {/* RIGHT IMAGE */}
   <div className="md:col-span-6">
     <div className="relative group">
-      
+
       {/* soft glow background */}
       <div className="absolute -inset-2 bg-gradient-to-tr from-gold/20 via-transparent to-navy/10 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition duration-500"></div>
 
@@ -186,8 +206,50 @@ useEffect(() => {
           alt="Khilung Kalika engineers on site"
           className="w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
         />
-      </div>
 
+        {/* stat bar overlay */}
+        <div className="absolute inset-x-0 bottom-0 bg-navy/90 backdrop-blur-sm">
+          <div className="grid grid-cols-3 divide-x divide-white/15">
+            <div className="flex items-center gap-2.5 px-3 py-4 sm:px-5">
+              <FaBuilding className="text-gold text-lg sm:text-xl shrink-0" />
+              <div>
+                <p className="text-white font-bold text-base sm:text-lg leading-none font-body">{stats.yearsExperience || 8}+</p>
+                <p className="text-white/70 text-[10px] sm:text-[11px] font-body mt-1">Years of Excellence</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 px-3 py-4 sm:px-5">
+              <FaUsers className="text-gold text-lg sm:text-xl shrink-0" />
+              <div>
+                <p className="text-white font-bold text-base sm:text-lg leading-none font-body">67+</p>
+                <p className="text-white/70 text-[10px] sm:text-[11px] font-body mt-1">Full-time Staff</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 px-3 py-4 sm:px-5">
+              <FaHardHat className="text-gold text-lg sm:text-xl shrink-0" />
+              <div>
+                <p className="text-white font-bold text-base sm:text-lg leading-none font-body">350+</p>
+                <p className="text-white/70 text-[10px] sm:text-[11px] font-body mt-1">Contract-based Staff</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Trust badges */}
+    <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
+      {trustBadges.map(([Icon, line1, line2]) => (
+        <div key={line2} className="flex flex-col items-center text-center gap-2.5">
+          <div className="w-11 h-11 rounded-lg bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
+            <Icon className="text-gold text-base" />
+          </div>
+          <p className="text-navy/60 text-[11px] font-body leading-tight">
+            {line1}
+            <br />
+            <span className="text-navy font-semibold">{line2}</span>
+          </p>
+        </div>
+      ))}
     </div>
   </div>
 

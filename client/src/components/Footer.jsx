@@ -2,14 +2,17 @@ import { FaFacebookF, FaLinkedinIn, FaYoutube, FaInstagram } from "react-icons/f
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSettings } from "../services/settingsService.js";
+import { fetchServices } from "../services/serviceService.js";
 
 const socialIconClass =
   "w-10 h-10 rounded-sm border border-stone/20 flex items-center justify-center text-stone/70 hover:bg-gold hover:border-gold hover:text-navy transition-all duration-300 hover:-translate-y-1";
 
 const Footer = () => {
   const { data } = useQuery({ queryKey: ["public-settings"], queryFn: fetchSettings });
+  const { data: servicesData } = useQuery({ queryKey: ["footer-services"], queryFn: () => fetchServices() });
   const settings = data?.data || {};
   const social = settings.social || {};
+  const footerServices = (servicesData?.data || []).slice(0, 5);
 
   return (
     <footer className="bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)] font-body  text-stone/80 relative overflow-hidden">
@@ -75,6 +78,7 @@ const Footer = () => {
             <li><Link to="/projects" className="hover:text-gold transition-colors font-body">Projects</Link></li>
             <li><Link to="/careers" className="hover:text-gold transition-colors font-body">Careers</Link></li>
             <li><Link to="/blog" className="hover:text-gold transition-colors font-body">Blogs</Link></li>
+            <li><Link to="/policy" className="hover:text-gold transition-colors font-body">Policy</Link></li>
           </ul>
         </div>
 
@@ -82,10 +86,14 @@ const Footer = () => {
         <div className="lg:col-span-2">
           <p className="eyebrow-invert mb-6 font-body">Services</p>
           <ul className="space-y-3 text-sm text-stone/70">
-            <li> <Link to="/services" className="hover:text-gold transition-colors font-body">Infrastructure</Link></li>
-            <li ><Link to="/services" className="hover:text-gold transition-colors font-body">Road &amp; Bridge</Link></li>
-            <li ><Link to="/services" className="hover:text-gold transition-colors font-body">Commercial Building</Link></li>
-            <li className="hover:text-gold transition-colors font-body">Project Management</li>
+            {footerServices.length === 0 && <li className="text-stone/40 font-body">No services added yet.</li>}
+            {footerServices.map((service) => (
+              <li key={service._id}>
+                <Link to="/services" className="hover:text-gold transition-colors font-body">
+                  {service.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

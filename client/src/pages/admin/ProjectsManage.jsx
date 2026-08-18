@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { fetchProjects, createProject, updateProject, deleteProject } from "../../services/projectService.js";
 import { fetchCategories } from "../../services/categoryService.js";
 import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
+import NepaliDateField from "../../components/admin/NepaliDateField.jsx";
 import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
@@ -244,10 +245,22 @@ const ProjectsManage = () => {
               <div>
                 <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>Start Date</label>
                 <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className={inputClass} />
+                <NepaliDateField
+                  adValue={form.startDate}
+                  onAdChange={(ad) => setForm({ ...form, startDate: ad })}
+                  inputClass={inputClass}
+                  mutedClass={mutedClass}
+                />
               </div>
               <div>
                 <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>End Date</label>
                 <input type="date" value={form.endDate} min={form.startDate || undefined} onChange={(e) => setForm({ ...form, endDate: e.target.value })} className={inputClass} />
+                <NepaliDateField
+                  adValue={form.endDate}
+                  onAdChange={(ad) => setForm({ ...form, endDate: ad })}
+                  inputClass={inputClass}
+                  mutedClass={mutedClass}
+                />
               </div>
             </div>
 

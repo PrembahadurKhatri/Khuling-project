@@ -18,6 +18,7 @@ import Careers from "./pages/Careers.jsx";
 import CareerDetail from "./pages/CareerDetail.jsx";
 import GeneralApplication from "./pages/GeneralApplication.jsx";
 import Contact from "./pages/Contact.jsx";
+import Policy from "./pages/Policy.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 import Login from "./pages/admin/Login.jsx";
@@ -57,6 +58,7 @@ function App() {
           <Route path="/careers/general" element={<GeneralApplication />} />
           <Route path="/careers/:slug" element={<CareerDetail />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/policy" element={<Policy />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
