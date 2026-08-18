@@ -122,7 +122,7 @@ Our vision is to become a reputable and preferred civil contractor who is well k
         <img
           src="https://i.pinimg.com/1200x/35/23/84/352384a7a5937c38bdf830722eeb1bc0.jpg"
           alt="Khilung Kalika engineers on site"
-          className="w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-[480px] object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
         {/* stat bar overlay */}
@@ -155,13 +155,13 @@ Our vision is to become a reputable and preferred civil contractor who is well k
     </div>
 
     {/* Trust badges */}
-    <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
+    <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
       {trustBadges.map(([Icon, line1, line2]) => (
-        <div key={line2} className="flex flex-col items-center text-center gap-2.5">
-          <div className="w-11 h-11 rounded-lg bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
-            <Icon className="text-gold text-base" />
+        <div key={line2} className="flex flex-col items-center text-center gap-3.5">
+          <div className="w-16 h-16 rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
+            <Icon className="text-gold text-xl" />
           </div>
-          <p className="text-navy/60 text-[11px] font-body leading-tight">
+          <p className="text-navy text-xs font-body leading-snug">
             {line1}
             <br />
             <span className="text-navy font-semibold">{line2}</span>

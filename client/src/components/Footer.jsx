@@ -12,7 +12,7 @@ const Footer = () => {
   const { data: servicesData } = useQuery({ queryKey: ["footer-services"], queryFn: () => fetchServices() });
   const settings = data?.data || {};
   const social = settings.social || {};
-  const footerServices = (servicesData?.data || []).slice(0, 5);
+  const footerServices = (servicesData?.data || []).slice(0, 4);
 
   return (
     <footer className="bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)] font-body  text-stone/80 relative overflow-hidden">
