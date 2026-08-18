@@ -6,3 +6,8 @@ export const fetchVisitStats = async () => {
   const { data } = await api.get("/visits/stats");
   return data;
 };
+
+export const resetVisits = async () => {
+  const { data } = await api.delete("/visits");
+  return data;
+};

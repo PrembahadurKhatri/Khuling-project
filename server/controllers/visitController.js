@@ -22,3 +22,12 @@ export const getVisitStats = asyncHandler(async (req, res) => {
 
   res.json({ success: true, data: { total, last7Days, last30Days } });
 });
+
+// @desc   Wipe all recorded visits — for zeroing the counter before handing
+//         a site over to a client, so dev/testing traffic doesn't show up
+//         as their real numbers. Irreversible, admin-only.
+// @route  DELETE /api/visits
+export const resetVisits = asyncHandler(async (req, res) => {
+  const { deletedCount } = await Visit.deleteMany({});
+  res.json({ success: true, message: `Cleared ${deletedCount} recorded visit(s).` });
+});
