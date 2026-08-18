@@ -25,15 +25,7 @@ const ProjectCard = ({ project, size = "md" }) => {
             <div className="absolute top-4 right-4 w-8 h-8 border-t border-r border-gold/70" />
           </div>
 
-          <div className="absolute top-4 left-4 flex items-center gap-2">
-            <span className="badge-gold shadow-sm">{project.category}</span>
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 p-5 flex items-center justify-between font-body text-[11px] font-semibold tracking-[0.12em] uppercase text-stone/90">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1 h-1 rounded-full bg-gold/80" />
-              {project.location}
-            </span>
+          <div className="absolute bottom-0 left-0 right-0 p-5 flex items-center justify-end font-body text-[11px] font-semibold tracking-[0.12em] uppercase text-stone/90">
             <span className="badge-white !text-[10px] backdrop-blur-sm">{project.status}</span>
           </div>
         </div>
