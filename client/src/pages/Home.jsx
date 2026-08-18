@@ -243,7 +243,7 @@ useEffect(() => {
           <div className="w-11 h-11 rounded-lg bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
             <Icon className="text-gold text-base" />
           </div>
-          <p className="text-navy/60 text-[11px] font-body leading-tight">
+          <p className="text-navy text-[11px] font-body leading-tight">
             {line1}
             <br />
             <span className="text-navy font-semibold">{line2}</span>
