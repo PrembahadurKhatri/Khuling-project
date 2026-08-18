@@ -181,7 +181,8 @@ const Blog = () => {
           </>
         ) : (
           <div className="text-center py-24 rounded-2xl border border-dashed border-navy/15 bg-navy/[0.02]">
-            <h2 className="font-display text-3xl text-navy mb-3">No articles yet</h2>
+              <div className="text-5xl mb-4">📂</div>
+            <h2 className="font-body text-3xl text-navy mb-3">No articles yet</h2>
             <p className="font-body text-navy/60">
               Stay tuned — new insights and stories coming soon.
             </p>

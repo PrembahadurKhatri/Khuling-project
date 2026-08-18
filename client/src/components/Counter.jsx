@@ -26,7 +26,7 @@ const Counter = ({ value, label, suffix = "+", size = "md" }) => {
       transition={{ duration: 0.6 }}
       className="text-center sm:text-left"
     >
-      <div className={`font-display text-gold-light leading-none ${size === "lg" ? "text-5xl sm:text-6xl md:text-7xl" : "text-3xl sm:text-4xl md:text-5xl"}`}>
+      <div className={`font-body text-gold-light leading-none ${size === "lg" ? "text-5xl sm:text-6xl md:text-7xl" : "text-3xl sm:text-4xl md:text-5xl"}`}>
         {count}{suffix}
       </div>
       <p className="mt-3 font-body text-[11px] font-semibold tracking-widest2 uppercase text-stone/60">{label}</p>
