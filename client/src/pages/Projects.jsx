@@ -5,6 +5,7 @@ import { fetchProjects } from "../services/projectService.js";
 import { fetchCategories } from "../services/categoryService.js";
 import ProjectCard from "../components/ProjectCard.jsx";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 
 const statuses = ["Completed", "Ongoing", "Upcoming"];
 
@@ -41,6 +42,7 @@ const Projects = () => {
 
   return (
     <div className="relative">
+      <Seo title="Projects" description="A record you can verify on the ground — completed, ongoing, and upcoming construction projects across Nepal." />
       {/* Header */}
       <PageHeader
         eyebrow="Portfolio"

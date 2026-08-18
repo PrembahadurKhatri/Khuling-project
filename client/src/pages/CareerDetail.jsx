@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { fetchCareerBySlug, applyToCareer } from "../services/careerService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import ApplicationFormFields from "../components/ApplicationFormFields.jsx";
 import {
   HiLocationMarker,
@@ -72,12 +73,14 @@ const CareerDetail = () => {
   if (!data?.data) {
     return (
       <div className="section text-center">
+        <Seo title="Position Not Found" noindex />
         <p className="text-navy/60 text-lg">Position not found.</p>
       </div>
     );
   }
 
   const job = data.data;
+  const jobDescription = job.description?.length > 160 ? `${job.description.slice(0, 157)}...` : job.description;
   const isOpen = job.status === "open";
 
   const onSubmit = async (values) => {
@@ -104,6 +107,9 @@ const CareerDetail = () => {
 
   return (
     <div>
+      {/* Closed positions are excluded from the sitemap too — keep them out
+          of search results once they stop being an active opening. */}
+      <Seo title={job.title} description={jobDescription} noindex={!isOpen} />
       <PageHeader
         eyebrow={[job.department, job.location, job.type].filter(Boolean).join(" · ") || "Careers"}
         title={job.title}

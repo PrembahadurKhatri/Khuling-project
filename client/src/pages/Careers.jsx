@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import { fetchCareers } from "../services/careerService.js";
 
 const Careers = () => {
@@ -19,6 +20,7 @@ const Careers = () => {
 
   return (
     <div>
+      <Seo title="Careers" description="Built by the people who show up on site — current job openings at Khilung Kalika Construction." />
       <PageHeader
         eyebrow="Join the Team"
         title="Built by the people who show up on site."

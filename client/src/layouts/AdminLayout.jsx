@@ -21,6 +21,7 @@ import {
 } from "react-icons/hi";
 import useAuth from "../hooks/useAuth.js";
 import { ToastProvider } from "../contexts/ToastContext.jsx";
+import Seo from "../components/Seo.jsx";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: HiOutlineViewGrid, end: true },
@@ -104,6 +105,7 @@ const AdminLayout = () => {
 
   return (
     <ToastProvider>
+      <Seo title="Admin" noindex />
       <div className="min-h-screen flex bg-stone text-ink transition-colors duration-200 dark:bg-gray-950 dark:text-gray-100">
         {/* Desktop sidebar — always visible at lg+ */}
         <aside className="hidden lg:flex w-64 shrink-0 bg-paper/90 border-r border-line backdrop-blur-sm flex-col dark:bg-gray-900/90 dark:border-gray-800">

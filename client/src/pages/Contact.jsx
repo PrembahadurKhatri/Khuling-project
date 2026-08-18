@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../services/api.js";
 import { fetchSettings } from "../services/settingsService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import { HiLocationMarker, HiPhone, HiMail } from "react-icons/hi";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
@@ -43,6 +44,7 @@ const Contact = () => {
 
   return (
     <div>
+      <Seo title="Contact Us" description="Send us the brief. We'll send back a real estimate — get in touch with Khilung Kalika Construction." />
       <PageHeader
         eyebrow="Get in Touch"
         title="Send us the brief. We'll send back a real estimate."

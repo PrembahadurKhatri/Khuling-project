@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import api from "../services/api.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 
 const fetchBlogs = async (params) => {
   const { data } = await api.get("/blogs", { params });
@@ -43,6 +44,7 @@ const Blog = () => {
 
   return (
     <div>
+      <Seo title="Blog" description="Insights, stories, and ideas shaping our projects." />
       <PageHeader
         eyebrow="Blogs"
         title="Insights, stories, and ideas shaping our projects."

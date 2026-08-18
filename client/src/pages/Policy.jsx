@@ -1,5 +1,6 @@
 import { FaUserShield, FaBalanceScale, FaHardHat, FaLeaf, FaCertificate } from "react-icons/fa";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 
 const policies = [
   {
@@ -42,6 +43,7 @@ const policies = [
 const Policy = () => {
   return (
     <div>
+      <Seo title="Company Policies" description="The important policies Khilung Kalika Construction has adopted to protect a healthy work culture, the environment, human rights, and employee welfare." />
       <PageHeader eyebrow="Governance" title="Company Policies" crumb="Home / Policy">
         The Company has adopted the following important policies to develop, maintain, and protect a healthy work
         culture, ecological environment, human rights, and the welfare of its employees and society.

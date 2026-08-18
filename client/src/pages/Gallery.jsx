@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import { fetchGallery } from "../services/galleryService.js";
 import { HiX, HiOutlinePhotograph } from "react-icons/hi";
 
@@ -16,6 +17,7 @@ const Gallery = () => {
 
   return (
     <div>
+      <Seo title="Gallery" description="Captured moments from our ongoing work — a photo record of Khilung Kalika Construction's project sites." />
       <PageHeader
         eyebrow="Site Record"
         title="Captured moments from our ongoing work."

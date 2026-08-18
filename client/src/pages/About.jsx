@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import { fetchSettings } from "../services/settingsService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 
 // Pulled straight out of the objective/research copy below — not invented,
 // just surfaced as scannable pillars instead of buried in one paragraph.
@@ -57,6 +58,7 @@ const About = () => {
 
   return (
     <div>
+      <Seo title="About Us" description="Fifteen years of holding the line on schedule — the story, mission, and vision behind Khilung Kalika Construction Pvt. Ltd." />
       <PageHeader
         eyebrow="About the Firm"
         title="Fifteen years of holding the line on schedule."

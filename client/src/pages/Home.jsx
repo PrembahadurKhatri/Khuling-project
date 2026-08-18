@@ -10,6 +10,7 @@ import Hero from "../components/Hero.jsx";
 import ProjectCard from "../components/ProjectCard.jsx";
 import Counter from "../components/Counter.jsx";
 import { FaBullseye, FaEye, FaBuilding, FaUsers, FaHardHat, FaShieldAlt, FaThumbsUp, FaHandshake } from "react-icons/fa";
+import Seo from "../components/Seo.jsx";
 
 // Below the story photo — short, scannable trust signals (icon + label).
 const trustBadges = [
@@ -114,6 +115,10 @@ useEffect(() => {
 }, [testimonials.length]);
   return (
     <div>
+      {/* No title/description passed — falls back to Settings -> SEO's
+          defaults (or index.html's static values if Settings hasn't been
+          configured yet), which is exactly what the homepage should use. */}
+      <Seo />
       <Hero />
 
       {/* Credibility strip */}

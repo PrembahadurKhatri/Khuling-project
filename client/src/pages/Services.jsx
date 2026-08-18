@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import api from "../services/api.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 
 const fetchServices = async () => {
   const { data } = await api.get("/services");
@@ -14,6 +15,7 @@ const Services = () => {
 
   return (
     <div>
+      <Seo title="Services" description="Six disciplines under one project office — infrastructure, buildings, roads, bridges, and the full range of civil construction capability." />
       <PageHeader
         eyebrow="Capability"
         title="Six disciplines under one project office."

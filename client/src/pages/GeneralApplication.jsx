@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { submitGeneralApplication } from "../services/applicationService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import ApplicationFormFields from "../components/ApplicationFormFields.jsx";
 
 const GeneralApplication = () => {
@@ -32,6 +33,7 @@ const GeneralApplication = () => {
 
   return (
     <div>
+      <Seo title="General Application" description="Don't see a fit today? Introduce yourself anyway — submit a general application to Khilung Kalika Construction." />
       <PageHeader
         eyebrow="Careers"
         title="Don't see a fit today? Introduce yourself anyway."

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { resetPassword } from "../../services/authService.js";
+import Seo from "../../components/Seo.jsx";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -36,6 +37,7 @@ const ResetPassword = () => {
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 transition-colors ${theme === "dark" ? "bg-gray-950 text-gray-100" : "bg-stone text-ink"}`}>
+      <Seo title="Reset Password" noindex />
       <div className={`w-full max-w-md rounded-2xl border p-8 shadow-xl ${theme === "dark" ? "border-gray-800 bg-gray-900" : "border-line bg-paper"}`}>
         <div className="flex flex-col items-center mb-6">
           <img src="/logo.png" alt="Khilung Kalika Construction" className="h-16 w-16 mb-3" />

@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../services/api.js";
+import Seo from "../components/Seo.jsx";
 
 const fetchBlogBySlug = async (slug) => {
   const { data } = await api.get(`/blogs/${slug}`);
@@ -59,6 +60,7 @@ const BlogDetail = () => {
   if (!data?.data) {
     return (
       <div className="section text-center py-32">
+        <Seo title="Post Not Found" noindex />
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-navy/5 border border-navy/10 mb-6">
           <span className="text-2xl">📄</span>
         </div>
@@ -74,6 +76,13 @@ const BlogDetail = () => {
 
   return (
     <article>
+      {/* Prefers this post's own seo.metaTitle/metaDescription override if
+          the admin set one, otherwise its own title/excerpt. */}
+      <Seo
+        title={post.seo?.metaTitle || post.title}
+        description={post.seo?.metaDescription || post.excerpt}
+        image={post.featuredImage}
+      />
       {/* HERO */}
       <div className="relative h-[48vh] min-h-[360px] max-h-[560px] overflow-hidden bg-navy">
         <img

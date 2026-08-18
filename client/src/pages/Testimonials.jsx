@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchTestimonials } from "../services/testimonialService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import { HiStar } from "react-icons/hi";
 
 const Stars = ({ rating }) => (
@@ -17,6 +18,7 @@ const Testimonials = () => {
 
   return (
     <div>
+      <Seo title="Testimonials" description="What it's like working with us — client voices from across our completed and ongoing projects." />
       <PageHeader
         eyebrow="Client Voices"
         title="What it's like working with us."

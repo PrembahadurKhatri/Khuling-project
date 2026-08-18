@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchTeam } from "../services/teamService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Seo from "../components/Seo.jsx";
 import { FaLinkedinIn, FaFacebook, FaWhatsapp, FaInstagram, FaEnvelope } from "react-icons/fa";
 
 // Every link here is optional — a member card only ever shows the icons for
@@ -87,6 +88,7 @@ const Team = () => {
 
   return (
     <div>
+      <Seo title="Our Team" description="The people running the site office — meet the leadership and staff behind Khilung Kalika Construction." />
       <PageHeader
         eyebrow="Who We Are"
         title="The people running the site office."

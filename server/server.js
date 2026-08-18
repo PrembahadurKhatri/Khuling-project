@@ -26,6 +26,7 @@ import galleryRoutes from "./routes/galleryRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import visitRoutes from "./routes/visitRoutes.js";
+import seoRoutes from "./routes/seoRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.join(__dirname, "../client/dist");
@@ -45,6 +46,12 @@ app.use(
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         "img-src": ["'self'", "data:", "https:"],
+        // Google Analytics (gtag.js) — only the *.googletagmanager.com script
+        // itself needs allowing here; the gtag() bootstrap call runs from the
+        // app's own bundled JS (see components/GoogleAnalytics.jsx), not an
+        // inline <script>, so this doesn't need 'unsafe-inline'.
+        "script-src": ["'self'", "https://www.googletagmanager.com"],
+        "connect-src": ["'self'", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://region1.google-analytics.com"],
       },
     },
   })
@@ -107,9 +114,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Health check
 app.get("/api/health", (req, res) => res.json({ success: true, message: "API is running" }));
-app.get("/", (req, res) => {
-  res.send("Server is running 🚀");
-});
+// Dev-only — in production this same server also serves the built React app
+// (see the static block below), so "/" must fall through to that instead of
+// this plain-text handler intercepting it first.
+if (process.env.NODE_ENV !== "production") {
+  app.get("/", (req, res) => {
+    res.send("Server is running 🚀");
+  });
+}
+
+// SEO — sitemap.xml / robots.txt, at the root (not under /api) and ahead of
+// the production SPA catch-all so a crawler gets real XML/text, not index.html.
+app.use(seoRoutes);
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);

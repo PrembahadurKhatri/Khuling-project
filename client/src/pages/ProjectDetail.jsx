@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProjectBySlug } from "../services/projectService.js";
 import ProjectCard from "../components/ProjectCard.jsx";
+import Seo from "../components/Seo.jsx";
 import {
   HiLocationMarker,
   HiCalendar,
@@ -77,6 +78,7 @@ const ProjectDetail = () => {
   if (!data?.data) {
     return (
       <div className="section text-center">
+        <Seo title="Project Not Found" noindex />
         <p className="font-body text-navy/60 text-lg">Project not found.</p>
         <Link to="/projects" className="font-body inline-flex items-center gap-2 text-teal font-medium mt-4 hover:underline">
           <HiArrowLeft /> Back to projects
@@ -93,6 +95,14 @@ const ProjectDetail = () => {
 
   return (
     <div>
+      {/* Prefers this project's own seo.metaTitle/metaDescription override
+          (already in the model, previously unused) if the admin set one,
+          otherwise falls back to the project's own title/shortDescription. */}
+      <Seo
+        title={project.seo?.metaTitle || project.title}
+        description={project.seo?.metaDescription || project.shortDescription || project.description?.slice(0, 160)}
+        image={project.thumbnail}
+      />
       {/* ---------- Hero ---------- */}
       <div className="relative h-[58vh] min-h-[440px] overflow-hidden">
         <img

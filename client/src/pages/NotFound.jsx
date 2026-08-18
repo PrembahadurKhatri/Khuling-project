@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import Seo from "../components/Seo.jsx";
 
 const NotFound = () => (
   <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 bg-stone relative">
+    <Seo title="Page Not Found" noindex />
     <div className="absolute inset-0 bg-hero-pattern opacity-40 pointer-events-none" />
     <div className="relative">
       <p className="eyebrow mb-4">Error</p>
