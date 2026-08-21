@@ -9,9 +9,9 @@ import { FaLinkedinIn, FaFacebook, FaWhatsapp, FaInstagram, FaEnvelope } from "r
 const SocialLinks = ({ social }) => {
   if (!social || !Object.values(social).some(Boolean)) return null;
   const iconClass =
-    "w-9 h-9 rounded-full border border-navy/20 bg-white flex items-center justify-center text-navy/50 hover:text-white hover:bg-navy hover:border-gold shadow-sm hover:shadow-md transition-all duration-300";
+    "w-8 h-8 rounded-full border border-navy/20 bg-white flex items-center justify-center text-navy/50 hover:text-white hover:bg-navy hover:border-gold shadow-sm hover:shadow-md transition-all duration-300";
   return (
-    <div className="flex items-center gap-2.5 pt-4 border-t border-navy/20 mt-4">
+    <div className="flex items-center gap-2 pt-3 border-t border-navy/20 mt-3">
       {social.linkedin && (
         <a href={social.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className={iconClass}>
           <FaLinkedinIn size={13} />
@@ -48,32 +48,32 @@ const SocialLinks = ({ social }) => {
 };
 
 const MemberCard = ({ member, size = "md" }) => (
-  <div className="group relative rounded-2xl border border-navy/10 bg-white shadow-soft hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 overflow-hidden">
-    <div className="relative overflow-hidden bg-navy aspect-[4/5]">
+  <div className="group relative rounded-xl border border-navy/10 bg-white shadow-soft hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden">
+    <div className="relative overflow-hidden bg-navy aspect-[4/3]">
       <img
         src={member.image}
         alt={member.name}
         className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/20 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/15 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500" />
 
       {/* Name overlay on image for a premium editorial feel */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
-        <h3 className={`font-body font-semibold text-white tracking-tight ${size === "lg" ? "text-2xl" : "text-lg"}`}>
+      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+        <h3 className={`font-body font-semibold text-white tracking-tight ${size === "lg" ? "text-lg" : "text-base"}`}>
           {member.name}
         </h3>
-        <p className="font-body text-gold text-sm font-medium mt-1">{member.designation}</p>
+        <p className="font-body text-gold text-xs font-medium mt-0.5">{member.designation}</p>
       </div>
     </div>
 
-    <div className="p-5">
+    <div className="p-4">
       {member.department && (
         <p className="font-body text-red badge-gold text-[11px] font-semibold tracking-[0.15em] uppercase">
           {member.department}
         </p>
       )}
       {member.bio && (
-        <p className="font-body text-navy/90 text-sm mt-2 leading-relaxed line-clamp-3">{member.bio}</p>
+        <p className="font-body text-navy/90 text-sm mt-2 leading-relaxed line-clamp-2">{member.bio}</p>
       )}
       <SocialLinks social={member.social} />
     </div>
@@ -97,9 +97,9 @@ const Team = () => {
 
       <section className="container-wide py-24 md:py-28 space-y-24">
         {isLoading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="aspect-[4/5] bg-line/30 animate-pulse rounded-2xl" />
+              <div key={n} className="aspect-[4/3] bg-line/30 animate-pulse rounded-xl" />
             ))}
           </div>
         ) : members.length ? (
@@ -110,7 +110,7 @@ const Team = () => {
                   <p className="font-body text-sm text-navy font-bold badge-gold tracking-wider whitespace-nowrap">Leadership</p>
                   <span className="h-px flex-1 bg-navy/10" />
                 </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {leadership.map((member) => (
                     <MemberCard key={member._id} member={member} size="lg" />
                   ))}
@@ -124,7 +124,7 @@ const Team = () => {
                   <p className="font-body text-sm text-navy badge-gold tracking-wider whitespace-nowrap">Team</p>
                   <span className="h-px flex-1 bg-navy/10" />
                 </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {staff.map((member) => (
                     <MemberCard key={member._id} member={member} />
                   ))}
