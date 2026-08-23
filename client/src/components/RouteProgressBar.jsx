@@ -3,12 +3,13 @@ import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // A thin gold→teal accent bar that sweeps across the very top of the
-// viewport on every route change — independent of PageTransition.jsx's
-// content fade, purely a flourish (most sites don't have one, which is
-// exactly why it reads as "premium" rather than default React Router
-// behavior). Re-fires on every `location.key` change (React Router bumps
-// this on every navigation, including to the same path) by remounting a
-// fresh motion.div keyed to it.
+// viewport on every route change — purely a flourish (most sites don't
+// have one, which is exactly why it reads as "premium" rather than default
+// React Router behavior), independent of page content (the fade/scale
+// page-content transition this used to pair with was removed — it caused
+// a white flash between the outgoing and incoming page). Re-fires on every
+// `location.key` change (React Router bumps this on every navigation,
+// including to the same path) by remounting a fresh motion.div keyed to it.
 export default function RouteProgressBar() {
   const location = useLocation();
   const [active, setActive] = useState(false);
