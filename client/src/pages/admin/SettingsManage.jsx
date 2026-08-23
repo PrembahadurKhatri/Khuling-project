@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { fetchSettings, updateSettings } from "../../services/settingsService.js";
-import { changePassword } from "../../services/authService.js";
+import { changePassword, changeEmail } from "../../services/authService.js";
 import useToast from "../../hooks/useToast.js";
 import useAuth from "../../hooks/useAuth.js";
 
@@ -22,17 +22,20 @@ const emptyForm = {
 };
 
 const emptyPasswordForm = { currentPassword: "", newPassword: "", confirmPassword: "" };
+const emptyEmailForm = { currentPassword: "", newEmail: "" };
 
 const SettingsManage = () => {
   const queryClient = useQueryClient();
   const { theme } = useOutletContext();
   const toast = useToast();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState(emptyForm);
   const [saved, setSaved] = useState(false);
   const [passwordForm, setPasswordForm] = useState(emptyPasswordForm);
   const [changingPassword, setChangingPassword] = useState(false);
+  const [emailForm, setEmailForm] = useState(emptyEmailForm);
+  const [changingEmail, setChangingEmail] = useState(false);
 
   const { data, isLoading } = useQuery({ queryKey: ["admin-settings"], queryFn: fetchSettings });
 
@@ -97,6 +100,27 @@ const SettingsManage = () => {
       toast?.error(err.response?.data?.message || "Failed to change password.");
     } finally {
       setChangingPassword(false);
+    }
+  };
+
+  // Login email, not Settings.email above — that one is the public contact
+  // address shown on the site (and where forgot-password links get sent);
+  // this is the address used to actually sign in to /admin.
+  const handleChangeEmail = async (e) => {
+    e.preventDefault();
+    setChangingEmail(true);
+    try {
+      await changeEmail(emailForm.currentPassword, emailForm.newEmail);
+      toast?.success("Email changed. Please log in again.");
+      setEmailForm(emptyEmailForm);
+      setTimeout(async () => {
+        await logout();
+        navigate("/admin/login");
+      }, 1500);
+    } catch (err) {
+      toast?.error(err.response?.data?.message || "Failed to change email.");
+    } finally {
+      setChangingEmail(false);
     }
   };
 
@@ -291,6 +315,42 @@ const SettingsManage = () => {
         <div className="flex justify-end pt-2">
           <button type="submit" disabled={changingPassword} className="btn-primary !py-2">
             {changingPassword ? "Changing..." : "Change Password"}
+          </button>
+        </div>
+      </form>
+
+      <form onSubmit={handleChangeEmail} className={`mt-8 max-w-3xl space-y-3 rounded-xl border p-6 ${panelClass}`}>
+        <h2 className="font-body font-semibold mb-1">Change Login Email</h2>
+        <p className={`text-xs mb-2 ${labelClass}`}>
+          Currently signed in as <strong>{user?.email}</strong>. This is the email used to log in to /admin — separate
+          from the contact email set above (that one is public, and where "Forgot password" reset links are sent).
+          You'll be logged out and need to sign in again after changing it.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <label className="space-y-1">
+            <span className={`text-xs ${labelClass}`}>Current password</span>
+            <input
+              type="password"
+              required
+              className={inputClass}
+              value={emailForm.currentPassword}
+              onChange={(e) => setEmailForm({ ...emailForm, currentPassword: e.target.value })}
+            />
+          </label>
+          <label className="space-y-1">
+            <span className={`text-xs ${labelClass}`}>New login email</span>
+            <input
+              type="email"
+              required
+              className={inputClass}
+              value={emailForm.newEmail}
+              onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
+            />
+          </label>
+        </div>
+        <div className="flex justify-end pt-2">
+          <button type="submit" disabled={changingEmail} className="btn-primary !py-2">
+            {changingEmail ? "Changing..." : "Change Email"}
           </button>
         </div>
       </form>

@@ -14,3 +14,8 @@ export const changePassword = async (currentPassword, newPassword) => {
   const { data } = await api.put("/auth/change-password", { currentPassword, newPassword });
   return data;
 };
+
+export const changeEmail = async (currentPassword, newEmail) => {
+  const { data } = await api.put("/auth/change-email", { currentPassword, newEmail });
+  return data;
+};

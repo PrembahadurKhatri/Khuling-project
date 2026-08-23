@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Settings from "../models/Settings.js";
 import { generateAccessToken, generateRefreshToken, setAuthCookies, jwtRefreshSecret } from "../utils/generateToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import wrapEmail from "../utils/emailTemplate.js";
@@ -217,7 +218,88 @@ export const changePassword = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Password changed. Please log in again with your new password." });
 });
 
-// @desc   Request password reset email
+// @desc   Change the logged-in user's own login email (verifies current
+//         password first) — separate from Settings.email (the public
+//         contact address shown on the site and used as the forgot-password
+//         delivery address below); this is the address used to sign in.
+// @route  PUT /api/auth/change-email
+export const changeEmail = asyncHandler(async (req, res) => {
+  const { currentPassword, newEmail } = req.body;
+  if (!currentPassword || !newEmail) {
+    res.status(400);
+    throw new Error("Current password and new email are required");
+  }
+
+  const normalizedEmail = newEmail.trim().toLowerCase();
+
+  // Same fallback-admin handling as changePassword above: the fallback
+  // admin isn't a real Mongo document, so changing anything about it
+  // provisions (or updates) a real User account from here on.
+  if (isFallbackAdminId(req.user._id)) {
+    if (!isFallbackAdminLogin(fallbackAdminCredentials.email, currentPassword)) {
+      res.status(401);
+      throw new Error("Current password is incorrect");
+    }
+
+    const emailTaken = await User.findOne({ email: normalizedEmail });
+    if (emailTaken) {
+      res.status(400);
+      throw new Error("That email is already in use");
+    }
+
+    const existing = await User.findOne({ email: fallbackAdminCredentials.email });
+    if (existing) {
+      existing.email = normalizedEmail;
+      existing.refreshTokens = [];
+      await existing.save();
+    } else {
+      await User.create({
+        name: fallbackAdminUser.name,
+        email: normalizedEmail,
+        password: currentPassword,
+        role: "admin",
+      });
+    }
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    return res.json({ success: true, message: "Email changed. Please log in again with your new email." });
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  if (!(await user.matchPassword(currentPassword))) {
+    res.status(401);
+    throw new Error("Current password is incorrect");
+  }
+
+  if (normalizedEmail !== user.email) {
+    const emailTaken = await User.findOne({ email: normalizedEmail });
+    if (emailTaken) {
+      res.status(400);
+      throw new Error("That email is already in use");
+    }
+  }
+
+  user.email = normalizedEmail;
+  user.refreshTokens = []; // force re-login on all devices
+  await user.save();
+
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.json({ success: true, message: "Email changed. Please log in again with your new email." });
+});
+
+// @desc   Request password reset email. Delivered to Settings.email (the
+//         one address the admin actually configured and monitors) rather
+//         than the account's own `email` field, which may not be a real
+//         inbox — the account being reset is still looked up by whatever
+//         email was submitted in the form, only the delivery address
+//         changes. Falls back to the account's own email if Settings has
+//         none set, so this never has zero valid destination.
 // @route  POST /api/auth/forgot-password
 export const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -232,28 +314,39 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   const resetUrl = `${(process.env.CLIENT_URL || "").split(",")[0]?.trim()}/admin/reset-password/${resetToken}`;
+  const settings = await Settings.findOne();
+  const deliverTo = settings?.email || user.email;
 
-  // Respond immediately — the reset token is already saved. Sending the
-  // email is fire-and-forget so a slow/unreachable SMTP server can't hang
-  // this request (see contactController.js for the same fix + rationale).
+  // Unlike the old fire-and-forget version, this is awaited: a match WAS
+  // found (so there's no "does this email exist" info to leak by the
+  // timing/outcome of the response), and an admin waiting on a password
+  // reset needs to know immediately if delivery genuinely failed (e.g. a
+  // missing/invalid SENDGRID_API_KEY) instead of being told "sent" and
+  // then never receiving anything with no way to tell why.
+  try {
+    await sendEmail({
+      to: deliverTo,
+      subject: "Password Reset - Khilung Kalika Construction Admin",
+      html: wrapEmail({
+        title: "Reset your password",
+        preheader: "This link expires in 15 minutes.",
+        bodyHtml: `
+          <p>Hi ${user.name},</p>
+          <p>We received a request to reset the password on your admin account. Click the button below to choose a new one — this link expires in <strong>15 minutes</strong>.</p>
+          <p style="text-align:center;margin:28px 0;">
+            <a href="${resetUrl}" style="background:#0b1f3a;color:#f5f3ee;text-decoration:none;padding:12px 28px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:0.03em;display:inline-block;">Reset Password</a>
+          </p>
+          <p style="color:#8a8578;font-size:12px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
+        `,
+      }),
+    });
+  } catch (err) {
+    console.error("Password reset email failed:", err.message);
+    res.status(500);
+    throw new Error(`Reset link generated but the email failed to send: ${err.message}`);
+  }
+
   res.json({ success: true, message: "If that email exists, a reset link has been sent." });
-
-  sendEmail({
-    to: user.email,
-    subject: "Password Reset - Khilung Kalika Construction Admin",
-    html: wrapEmail({
-      title: "Reset your password",
-      preheader: "This link expires in 15 minutes.",
-      bodyHtml: `
-        <p>Hi ${user.name},</p>
-        <p>We received a request to reset the password on your admin account. Click the button below to choose a new one — this link expires in <strong>15 minutes</strong>.</p>
-        <p style="text-align:center;margin:28px 0;">
-          <a href="${resetUrl}" style="background:#0b1f3a;color:#f5f3ee;text-decoration:none;padding:12px 28px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:0.03em;display:inline-block;">Reset Password</a>
-        </p>
-        <p style="color:#8a8578;font-size:12px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
-      `,
-    }),
-  }).catch((err) => console.error("Password reset email failed:", err.message));
 });
 
 // @desc   Reset password using token

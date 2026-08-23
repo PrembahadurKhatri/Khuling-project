@@ -7,6 +7,7 @@ import {
   logout,
   getMe,
   changePassword,
+  changeEmail,
   forgotPassword,
   resetPassword,
 } from "../controllers/authController.js";
@@ -40,6 +41,13 @@ router.put(
   [body("currentPassword").notEmpty(), body("newPassword").isLength({ min: 8 })],
   validate,
   changePassword
+);
+router.put(
+  "/change-email",
+  protect,
+  [body("currentPassword").notEmpty(), body("newEmail").isEmail()],
+  validate,
+  changeEmail
 );
 router.post("/forgot-password", [body("email").isEmail()], validate, forgotPassword);
 router.post(
