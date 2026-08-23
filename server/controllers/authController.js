@@ -321,7 +321,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   // found (so there's no "does this email exist" info to leak by the
   // timing/outcome of the response), and an admin waiting on a password
   // reset needs to know immediately if delivery genuinely failed (e.g. a
-  // missing/invalid SENDGRID_API_KEY) instead of being told "sent" and
+  // missing/invalid RESEND_API_KEY) instead of being told "sent" and
   // then never receiving anything with no way to tell why.
   try {
     await sendEmail({
