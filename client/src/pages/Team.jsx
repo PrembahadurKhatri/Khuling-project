@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchTeam } from "../services/teamService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 import { FaLinkedinIn, FaFacebook, FaWhatsapp, FaInstagram, FaEnvelope } from "react-icons/fa";
 
@@ -111,8 +112,10 @@ const Team = () => {
                   <span className="h-px flex-1 bg-navy/10" />
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
-                  {leadership.map((member) => (
-                    <MemberCard key={member._id} member={member} size="lg" />
+                  {leadership.map((member, i) => (
+                    <Reveal key={member._id} delay={(i % 6) * 0.06}>
+                      <MemberCard member={member} size="lg" />
+                    </Reveal>
                   ))}
                 </div>
               </div>
@@ -125,8 +128,10 @@ const Team = () => {
                   <span className="h-px flex-1 bg-navy/10" />
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-7">
-                  {staff.map((member) => (
-                    <MemberCard key={member._id} member={member} />
+                  {staff.map((member, i) => (
+                    <Reveal key={member._id} delay={(i % 8) * 0.05}>
+                      <MemberCard member={member} />
+                    </Reveal>
                   ))}
                 </div>
               </div>

@@ -122,9 +122,13 @@ useEffect(() => {
       <Hero />
 
       {/* Credibility strip */}
-<section
+<motion.section
   id="content-start"
   className="border-b border-line bg-paper"
+  initial={{ opacity: 0, y: 24 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, margin: "-80px" }}
+  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
 >
   <div className="container-wide py-5 sm:py-8">
 
@@ -149,8 +153,14 @@ useEffect(() => {
     </div>
 
   </div>
-</section>
-  <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-14 md:gap-16 items-center">
+</motion.section>
+  <motion.section
+    className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-14 md:gap-16 items-center"
+    initial={{ opacity: 0, y: 28 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-80px" }}
+    transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+  >
 
   {/* LEFT CONTENT */}
   <div className="md:col-span-6 space-y-6">
@@ -258,9 +268,15 @@ useEffect(() => {
     </div>
   </div>
 
-</section>
+</motion.section>
 
-<section className="container-wide py-20 md:py-28">
+<motion.section
+  className="container-wide py-20 md:py-28"
+  initial={{ opacity: 0, y: 28 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, margin: "-80px" }}
+  transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+>
 
   {/* Header */}
   <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-14 md:mb-16 gap-6 border-b border-line pb-8">
@@ -320,9 +336,15 @@ useEffect(() => {
     </div>
   )}
 
-</section>
-     
-    <section className="relative overflow-hidden">
+</motion.section>
+
+    <motion.section
+      className="relative overflow-hidden"
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+    >
 
   {/* subtle background texture */}
   <div className="absolute inset-0 bg-hero-pattern opacity-30 pointer-events-none" />
@@ -409,8 +431,14 @@ useEffect(() => {
     </div>
   ))}
 
-</section>
- <section className="border-t border-line  relative overflow-hidden">
+</motion.section>
+ <motion.section
+   className="border-t border-line  relative overflow-hidden"
+   initial={{ opacity: 0, y: 28 }}
+   whileInView={{ opacity: 1, y: 0 }}
+   viewport={{ once: true, margin: "-80px" }}
+   transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+ >
 
   {/* subtle background texture */}
   <div className="absolute inset-0 bg-hero-pattern opacity-20 pointer-events-none" />
@@ -463,10 +491,16 @@ useEffect(() => {
     </div>
 
   </div>
-</section>
+</motion.section>
       {/* Achievements — navy band, one stat deliberately larger than the
           rest, separated by hairlines rather than equal card gutters. */}
-      <section className="bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)] py-20 relative overflow-hidden">
+      <motion.section
+        className="bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)] py-20 relative overflow-hidden"
+        initial={{ opacity: 0, scale: 0.96 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="absolute inset-0 bg-hero-pattern opacity-30 pointer-events-none" />
         <div className="container-wide relative">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-0">
@@ -479,11 +513,17 @@ useEffect(() => {
             <div className="lg:pl-8 font-body"><Counter value={stats.machines || 60} label="Machines in Fleet" /></div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Why choose us — large typography, minimal imagery, editorial list
           instead of icon cards. */}
-    <section className="container-wide py-20 md:py-28 grid md:grid-cols-12 gap-10 md:gap-16">
+    <motion.section
+      className="container-wide py-20 md:py-28 grid md:grid-cols-12 gap-10 md:gap-16"
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+    >
 
   {/* Left Content */}
   <div className="md:col-span-4 flex flex-col justify-start font-body md:sticky md:top-24 md:self-start">
@@ -546,10 +586,16 @@ useEffect(() => {
 
   </div>
 
-</section>
+</motion.section>
 
       {/* Testimonials — one featured quote at a time, not a card carousel. */}
-      <section className=" to-stone border-y border-line py-20 md:py-24 relative overflow-hidden">
+      <motion.section
+        className=" to-stone border-y border-line py-20 md:py-24 relative overflow-hidden"
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+      >
   <div className="absolute inset-0 bg-hero-pattern opacity-15 pointer-events-none" />
   <div className="container-wide max-w-3xl relative text-center">
     <p className="eyebrow mb-6 md:mb-8 font-body">Client Record</p>
@@ -582,11 +628,17 @@ useEffect(() => {
       </div>
     </div>
   </div>
-</section>
+</motion.section>
 
       {/* Latest news — one large feature, two minor items. */}
 {posts.length > 0 && (
-  <section className="container-wide py-24 md:py-28">
+  <motion.section
+    className="container-wide py-24 md:py-28"
+    initial={{ opacity: 0, y: 28 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-80px" }}
+    transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+  >
 
     {/* Header */}
     <div className="flex items-end justify-between mb-14 flex-wrap gap-4 border-b border-line pb-8">
@@ -685,11 +737,17 @@ useEffect(() => {
       </div>
 
     </div>
-  </section>
+  </motion.section>
 )}
 
  {/* Contact CTA — split band, not a centered box. */}
-<section className="bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)] grid md:grid-cols-2 relative overflow-hidden items-stretch">
+<motion.section
+  className="bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)] grid md:grid-cols-2 relative overflow-hidden items-stretch"
+  initial={{ opacity: 0, scale: 0.97 }}
+  whileInView={{ opacity: 1, scale: 1 }}
+  viewport={{ once: true, margin: "-80px" }}
+  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+>
 
   <div className="absolute inset-0 bg-hero-pattern opacity-15 pointer-events-none" />
 
@@ -747,7 +805,7 @@ useEffect(() => {
 
   </div>
 
-</section>
+</motion.section>
     </div>
   );
 };

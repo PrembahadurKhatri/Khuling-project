@@ -5,6 +5,7 @@ import { fetchProjects } from "../services/projectService.js";
 import { fetchCategories } from "../services/categoryService.js";
 import ProjectCard from "../components/ProjectCard.jsx";
 import PageHeader from "../components/PageHeader.jsx";
+import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 
 const statuses = ["Completed", "Ongoing", "Upcoming"];
@@ -52,6 +53,7 @@ const Projects = () => {
 
       <section className="section relative">
         {/* 🔵 Background Glow */}
+  <Reveal>
   <div className="mb-10 md:mb-14 backdrop-blur-xl bg-white/60 border border-white/40 rounded-2xl p-4 md:p-6 shadow-lg flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center">
 
   {/* Search */}
@@ -122,6 +124,7 @@ const Projects = () => {
 
   </div>
 </div>
+  </Reveal>
         {/* 🔄 Loading Skeleton */}
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -136,13 +139,12 @@ const Projects = () => {
           <>
             {/* 🧩 Project Grid */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
-              {data.data.map((project) => (
-                <div
-                  key={project._id}
-                  className="group transition-transform duration-300 hover:-translate-y-2"
-                >
-                  <ProjectCard project={project} />
-                </div>
+              {data.data.map((project, i) => (
+                <Reveal key={project._id} delay={(i % 6) * 0.06}>
+                  <div className="group h-full transition-transform duration-300 hover:-translate-y-2">
+                    <ProjectCard project={project} />
+                  </div>
+                </Reveal>
               ))}
             </div>
 

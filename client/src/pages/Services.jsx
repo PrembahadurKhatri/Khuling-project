@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import api from "../services/api.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 
 const fetchServices = async () => {
@@ -58,8 +59,8 @@ const Services = () => {
 
               <div className="space-y-2">
                 {services.map((service, i) => (
+                  <Reveal key={service._id} delay={(i % 6) * 0.06} variant={i % 2 === 0 ? "left" : "right"}>
                   <div
-                    key={service._id}
                     className={`relative py-9 flex flex-col sm:flex-row gap-6 sm:gap-8 group transition-all duration-300 ${
                       i > 0 ? "border-t border-line" : ""
                     }`}
@@ -133,9 +134,10 @@ const Services = () => {
                     </div>
 
                     <div className="hidden md:flex items-center opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                 
+
                     </div>
                   </div>
+                  </Reveal>
                 ))}
               </div>
             </div>

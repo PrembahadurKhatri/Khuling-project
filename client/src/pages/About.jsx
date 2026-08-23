@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import { fetchSettings } from "../services/settingsService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 
 // Pulled straight out of the objective/research copy below — not invented,
@@ -65,6 +66,7 @@ const About = () => {
         crumb="Home / About"
       />
 
+ <Reveal>
  <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-14 md:gap-16 items-center">
 
   {/* LEFT CONTENT */}
@@ -174,8 +176,10 @@ Our vision is to become a reputable and preferred civil contractor who is well k
   </div>
 
 </section>
+</Reveal>
 
 {/* OBJECTIVE */}
+<Reveal>
 <section className="relative overflow-hidden border-t border-line">
   <div className="absolute inset-0 bg-hero-pattern opacity-20 pointer-events-none" />
   <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-teal/5 blur-3xl pointer-events-none" />
@@ -221,8 +225,10 @@ Our vision is to become a reputable and preferred civil contractor who is well k
     </div>
   </div>
 </section>
+</Reveal>
 
 {/* RESEARCH & INNOVATION */}
+<Reveal>
 <section className="relative overflow-hidden">
   <div className="absolute inset-0 bg-hero-pattern opacity-20 pointer-events-none" />
 
@@ -270,7 +276,9 @@ Our vision is to become a reputable and preferred civil contractor who is well k
     </div>
   </div>
 </section>
+</Reveal>
 
+<Reveal>
 <section className="border-t border-line  relative overflow-hidden">
 
   {/* subtle background texture */}
@@ -325,6 +333,7 @@ Our vision is to become a reputable and preferred civil contractor who is well k
 
   </div>
 </section>
+</Reveal>
     </div>
   );
 };

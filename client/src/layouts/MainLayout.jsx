@@ -1,4 +1,3 @@
-import { Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { fetchSettings } from "../services/settingsService.js";
@@ -10,6 +9,8 @@ import WhatsAppButton from "../components/WhatsAppButton.jsx";
 import MaintenanceScreen from "../components/MaintenanceScreen.jsx";
 import Seo from "../components/Seo.jsx";
 import GoogleAnalytics from "../components/GoogleAnalytics.jsx";
+import PageTransition from "../components/PageTransition.jsx";
+import RouteProgressBar from "../components/RouteProgressBar.jsx";
 
 const MainLayout = () => {
   useTrackVisit();
@@ -39,10 +40,11 @@ const MainLayout = () => {
         </Helmet>
       )}
       <GoogleAnalytics measurementId={googleAnalyticsId} />
+      <RouteProgressBar />
 
       <Navbar />
       <main className="flex-1">
-        <Outlet />
+        <PageTransition />
       </main>
       <Footer />
       <WhatsAppButton />

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../services/api.js";
 import { fetchSettings } from "../services/settingsService.js";
 import PageHeader from "../components/PageHeader.jsx";
+import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 import { HiLocationMarker, HiPhone, HiMail } from "react-icons/hi";
 import "react-phone-input-2/lib/style.css";
@@ -54,7 +55,7 @@ const Contact = () => {
       <section className="container-wide py-24 md:py-28 grid lg:grid-cols-12 gap-14 md:gap-16">
 
         {/* LEFT */}
-    <div className="lg:col-span-4 space-y-6">
+    <Reveal variant="left" className="lg:col-span-4 space-y-6">
   <p className="eyebrow mb-6">Reach Us</p>
 
   <div className="space-y-5">
@@ -134,10 +135,10 @@ const Contact = () => {
     </div>
 
   </div>
-</div>
+</Reveal>
 
         {/* RIGHT */}
-        <div className="lg:col-span-8">
+        <Reveal variant="right" className="lg:col-span-8">
           <div className="card p-8 md:p-10 rounded-2xl shadow-soft hover:shadow-card transition-all duration-500">
 
             {/* TOGGLE */}
@@ -209,9 +210,10 @@ const Contact = () => {
             )}
 
           </div>
-        </div>
+        </Reveal>
       </section>
 
+ <Reveal variant="scale">
  <section className="h-96 border-t border-line relative overflow-hidden">
   <iframe
     key={mapSrc}
@@ -223,6 +225,7 @@ const Contact = () => {
     allowFullScreen
   />
 </section>
+</Reveal>
     </div>
   );
 };

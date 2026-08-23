@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PageHeader from "../components/PageHeader.jsx";
+import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 import { fetchGallery } from "../services/galleryService.js";
 import { HiX, HiOutlinePhotograph } from "react-icons/hi";
@@ -37,10 +38,10 @@ const Gallery = () => {
         ) : images.length ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {images.map((img, i) => (
+              <Reveal key={img._id} delay={(i % 8) * 0.05} variant="scale">
               <button
-                key={img._id}
                 onClick={() => setActive(img)}
-                className="relative overflow-hidden rounded-2xl group aspect-[4/3] border border-navy/5 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+                className="relative overflow-hidden rounded-2xl group aspect-[4/3] border border-navy/5 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 w-full"
               >
                 {/* Image */}
                 <img
@@ -65,6 +66,7 @@ const Gallery = () => {
                   <HiOutlinePhotograph size={18} />
                 </div>
               </button>
+              </Reveal>
             ))}
           </div>
         ) : (
