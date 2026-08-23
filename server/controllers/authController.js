@@ -33,14 +33,28 @@ export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   let user = null;
+  let dbReachable = true;
   try {
     user = await User.findOne({ email }).select("+password");
   } catch (dbError) {
+    dbReachable = false;
     console.warn("Falling back to local admin credentials because the database lookup failed:", dbError.message);
   }
 
   if (!user) {
-    if (isFallbackAdminLogin(email, password)) {
+    // The hardcoded/env fallback exists solely to bootstrap access before
+    // any real admin account exists. Gating it on "the DB is reachable and
+    // no real admin exists yet" (rather than just "no user matches THIS
+    // email") matters once changeEmail/changePassword are in the picture:
+    // changing an admin's email removes the OLD email from Mongo entirely,
+    // and without this check that would silently reopen the fallback
+    // credentials for the old email forever, even though the account
+    // itself moved on — the opposite of what changing the email is for.
+    // If the DB itself is unreachable, the fallback still applies
+    // unconditionally (that's its actual bootstrap/resilience purpose).
+    const fallbackAllowed = !dbReachable || !(await User.exists({ role: "admin" }));
+
+    if (fallbackAllowed && isFallbackAdminLogin(email, password)) {
       const accessToken = generateAccessToken(fallbackAdminUser._id);
       const refreshToken = generateRefreshToken(fallbackAdminUser._id);
       setAuthCookies(res, accessToken, refreshToken);
