@@ -5,6 +5,7 @@ import { fetchSettings, updateSettings } from "../../services/settingsService.js
 import { changePassword, changeEmail } from "../../services/authService.js";
 import useToast from "../../hooks/useToast.js";
 import useAuth from "../../hooks/useAuth.js";
+import getErrorMessage from "../../utils/getErrorMessage.js";
 
 const emptyForm = {
   companyName: "",
@@ -60,7 +61,7 @@ const SettingsManage = () => {
       setTimeout(() => setSaved(false), 2500);
     },
     onError: (err) => {
-      toast?.error(err.response?.data?.message || "Failed to save settings.");
+      toast?.error(getErrorMessage(err, "Failed to save settings."));
     },
   });
 
@@ -97,7 +98,7 @@ const SettingsManage = () => {
         navigate("/admin/login");
       }, 1500);
     } catch (err) {
-      toast?.error(err.response?.data?.message || "Failed to change password.");
+      toast?.error(getErrorMessage(err, "Failed to change password."));
     } finally {
       setChangingPassword(false);
     }
@@ -118,7 +119,7 @@ const SettingsManage = () => {
         navigate("/admin/login");
       }, 1500);
     } catch (err) {
-      toast?.error(err.response?.data?.message || "Failed to change email.");
+      toast?.error(getErrorMessage(err, "Failed to change email."));
     } finally {
       setChangingEmail(false);
     }

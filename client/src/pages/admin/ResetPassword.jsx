@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { resetPassword } from "../../services/authService.js";
 import Seo from "../../components/Seo.jsx";
+import getErrorMessage from "../../utils/getErrorMessage.js";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -29,7 +30,7 @@ const ResetPassword = () => {
       setDone(true);
       setTimeout(() => navigate("/admin/login"), 2500);
     } catch (err) {
-      setError(err.response?.data?.message || "Reset link is invalid or has expired.");
+      setError(getErrorMessage(err, "Reset link is invalid or has expired."));
     } finally {
       setLoading(false);
     }

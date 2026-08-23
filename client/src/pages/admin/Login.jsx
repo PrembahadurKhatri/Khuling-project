@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import useAuth from "../../hooks/useAuth.js";
 import Seo from "../../components/Seo.jsx";
+import getErrorMessage from "../../utils/getErrorMessage.js";
 
 const Login = () => {
   const { login } = useAuth();
@@ -27,7 +28,7 @@ const Login = () => {
       await login(form.email, form.password);
       navigate("/admin");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(getErrorMessage(err, "Login failed"));
     } finally {
       setLoading(false);
     }
