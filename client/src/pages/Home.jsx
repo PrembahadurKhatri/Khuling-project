@@ -27,6 +27,29 @@ const fadeUp = {
   transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
 };
 
+const EASE = [0.16, 1, 0.3, 1];
+
+// Applied to a grid/row wrapper (initial="hidden" whileInView="show") so its
+// motion.* children — using `staggerItem` below — reveal one after another
+// instead of popping in together as a flat block.
+const staggerContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+};
+const staggerItem = {
+  hidden: { opacity: 0, y: 22, scale: 0.97 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: EASE } },
+};
+
+// A left-to-right clip-path wipe, used on the two big feature images —
+// reads as more "premium" than a plain fade for a large hero-ish image.
+const wipeReveal = {
+  initial: { clipPath: "inset(0 100% 0 0)", opacity: 0.4 },
+  whileInView: { clipPath: "inset(0 0% 0 0)", opacity: 1 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.9, ease: EASE },
+};
+
 // Shown only until the admin sets their own list in Settings → Credibility Strip.
 const DEFAULT_CREDENTIALS = [
   "ISO 9001:2015 Certified",
@@ -132,12 +155,19 @@ useEffect(() => {
 >
   <div className="container-wide py-5 sm:py-8">
 
-    <div className="flex flex-wrap justify-center sm:justify-between gap-2 sm:gap-4">
+    <motion.div
+      className="flex flex-wrap justify-center sm:justify-between gap-2 sm:gap-4"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-40px" }}
+      variants={staggerContainer}
+    >
 
       {credentials.map((c) => (
-        <span
+        <motion.span
           key={c}
-          className="flex items-center gap-1.5 px-2.5 py-1 
+          variants={staggerItem}
+          className="flex items-center gap-1.5 px-2.5 py-1
           sm:px-4 sm:py-2 sm:gap-2
           rounded-full bg-white border border-line shadow-sm
           text-[7px] sm:text-[12px] font-body font-semibold tracking-wide uppercase text-navy/80"
@@ -147,10 +177,10 @@ useEffect(() => {
 
           {/* text */}
           <span className="whitespace-nowrap font-body ">{c}</span>
-        </span>
+        </motion.span>
       ))}
 
-    </div>
+    </motion.div>
 
   </div>
 </motion.section>
@@ -183,9 +213,15 @@ useEffect(() => {
     </p>
 
     {/* MISSION / VISION */}
-    <div className="mt-8 grid sm:grid-cols-2 gap-5">
+    <motion.div
+      className="mt-8 grid sm:grid-cols-2 gap-5"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={staggerContainer}
+    >
 
-      <div className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <motion.div variants={staggerItem} className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
         <div className="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center ring-1 ring-navy/10 group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
           <FaBullseye className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
         </div>
@@ -193,9 +229,9 @@ useEffect(() => {
         <p className="text-navy/70 text-sm leading-relaxed font-body">
          Our mission is to deliver high-quality construction services at competitive prices while ensuring customer satisfaction through timely project completion, attention to detail, and professional service. We uphold the highest standards of professionalism, integrity, honesty, and fairness in all our relationships.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <motion.div variants={staggerItem} className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
         <div className="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center ring-1 ring-navy/10 group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
           <FaEye className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
         </div>
@@ -203,9 +239,9 @@ useEffect(() => {
         <p className="text-navy/70 text-sm leading-relaxed font-body">
           To become a reputable and preferred civil contractor who is well known for delivering beyond the client's and project's expectations.
         </p>
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   </div>
 
   {/* RIGHT IMAGE */}
@@ -215,7 +251,7 @@ useEffect(() => {
       {/* soft glow background */}
       <div className="absolute -inset-2 bg-gradient-to-tr from-gold/20 via-transparent to-navy/10 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition duration-500"></div>
 
-      <div className="img-frame overflow-hidden rounded-2xl shadow-lg relative z-10">
+      <motion.div {...wipeReveal} className="img-frame overflow-hidden rounded-2xl shadow-lg relative z-10">
         <img
           src="https://i.pinimg.com/1200x/35/23/84/352384a7a5937c38bdf830722eeb1bc0.jpg"
           alt="Khilung Kalika engineers on site"
@@ -248,13 +284,19 @@ useEffect(() => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
 
     {/* Trust badges */}
-    <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
+    <motion.div
+      className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={staggerContainer}
+    >
       {trustBadges.map(([Icon, line1, line2]) => (
-        <div key={line2} className="flex flex-col items-center text-center gap-3.5">
+        <motion.div key={line2} variants={staggerItem} className="flex flex-col items-center text-center gap-3.5">
           <div className="w-16 h-16 rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
             <Icon className="text-gold text-xl" />
           </div>
@@ -263,9 +305,9 @@ useEffect(() => {
             <br />
             <span className="text-navy font-semibold">{line2}</span>
           </p>
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   </div>
 
 </motion.section>
@@ -455,10 +497,17 @@ useEffect(() => {
     </div>
 
     {/* VALUES GRID */}
-    <div className="grid sm:grid-cols-2 gap-5 md:gap-6">
+    <motion.div
+      className="grid sm:grid-cols-2 gap-5 md:gap-6"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={staggerContainer}
+    >
       {values.map(([title, desc], i) => (
-        <div
+        <motion.div
           key={title}
+          variants={staggerItem}
           className="group relative p-7 md:p-9 rounded-2xl bg-white/70 backdrop-blur-sm
                      border border-line
                      transition-all duration-300 ease-out
@@ -486,9 +535,9 @@ useEffect(() => {
               {desc}
             </p>
           </div>
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
 
   </div>
 </motion.section>
@@ -535,7 +584,13 @@ useEffect(() => {
   </div>
 
   {/* Right Content */}
-  <div className="md:col-span-8 grid sm:grid-cols-2 gap-5 md:gap-6 font-body">
+  <motion.div
+    className="md:col-span-8 grid sm:grid-cols-2 gap-5 md:gap-6 font-body"
+    initial="hidden"
+    whileInView="show"
+    viewport={{ once: true, margin: "-60px" }}
+    variants={staggerContainer}
+  >
 
     {[
       ["Site discipline", "Daily safety briefings and a documented QA process on every active site, audited monthly."],
@@ -544,8 +599,9 @@ useEffect(() => {
       ["Government-panel standing", "Listed and vetted for public infrastructure tender across multiple provinces."],
     ].map(([title, copy], i) => (
 
-      <div
+      <motion.div
         key={title}
+        variants={staggerItem}
         tabIndex={0}
         className="group relative flex gap-4 p-7 md:p-9 rounded-2xl bg-white/70 backdrop-blur-sm
         border border-line font-body overflow-hidden
@@ -580,11 +636,11 @@ useEffect(() => {
           </p>
         </div>
 
-      </div>
+      </motion.div>
 
     ))}
 
-  </div>
+  </motion.div>
 
 </motion.section>
 
