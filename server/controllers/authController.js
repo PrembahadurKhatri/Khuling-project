@@ -2,7 +2,6 @@ import asyncHandler from "express-async-handler";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import Settings from "../models/Settings.js";
 import { generateAccessToken, generateRefreshToken, setAuthCookies, jwtRefreshSecret } from "../utils/generateToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import wrapEmail from "../utils/emailTemplate.js";
@@ -307,13 +306,15 @@ export const changeEmail = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Email changed. Please log in again with your new email." });
 });
 
-// @desc   Request password reset email. Delivered to Settings.email (the
-//         one address the admin actually configured and monitors) rather
-//         than the account's own `email` field, which may not be a real
-//         inbox — the account being reset is still looked up by whatever
-//         email was submitted in the form, only the delivery address
-//         changes. Falls back to the account's own email if Settings has
-//         none set, so this never has zero valid destination.
+// @desc   Request password reset email. Delivered to the account's own
+//         login `email` — NOT Settings.email (the public contact address
+//         shown in the site footer, which anyone visiting the site can
+//         see). Now that changeEmail exists, the login email is the
+//         address the admin actually controls and verifies by using it to
+//         sign in; routing resets to a publicly-visible address instead
+//         would mean anyone who could read that public inbox could reset
+//         any admin's password regardless of what email they actually log
+//         in with — the opposite of secure.
 // @route  POST /api/auth/forgot-password
 export const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -328,8 +329,6 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   const resetUrl = `${(process.env.CLIENT_URL || "").split(",")[0]?.trim()}/admin/reset-password/${resetToken}`;
-  const settings = await Settings.findOne();
-  const deliverTo = settings?.email || user.email;
 
   // Unlike the old fire-and-forget version, this is awaited: a match WAS
   // found (so there's no "does this email exist" info to leak by the
@@ -339,7 +338,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   // then never receiving anything with no way to tell why.
   try {
     await sendEmail({
-      to: deliverTo,
+      to: user.email,
       subject: "Password Reset - Khilung Kalika Construction Admin",
       html: wrapEmail({
         title: "Reset your password",

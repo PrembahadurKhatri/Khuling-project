@@ -16,6 +16,18 @@ import validate from "../middleware/validate.js";
 
 const router = express.Router();
 
+// A bare length check lets through things like "aaaaaaaa" — requiring at
+// least one letter and one number is a cheap, low-friction step up in
+// actual strength for every place a password gets set (register, change,
+// reset), without demanding a full symbol/case policy that mostly just
+// annoys people into writing it on a sticky note.
+const strongPassword = (field) =>
+  body(field)
+    .isLength({ min: 8 })
+    .withMessage(`${field === "password" ? "Password" : "New password"} must be at least 8 characters`)
+    .matches(/^(?=.*[A-Za-z])(?=.*\d).+$/)
+    .withMessage(`${field === "password" ? "Password" : "New password"} must include at least one letter and one number`);
+
 // Every email field is trimmed BEFORE isEmail() checks it — a stray
 // leading/trailing space (an easy copy-paste artifact) otherwise fails
 // isEmail() outright, and express-validator's own default message for that
@@ -31,7 +43,7 @@ router.post(
   [
     body("name").trim().notEmpty().withMessage("Name is required"),
     body("email").trim().isEmail().withMessage("Enter a valid email address"),
-    body("password").isLength({ min: 8 }).withMessage("Password must be at least 8 characters"),
+    strongPassword("password"),
   ],
   validate,
   register
@@ -55,7 +67,7 @@ router.put(
   protect,
   [
     body("currentPassword").notEmpty().withMessage("Current password is required"),
-    body("newPassword").isLength({ min: 8 }).withMessage("New password must be at least 8 characters"),
+    strongPassword("newPassword"),
   ],
   validate,
   changePassword
@@ -78,7 +90,7 @@ router.post(
 );
 router.post(
   "/reset-password/:token",
-  [body("password").isLength({ min: 8 }).withMessage("Password must be at least 8 characters")],
+  [strongPassword("password")],
   validate,
   resetPassword
 );
