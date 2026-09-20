@@ -35,6 +35,7 @@ import TestimonialsManage from "./pages/admin/TestimonialsManage.jsx";
 import ContactManage from "./pages/admin/ContactManage.jsx";
 import GalleryManage from "./pages/admin/GalleryManage.jsx";
 import TeamManage from "./pages/admin/TeamManage.jsx";
+import MdMessageManage from "./pages/admin/MdMessageManage.jsx";
 import SettingsManage from "./pages/admin/SettingsManage.jsx";
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
           <Route path="inquiries" element={<ContactManage />} />
           <Route path="gallery" element={<GalleryManage />} />
           <Route path="team" element={<TeamManage />} />
+          <Route path="md-message" element={<MdMessageManage />} />
           <Route path="settings" element={<SettingsManage />} />
         </Route>
       </Routes>

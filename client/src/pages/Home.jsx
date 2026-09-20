@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { fetchProjects } from "../services/projectService.js";
 import { fetchSettings } from "../services/settingsService.js";
 import { fetchTestimonials } from "../services/testimonialService.js";
+import { fetchMdMessage } from "../services/mdMessageService.js";
 import api from "../services/api.js";
 import Hero from "../components/Hero.jsx";
 import ProjectCard from "../components/ProjectCard.jsx";
+import MdCeoMessage from "../components/MdCeoMessage.jsx";
 import Counter from "../components/Counter.jsx";
 import { FaBullseye, FaEye, FaBuilding, FaUsers, FaHardHat, FaShieldAlt, FaThumbsUp, FaHandshake } from "react-icons/fa";
 import Seo from "../components/Seo.jsx";
@@ -120,6 +122,7 @@ const Home = () => {
     queryKey: ["home-testimonials"],
     queryFn: () => fetchTestimonials({ featured: true }),
   });
+  const { data: mdMessageData } = useQuery({ queryKey: ["public-md-message"], queryFn: fetchMdMessage });
 
   const [tIndex, setTIndex] = useState(0);
   const projects = projectsData?.data || [];
@@ -353,21 +356,21 @@ useEffect(() => {
 
   {/* Projects Layout */}
   {projects.length > 0 && (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 lg:items-stretch">
 
-      <div className="lg:col-span-2 lg:row-span-2">
-        <div className="h-full rounded-2xl overflow-hidden border border-line bg-white shadow-sm 
+      <div className="lg:col-span-2 h-full">
+        <div className="h-full rounded-2xl overflow-hidden border border-line bg-white shadow-sm
           hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <ProjectCard project={projects[0]} size="lg" />
         </div>
       </div>
 
-      {/* Side Projects */}
-      <div className="flex flex-col gap-6 md:gap-8">
+      {/* Side Projects — stretched to match the big card's height, split evenly */}
+      <div className="flex flex-col gap-6 md:gap-8 h-full">
         {projects.slice(1, 3).map((p) => (
           <div
             key={p._id}
-            className="rounded-2xl overflow-hidden border border-line bg-white shadow-sm
+            className="flex-1 rounded-2xl overflow-hidden border border-line bg-white shadow-sm
             hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
             <ProjectCard project={p} />
@@ -379,6 +382,8 @@ useEffect(() => {
   )}
 
 </motion.section>
+
+<MdCeoMessage mdMessage={mdMessageData?.data} />
 
     <motion.section
       className="relative overflow-hidden"
