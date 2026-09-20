@@ -9,12 +9,10 @@ import {
   FaShieldAlt,
   FaThumbsUp,
   FaHandshake,
-  FaCrosshairs,
   FaClock,
   FaAward,
   FaLeaf,
   FaSyncAlt,
-  FaFlask,
   FaBolt,
   FaRobot,
   FaLandmark,
@@ -228,9 +226,6 @@ Our vision is to become a reputable and preferred civil contractor who is well k
 
     {/* LEFT — copy */}
     <div className="lg:col-span-5">
-      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-navy/5 ring-1 ring-navy/10 mb-6">
-        <FaCrosshairs className="text-navy text-xl" />
-      </div>
       <p className="eyebrow tracking-wider mb-4 font-body">Our Objective</p>
       <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] max-w-md mb-3">
         Precision, on schedule, without compromise.
@@ -247,7 +242,7 @@ Our vision is to become a reputable and preferred civil contractor who is well k
     </div>
 
     {/* RIGHT — pillars */}
-    <div className="lg:col-span-7 grid sm:grid-cols-2 gap-5 md:gap-6">
+    <div className="lg:col-span-7 lg:mt-20 grid sm:grid-cols-2 gap-5 md:gap-6">
       {objectivePillars.map(([Icon, title, desc]) => (
         <div
           key={title}
@@ -277,14 +272,11 @@ Our vision is to become a reputable and preferred civil contractor who is well k
 
     {/* LEFT — copy */}
     <div className="lg:col-span-5">
-      <div className="w-14 h-14 rounded-full bg-navy/5 ring-1 ring-navy/10 flex items-center justify-center mb-6">
-        <FaFlask className="text-navy text-xl" />
-      </div>
       <p className="eyebrow tracking-wider font-body mb-3">Research &amp; Innovation</p>
       <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] max-w-md mb-3">
         Where old craft meets new capability.
       </h2>
-    
+
       <p className="text-navy/70 leading-relaxed text-base font-body max-w-lg">
         Research and innovation is one of the prime objectives of KKCPL. Thus, KKCPL shall allocate a substantial
         amount of its resources in this area. Learning from research and innovation shall be made sustainable in
@@ -295,7 +287,7 @@ Our vision is to become a reputable and preferred civil contractor who is well k
     </div>
 
     {/* RIGHT — pillars */}
-    <div className="lg:col-span-7 grid sm:grid-cols-3 gap-5 md:gap-6">
+    <div className="lg:col-span-7 lg:mt-20 grid sm:grid-cols-3 gap-5 md:gap-6">
       {researchPillars.map(([Icon, title, desc], i) => (
         <div
           key={title}
