@@ -21,10 +21,45 @@ const toEmbedUrl = (url) => {
       const id = u.pathname.split("/").filter(Boolean).pop();
       return `https://player.vimeo.com/video/${id}`;
     }
-    return url;
+    return null; // not a recognized embed host — treat as an uploaded file instead
   } catch {
-    return url;
+    return null;
   }
+};
+
+// A video card: shows its poster thumbnail (if set) with a play button
+// overlay until clicked, then swaps in the real player — an embedded
+// iframe for YouTube/Vimeo links, or a native <video> for uploaded files.
+const VideoCard = ({ video, title }) => {
+  const [playing, setPlaying] = useState(!video.thumbnail);
+  const embedSrc = toEmbedUrl(video.url);
+
+  return (
+    <div className="relative aspect-video rounded-xl overflow-hidden border border-line bg-navy/5">
+      {playing ? (
+        embedSrc ? (
+          <iframe
+            src={embedSrc}
+            title={title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <video src={video.url} controls autoPlay className="w-full h-full" />
+        )
+      ) : (
+        <button type="button" onClick={() => setPlaying(true)} className="group relative block h-full w-full" aria-label={`Play ${title}`}>
+          <img src={video.thumbnail} alt={title} className="h-full w-full object-cover" />
+          <span className="absolute inset-0 flex items-center justify-center bg-navy/30 transition-colors duration-300 group-hover:bg-navy/40">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
+              <HiOutlinePlay className="text-2xl text-navy translate-x-0.5" />
+            </span>
+          </span>
+        </button>
+      )}
+    </div>
+  );
 };
 
 const DesignDetail = () => {
@@ -62,18 +97,19 @@ const DesignDetail = () => {
   const related = data.related || [];
   const images = design.images ?? [];
   const videos = design.videos ?? [];
+  const heroImage = design.thumbnail || images[0];
 
   const showPrev = () => setLightboxIndex((i) => (i === 0 ? images.length - 1 : i - 1));
   const showNext = () => setLightboxIndex((i) => (i === images.length - 1 ? 0 : i + 1));
 
   return (
     <div>
-      <Seo title={design.name} description={design.description?.slice(0, 160)} image={images[0]} />
+      <Seo title={design.name} description={design.description?.slice(0, 160)} image={heroImage} />
 
       {/* ---------- Hero ---------- */}
       <div className="relative h-[50vh] min-h-[360px] overflow-hidden">
-        {images[0] ? (
-          <img src={images[0]} alt={design.name} className="w-full h-full object-cover scale-105" />
+        {heroImage ? (
+          <img src={heroImage} alt={design.name} className="w-full h-full object-cover scale-105" />
         ) : (
           <div className="w-full h-full bg-navy/10" />
         )}
@@ -134,16 +170,8 @@ const DesignDetail = () => {
                 <HiOutlinePlay className="text-teal" /> Videos
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                {videos.map((url, i) => (
-                  <div key={i} className="aspect-video rounded-xl overflow-hidden border border-line bg-navy/5">
-                    <iframe
-                      src={toEmbedUrl(url)}
-                      title={`${design.name} video ${i + 1}`}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
+                {videos.map((video, i) => (
+                  <VideoCard key={i} video={video} title={`${design.name} video ${i + 1}`} />
                 ))}
               </div>
             </div>
@@ -199,9 +227,9 @@ const DesignDetail = () => {
                   to={`/services/design/${d.slug || d._id}`}
                   className="group rounded-2xl border border-line bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]"
                 >
-                  {d.images?.[0] ? (
+                  {d.thumbnail || d.images?.[0] ? (
                     <div className="h-40 overflow-hidden">
-                      <img src={d.images[0]} alt={d.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <img src={d.thumbnail || d.images[0]} alt={d.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     </div>
                   ) : (
                     <div className="h-40 bg-navy/5" />

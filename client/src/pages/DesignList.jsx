@@ -41,16 +41,18 @@ const DesignList = () => {
           <p className="text-navy/60 font-body">No design services added yet.</p>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {designs.map((item, i) => (
+            {designs.map((item, i) => {
+              const cover = item.thumbnail || item.images?.[0];
+              return (
               <Reveal key={item._id} delay={(i % 6) * 0.06} variant="up">
                 <Link
                   to={`/services/design/${item.slug || item._id}`}
                   className="group block rounded-2xl border border-line bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-navy/20 hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]"
                 >
-                  {item.images?.[0] ? (
+                  {cover ? (
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={item.images[0]}
+                        src={cover}
                         alt={item.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
@@ -83,7 +85,8 @@ const DesignList = () => {
                   </div>
                 </Link>
               </Reveal>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

@@ -4,14 +4,18 @@ import { useOutletContext } from "react-router-dom";
 import { fetchDesigns, createDesign, updateDesign, deleteDesign } from "../../services/designService.js";
 import MultiImageField from "../../components/admin/MultiImageField.jsx";
 import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
+import VideoField from "../../components/admin/VideoField.jsx";
 import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
   name: "", category: "", description: "", order: 0,
+  existingThumbnail: "", thumbnailFile: null,
   existingImages: [], imageFiles: [],
   videos: [],
   existingDpr: "", dprFile: null,
 };
+
+const emptyVideo = { existingUrl: "", urlFile: null, existingThumbnail: "", thumbFile: null };
 
 const DesignManage = () => {
   const queryClient = useQueryClient();
@@ -74,16 +78,23 @@ const DesignManage = () => {
     setForm({
       ...emptyForm,
       ...item,
+      existingThumbnail: item.thumbnail || "",
+      thumbnailFile: null,
       existingImages: item.images || [],
       imageFiles: [],
-      videos: item.videos || [],
+      videos: (item.videos || []).map((v) => ({
+        existingUrl: v.url || "",
+        urlFile: null,
+        existingThumbnail: v.thumbnail || "",
+        thumbFile: null,
+      })),
       existingDpr: item.dpr || "",
       dprFile: null,
     });
     setShowForm(true);
   };
 
-  const addVideo = () => setForm((f) => ({ ...f, videos: [...f.videos, ""] }));
+  const addVideo = () => setForm((f) => ({ ...f, videos: [...f.videos, { ...emptyVideo }] }));
   const setVideo = (i, value) => setForm((f) => ({ ...f, videos: f.videos.map((v, idx) => (idx === i ? value : v)) }));
   const removeVideo = (i) => setForm((f) => ({ ...f, videos: f.videos.filter((_, idx) => idx !== i) }));
 
@@ -141,8 +152,8 @@ const DesignManage = () => {
                   {data?.data?.map((item) => (
                     <tr key={item._id} className={`border-t ${rowClass}`}>
                       <td className="px-4 py-3">
-                        {item.images?.[0] ? (
-                          <img src={item.images[0]} alt={item.name} className="h-10 w-10 rounded-lg object-cover" />
+                        {item.thumbnail || item.images?.[0] ? (
+                          <img src={item.thumbnail || item.images[0]} alt={item.name} className="h-10 w-10 rounded-lg object-cover" />
                         ) : (
                           <div className={`h-10 w-10 rounded-lg ${theme === "dark" ? "bg-gray-800" : "bg-stone"}`} />
                         )}
@@ -173,8 +184,8 @@ const DesignManage = () => {
             {data?.data?.map((item) => (
               <div key={item._id} className={`rounded-2xl border p-4 ${cardClass}`}>
                 <div className="flex items-start gap-3">
-                  {item.images?.[0] ? (
-                    <img src={item.images[0]} alt={item.name} className="h-14 w-14 shrink-0 rounded-xl object-cover" />
+                  {item.thumbnail || item.images?.[0] ? (
+                    <img src={item.thumbnail || item.images[0]} alt={item.name} className="h-14 w-14 shrink-0 rounded-xl object-cover" />
                   ) : (
                     <div className={`h-14 w-14 shrink-0 rounded-xl ${theme === "dark" ? "bg-gray-800" : "bg-stone"}`} />
                   )}
@@ -208,9 +219,19 @@ const DesignManage = () => {
               <input placeholder="Category (e.g. Architectural Design)" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass} />
             </div>
 
+            <ImageSourceField
+              theme={theme}
+              label="Card Thumbnail (shown on the Design list page)"
+              urlValue={form.existingThumbnail}
+              fileValue={form.thumbnailFile}
+              onUrlChange={(v) => setForm((prev) => ({ ...prev, existingThumbnail: v }))}
+              onFileChange={(f) => setForm((prev) => ({ ...prev, thumbnailFile: f }))}
+            />
+            <p className={`-mt-2 text-xs ${mutedClass}`}>Falls back to the first gallery image below if left empty.</p>
+
             <MultiImageField
               theme={theme}
-              label="Images"
+              label="Gallery Images"
               urls={form.existingImages}
               files={form.imageFiles}
               onUrlsChange={(urls) => setForm((prev) => ({ ...prev, existingImages: urls }))}
@@ -221,29 +242,20 @@ const DesignManage = () => {
             <textarea placeholder="Description" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
 
             <div>
-              <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>Videos (optional — YouTube/Vimeo links)</label>
-              <div className="space-y-2">
+              <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>Videos (optional)</label>
+              <div className="space-y-3">
                 {form.videos.map((v, i) => (
-                  <div key={i} className="flex gap-2">
-                    <input
-                      placeholder="https://youtube.com/watch?v=..."
-                      value={v}
-                      onChange={(e) => setVideo(i, e.target.value)}
-                      className={inputClass}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeVideo(i)}
-                      className={`shrink-0 rounded-lg border px-3 text-sm ${theme === "dark" ? "border-gray-700 text-gray-400 hover:text-red-400" : "border-line text-gray-500 hover:text-red-500"}`}
-                      aria-label="Remove"
-                    >
-                      ✕
-                    </button>
-                  </div>
+                  <VideoField
+                    key={i}
+                    theme={theme}
+                    value={v}
+                    onChange={(value) => setVideo(i, value)}
+                    onRemove={() => removeVideo(i)}
+                  />
                 ))}
               </div>
               <button type="button" onClick={addVideo} className={`mt-2 text-sm font-semibold ${theme === "dark" ? "text-gold" : "text-navy"} hover:underline`}>
-                + Add video link
+                + Add video
               </button>
             </div>
 
@@ -251,7 +263,7 @@ const DesignManage = () => {
               theme={theme}
               label="DPR (Detailed Project Report)"
               accept="application/pdf,.doc,.docx"
-              isDocument
+              previewType="document"
               urlValue={form.existingDpr}
               fileValue={form.dprFile}
               onUrlChange={(v) => setForm((prev) => ({ ...prev, existingDpr: v }))}

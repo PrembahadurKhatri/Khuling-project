@@ -7,7 +7,10 @@ const router = express.Router();
 
 const uploadFields = upload.fields([
   { name: "images", maxCount: 10 },
+  { name: "thumbnail", maxCount: 1 },
   { name: "dpr", maxCount: 1 },
+  { name: "videoFiles", maxCount: 10 },
+  { name: "videoThumbFiles", maxCount: 10 },
 ]);
 
 router.get("/", getDesigns);

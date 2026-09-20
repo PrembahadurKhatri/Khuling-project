@@ -2,16 +2,31 @@ import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 import Design from "../models/Design.js";
 
-// The admin form sends images two ways at once: `existingImages` (a JSON
-// array of URLs already kept from before, or pasted directly) and `images`
-// (newly uploaded files, via upload.fields). Both merge into one list here,
-// capped at 10. `videos` arrives as a JSON array of pasted URLs (YouTube/
-// Vimeo links, not uploads). `dpr` is a single document -- an uploaded file
-// wins over a pasted `existingDpr` URL, matching ImageSourceField's
-// URL-or-file convention -- see DesignManage.jsx.
+// The admin form (DesignManage.jsx) sends a lot of URL-or-file pairs at
+// once. Each follows the same shape: a plain field for the kept/pasted URL,
+// and a file field for a fresh upload, with the file winning when both are
+// present (an admin form only ever produces one or the other per pair).
+//
+// Videos are the trickiest case: each entry has its own video (link OR
+// upload) and its own optional thumbnail (link OR upload). Rather than
+// indexed field names, the form sends one JSON `videosMeta` array
+// describing each entry's shape (video-is-a-file? thumbnail-is-a-file? plus
+// whatever kept URLs there are), and two flat file arrays (`videoFiles`,
+// `videoThumbFiles`) in the same order as the "is a file" flags appear in
+// videosMeta -- this function walks the metadata and pulls files off those
+// queues as it goes.
 const normalizePayload = (body, files) => {
   const payload = { ...body };
 
+  // Card thumbnail
+  delete payload.existingThumbnail;
+  if (files?.thumbnail?.[0]) {
+    payload.thumbnail = files.thumbnail[0].path;
+  } else if (body.existingThumbnail) {
+    payload.thumbnail = body.existingThumbnail;
+  }
+
+  // Gallery images
   let existingImages = [];
   if (body.existingImages) {
     try {
@@ -24,14 +39,28 @@ const normalizePayload = (body, files) => {
   const uploadedImages = (files?.images || []).map((f) => f.path);
   payload.images = [...existingImages, ...uploadedImages].slice(0, 10);
 
-  if (typeof body.videos === "string") {
+  // Videos
+  delete payload.videosMeta;
+  if (typeof body.videosMeta === "string") {
+    let meta = [];
     try {
-      payload.videos = JSON.parse(body.videos);
+      meta = JSON.parse(body.videosMeta);
     } catch {
-      payload.videos = [];
+      meta = [];
     }
+    const videoFiles = files?.videoFiles || [];
+    const videoThumbFiles = files?.videoThumbFiles || [];
+    let fi = 0;
+    let ti = 0;
+    payload.videos = meta
+      .map((v) => ({
+        url: v.urlIsFile ? videoFiles[fi++]?.path : v.url,
+        thumbnail: v.thumbIsFile ? videoThumbFiles[ti++]?.path : v.thumbnail || undefined,
+      }))
+      .filter((v) => v.url);
   }
 
+  // DPR document
   delete payload.existingDpr;
   if (files?.dpr?.[0]) {
     payload.dpr = files.dpr[0].path;

@@ -11,8 +11,12 @@ const designSchema = new mongoose.Schema(
     slug: { type: String, unique: true },
     category: { type: String },
     description: { type: String },
-    // Up to 10 photos for this design (first one doubles as the card cover
-    // on the public Design page) -- enforced here and again client-side in
+    // The public Design card's cover photo — a deliberate choice, not just
+    // "whichever image happens to be first" in the gallery below. Falls back
+    // to images[0] on the frontend for designs saved before this field
+    // existed.
+    thumbnail: { type: String },
+    // Up to 10 gallery photos -- enforced here and again client-side in
     // DesignManage.jsx so the limit is obvious before a submit ever happens.
     images: {
       type: [String],
@@ -21,7 +25,16 @@ const designSchema = new mongoose.Schema(
         message: "A design can have at most 10 images.",
       },
     },
-    videos: [{ type: String }],
+    // Each video is either a pasted link (YouTube/Vimeo) or an uploaded
+    // file, with its own optional poster thumbnail (also link-or-upload) --
+    // see designController.js's normalizePayload for how these get merged
+    // from the admin form's parallel metadata + file arrays.
+    videos: [
+      {
+        url: { type: String, required: true },
+        thumbnail: { type: String },
+      },
+    ],
     // Detailed Project Report — a single document (PDF, typically).
     dpr: { type: String },
     order: { type: Number, default: 0 },
