@@ -1,152 +1,71 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import api from "../services/api.js";
+import { FaDraftingCompass, FaHardHat, FaTruckMoving } from "react-icons/fa";
 import PageHeader from "../components/PageHeader.jsx";
 import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 
-const fetchServices = async () => {
-  const { data } = await api.get("/services");
-  return data;
-};
+const categories = [
+  {
+    to: "/services/design",
+    icon: FaDraftingCompass,
+    title: "Design",
+    description: "Architectural, structural, and specialist design services — every design discipline a build needs, coordinated in one place.",
+  },
+  {
+    to: "/services/construction",
+    icon: FaHardHat,
+    title: "Construction",
+    description: "Six disciplines under one project office — infrastructure, buildings, roads, bridges, and the full range of civil construction capability.",
+  },
+  {
+    to: "/services/equipment-lease",
+    icon: FaTruckMoving,
+    title: "Equipment Lease",
+    description: "Sixty-plus pieces of owned heavy equipment available for lease — excavators, loaders, cranes, and more.",
+  },
+];
 
-const Services = () => {
-  const { data, isLoading } = useQuery({ queryKey: ["services"], queryFn: fetchServices });
-  const services = data?.data || [];
+const Services = () => (
+  <div>
+    <Seo
+      title="Services"
+      description="Design, construction, and equipment lease — the three capabilities Khilung Kalika Construction delivers under one project office."
+    />
+    <PageHeader eyebrow="Capability" title="What we deliver." crumb="Home / Services" />
 
-  return (
-    <div>
-      <Seo title="Services" description="Six disciplines under one project office — infrastructure, buildings, roads, bridges, and the full range of civil construction capability." />
-      <PageHeader
-        eyebrow="Capability"
-        title="Six disciplines under one project office."
-        crumb="Home / Services"
-      />
+    <section className="container-wide py-24 md:py-28">
+      <div className="max-w-2xl mb-14">
+        <p className="eyebrow tracking-wider mb-4 font-body">Our Services</p>
+        <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2]">
+          Three capabilities, one project office.
+        </h2>
+      </div>
 
-      <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-12 gap-y-14">
-
-        {/* LEFT SIDE */}
-        <div className="md:col-span-4 md:sticky md:top-28 md:self-start space-y-8">
-          <div className="pt-4 space-y-6">
-            <div className="flex items-baseline gap-3">
-              <span className="font-body text-[11px] font-bold tracking-widest2 uppercase text-teal">
-                What We Deliver
-              </span>
-              <span className="h-px flex-1 bg-line" />
-            </div>
-
-            <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] max-w-sm">
-              Each discipline runs its own site office, under one project
-              management structure.
-            </h2>
-
-    
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="md:col-span-8">
-          {isLoading ? (
-            <div className="space-y-5">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="h-32 bg-line/30 animate-pulse rounded-md" />
-              ))}
-            </div>
-          ) : (
-            <div className="relative">
-              {/* Connecting spine — reinforces "one project office" across disciplines */}
-              <div className="absolute left-[27px] top-2 bottom-2 w-px bg-line hidden sm:block" />
-
-              <div className="space-y-2">
-                {services.map((service, i) => (
-                  <Reveal key={service._id} delay={(i % 6) * 0.06} variant={i % 2 === 0 ? "left" : "right"}>
-                  <div
-                    className={`relative py-9 flex flex-col sm:flex-row gap-6 sm:gap-8 group transition-all duration-300 ${
-                      i > 0 ? "border-t border-line" : ""
-                    }`}
-                  >
-                    {/* Index — set like a drawing sheet number, e.g. S.01 */}
-                    <div className="hidden sm:flex flex-col items-center shrink-0 w-14">
-                      <span className="font-body text-[13px] font-bold text-white bg-navy group-hover:bg-teal transition-colors duration-300 w-9 h-9 rounded-full flex items-center justify-center relative z-10 tabular-nums">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                     
-                    </div>
-
-                    {service.heroImage && (
-                      <div className="relative w-full sm:w-44 h-32 shrink-0">
-
-                        
-                        
-                        <div className="img-frame w-full h-full overflow-hidden rounded-lg">
-                          <img
-                            src={service.heroImage}
-                            alt={service.title}
-                            className="w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex-1 space-y-2.5">
-                      
-                      <h3 className="font-body text-xl md:text-2xl text-navy transition-colors duration-300 group-hover:text-teal">
-                        {service.title}
-                      </h3>
-
-                      <p className="text-navy/70 leading-relaxed max-w-lg font-body">
-                        {service.shortDescription}
-                      </p>
-
-                      {service.benefits?.length > 0 && (
-                        <div className="pt-2 flex flex-wrap gap-2">
-                          {service.benefits.map((b) => (
-                            <span key={b} className="badge-navy font-body">
-                              {b}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      {service.category && (
-                        <div className="pt-3">
-                          <Link
-                            to={`/projects?category=${encodeURIComponent(service.category)}`}
-                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal hover:text-navy transition-colors duration-300 font-body"
-                          >
-                            <span   className="group/btn inline-flex items-center gap-2.5 mt-6 md:mt-8
-            px-5 py-2.5 rounded-full
-            bg-navy text-white
-            text-[11px] md:text-[12px] font-body font-semibold tracking-wide uppercase
-            border border-navy/80 shadow-sm
-            whitespace-nowrap
-            transition-all duration-300 ease-out
-            hover:shadow-[0_6px_20px_rgba(10,25,47,0.35)]
-            hover:-translate-y-0.5
-            hover:bg-[linear-gradient(135deg,#0b1f3a_0%,#102a4c_50%,#0a192f_100%)]">
-                              Related Projects
-                              <span className="absolute left-0 -bottom-0.5 h-px w-0 bg-current group-hover:w-full transition-all duration-300" />
-                            </span>
-                    
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="hidden md:flex items-center opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-
-                    </div>
-                  </div>
-                  </Reveal>
-                ))}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {categories.map(({ to, icon: Icon, title, description }, i) => (
+          <Reveal key={to} delay={i * 0.08} variant="up">
+            <Link
+              to={to}
+              className="group relative flex flex-col h-full rounded-2xl border border-line bg-white p-7 md:p-8
+                         transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-navy/20
+                         hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]"
+            >
+              <div className="w-14 h-14 rounded-xl bg-navy/5 ring-1 ring-navy/10 flex items-center justify-center mb-6
+                              group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
+                <Icon className="text-navy text-2xl group-hover:text-gold transition-colors duration-300" />
               </div>
-            </div>
-          )}
-        </div>
-
-      </section>
-    </div>
-  );
-};
+              <h3 className="font-body text-xl md:text-2xl text-navy font-semibold mb-3">{title}</h3>
+              <p className="text-navy/70 leading-relaxed font-body flex-1">{description}</p>
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-navy group-hover:text-teal transition-colors duration-300 font-body">
+                Explore {title}
+                <span className="text-base leading-none transition-transform duration-300 group-hover:translate-x-1">→</span>
+              </span>
+            </Link>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  </div>
+);
 
 export default Services;

@@ -7,6 +7,8 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Services from "./pages/Services.jsx";
+import ServiceList from "./pages/ServiceList.jsx";
+import EquipmentLease from "./pages/EquipmentLease.jsx";
 import Projects from "./pages/Projects.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import Blog from "./pages/Blog.jsx";
@@ -36,6 +38,7 @@ import ContactManage from "./pages/admin/ContactManage.jsx";
 import GalleryManage from "./pages/admin/GalleryManage.jsx";
 import TeamManage from "./pages/admin/TeamManage.jsx";
 import MessagesManage from "./pages/admin/MessagesManage.jsx";
+import EquipmentManage from "./pages/admin/EquipmentManage.jsx";
 import SettingsManage from "./pages/admin/SettingsManage.jsx";
 
 function App() {
@@ -48,6 +51,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services/design" element={<ServiceList group="design" />} />
+          <Route path="/services/construction" element={<ServiceList group="construction" />} />
+          <Route path="/services/equipment-lease" element={<EquipmentLease />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<ProjectDetail />} />
           <Route path="/blog" element={<Blog />} />
@@ -87,6 +93,7 @@ function App() {
           <Route path="gallery" element={<GalleryManage />} />
           <Route path="team" element={<TeamManage />} />
           <Route path="messages" element={<MessagesManage />} />
+          <Route path="equipment" element={<EquipmentManage />} />
           <Route path="settings" element={<SettingsManage />} />
         </Route>
       </Routes>
