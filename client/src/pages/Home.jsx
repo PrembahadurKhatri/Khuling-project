@@ -675,26 +675,26 @@ useEffect(() => {
 
       {/* Testimonials — one featured quote at a time, not a card carousel. */}
       <motion.section
-        className=" to-stone border-y border-line py-20 md:py-24 relative overflow-hidden"
+        className=" to-stone border-y border-line py-12 md:py-16 relative overflow-hidden"
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
       >
   <div className="absolute inset-0 bg-hero-pattern opacity-15 pointer-events-none" />
-  <div className="container-wide max-w-3xl relative text-center">
-    <p className="eyebrow mb-6 md:mb-8 font-body">Client Record</p>
-    <div className="text-6xl md:text-7xl text-gold/20 font-display leading-none mb-3 md:mb-4">"</div>
+  <div className="container-wide max-w-2xl relative text-center">
+    <p className="eyebrow mb-4 md:mb-5 font-body">Client Record</p>
+    <div className="text-4xl md:text-5xl text-gold/20 font-display leading-none mb-1 md:mb-2">"</div>
     <motion.blockquote
       key={tIndex}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="font-display italic text-xl md:text-3xl text-navy leading-relaxed md:leading-snug -mt-6 md:-mt-8 px-2 md:px-6"
+      className="font-display italic text-lg md:text-xl text-navy leading-relaxed md:leading-snug -mt-3 md:-mt-4 px-2 md:px-6"
     >
       {testimonials[tIndex].quote}
     </motion.blockquote>
-    <div className="mt-10 flex items-center justify-between flex-wrap gap-4 md:gap-6">
+    <div className="mt-6 flex items-center justify-between flex-wrap gap-4 md:gap-6">
       <p className="font-body text-[11px] md:text-[12px] font-semibold tracking-wide uppercase text-navy/60">
         {testimonials[tIndex].name} — {testimonials[tIndex].org}
       </p>
