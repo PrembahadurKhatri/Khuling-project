@@ -225,8 +225,8 @@ Our vision is to become a reputable and preferred civil contractor who is well k
   <div className="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
 
   <div className="container-wide py-20 md:py-28 relative">
-    <div className="max-w-3xl mx-auto text-center">
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-navy/5 ring-1 ring-navy/10 mb-6">
+    <div className="max-w-2xl">
+      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-navy/5 ring-1 ring-navy/10 mb-6">
         <FaCrosshairs className="text-navy text-xl" />
       </div>
       <p className="eyebrow tracking-wider mb-4 font-body">Our Objective</p>
