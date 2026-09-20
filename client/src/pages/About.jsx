@@ -224,17 +224,19 @@ Our vision is to become a reputable and preferred civil contractor who is well k
   <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-teal/5 blur-3xl pointer-events-none" />
   <div className="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
 
-  <div className="container-wide py-20 md:py-28 relative">
-    <div className="max-w-2xl">
+  <div className="container-wide py-20 md:py-28 relative grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+
+    {/* LEFT — copy */}
+    <div className="lg:col-span-5">
       <div className="flex items-center justify-center w-14 h-14 rounded-full bg-navy/5 ring-1 ring-navy/10 mb-6">
         <FaCrosshairs className="text-navy text-xl" />
       </div>
       <p className="eyebrow tracking-wider mb-4 font-body">Our Objective</p>
-      <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] mb-3">
+      <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] max-w-md mb-3">
         Precision, on schedule, without compromise.
       </h2>
 
-      <p className="text-navy/70 leading-relaxed text-base md:text-lg font-body">
+      <p className="text-navy/70 leading-relaxed text-base font-body max-w-lg">
         The primary objective of Khilung Kalika Construction Pvt. Ltd. (KKCPL) is to deliver high-quality,
         innovative, and sustainable infrastructure by combining modern engineering practices, advanced
         construction technologies, and skilled professionals. The company is committed to completing projects on
@@ -244,21 +246,21 @@ Our vision is to become a reputable and preferred civil contractor who is well k
       </p>
     </div>
 
-    {/* PILLARS */}
-    <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+    {/* RIGHT — pillars */}
+    <div className="lg:col-span-7 grid sm:grid-cols-2 gap-5 md:gap-6">
       {objectivePillars.map(([Icon, title, desc]) => (
         <div
           key={title}
-          className="group rounded-2xl border border-line bg-white p-5 md:p-6
+          className="group rounded-2xl border border-line bg-white p-6 md:p-7
                      transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-navy/20
                      hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]"
         >
-          <div className="w-10 h-10 rounded-lg bg-navy/5 ring-1 ring-navy/10 flex items-center justify-center mb-4
+          <div className="w-11 h-11 rounded-lg bg-navy/5 ring-1 ring-navy/10 flex items-center justify-center mb-4
                           group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
-            <Icon className="text-navy text-sm group-hover:text-gold transition-colors duration-300" />
+            <Icon className="text-navy text-base group-hover:text-gold transition-colors duration-300" />
           </div>
-          <p className="font-body text-sm md:text-base text-navy font-semibold leading-snug mb-1.5">{title}</p>
-          <p className="text-navy/60 text-xs md:text-[13px] leading-relaxed font-body">{desc}</p>
+          <p className="font-body text-base text-navy font-bold mb-2 leading-snug">{title}</p>
+          <p className="text-navy/70 text-sm leading-relaxed font-body">{desc}</p>
         </div>
       ))}
     </div>
