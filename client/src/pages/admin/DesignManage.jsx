@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchDesigns, createDesign, updateDesign, deleteDesign } from "../../services/designService.js";
+import { fetchCategories } from "../../services/categoryService.js";
 import MultiImageField from "../../components/admin/MultiImageField.jsx";
 import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
 import VideoField from "../../components/admin/VideoField.jsx";
@@ -29,6 +30,12 @@ const DesignManage = () => {
     queryKey: ["admin-designs"],
     queryFn: fetchDesigns,
   });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
+  const categories = categoriesData?.data || [];
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-designs"] });
@@ -216,7 +223,12 @@ const DesignManage = () => {
             <h2 className="mb-2 font-heading text-lg font-semibold">{editing ? "Edit Design" : "New Design"}</h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input required placeholder="Name (e.g. Hospital Block Design)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} />
-              <input placeholder="Category (e.g. Architectural Design)" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass} />
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
+                <option value="">Select a category</option>
+                {categories.map((c) => (
+                  <option key={c._id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
             </div>
 
             <ImageSourceField

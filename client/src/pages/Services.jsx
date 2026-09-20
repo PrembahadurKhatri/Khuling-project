@@ -39,7 +39,7 @@ const Services = () => (
     />
     <PageHeader eyebrow="Capability" title="What we deliver." crumb="Home / Services" />
 
-    <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-8 gap-y-14">
+    <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-6 gap-y-14">
 
       {/* LEFT SIDE */}
       <div className="md:col-span-3 md:sticky md:top-28 md:self-start space-y-6">
@@ -72,7 +72,7 @@ const Services = () => (
       </div>
 
       {/* RIGHT SIDE */}
-      <div id="service-categories" className="md:col-span-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div id="service-categories" className="md:col-span-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
         {categories.map(({ to, icon: Icon, title, description, image, accent }, i) => {
           const accentBg = accent === "gold" ? "bg-gold" : "bg-navy";
           return (
