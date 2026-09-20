@@ -320,7 +320,7 @@ useEffect(() => {
       </div>
     </motion.div>
 
-    <div className="lg:col-span-4 grid grid-cols-4 gap-x-2 gap-y-4 sm:gap-x-4 lg:min-h-[280px] lg:content-between lg:gap-x-6 lg:gap-y-6">
+    <div className="lg:col-span-4 grid grid-cols-4 gap-x-2 gap-y-4 sm:gap-x-4 lg:min-h-[280px] lg:grid-cols-2 lg:content-between lg:gap-x-6 lg:gap-y-6">
       {trustBadges.map(([Icon, line1, line2]) => (
         <motion.div key={line2} variants={staggerItem} className="flex flex-col items-center text-center gap-2 sm:gap-3 lg:gap-4">
           <div className="w-9 h-9 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
