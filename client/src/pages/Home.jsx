@@ -43,15 +43,6 @@ const staggerItem = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: EASE } },
 };
 
-// A left-to-right clip-path wipe, used on the two big feature images —
-// reads as more "premium" than a plain fade for a large hero-ish image.
-const wipeReveal = {
-  initial: { clipPath: "inset(0 100% 0 0)", opacity: 0.4 },
-  whileInView: { clipPath: "inset(0 0% 0 0)", opacity: 1 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.9, ease: EASE },
-};
-
 // Shown only until the admin sets their own list in Settings → Credibility Strip.
 const DEFAULT_CREDENTIALS = [
   "ISO 9001:2015 Certified",
@@ -238,13 +229,13 @@ useEffect(() => {
       <div className="absolute -top-5 -right-5 h-28 w-28 sm:h-36 sm:w-36 rounded-2xl bg-gold" aria-hidden="true" />
 
       <div className="relative group">
-        <motion.div {...wipeReveal} className="img-frame overflow-hidden rounded-2xl shadow-lg relative z-10">
+        <div className="img-frame overflow-hidden rounded-2xl shadow-lg relative z-10">
           <img
             src="https://i.pinimg.com/1200x/35/23/84/352384a7a5937c38bdf830722eeb1bc0.jpg"
             alt="Khilung Kalika engineers on site"
             className="w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
           />
-        </motion.div>
+        </div>
 
         {/* floating stat bar, overlapping the photo's bottom edge */}
         <div className="absolute inset-x-5 sm:inset-x-8 -bottom-8 z-20 rounded-xl bg-navy shadow-xl">
