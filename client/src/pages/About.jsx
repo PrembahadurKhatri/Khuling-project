@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaBullseye,
@@ -97,22 +96,6 @@ const About = () => {
     <p className="text-navy/70 leading-relaxed max-w-lg text-base font-body">
 Khilung Kalika Construction Pvt. Ltd. (KKCPL) was established in 2018 under the Companies Act 2063. The company provides civil and architectural construction services for projects such as hydropower, hospitals, buildings, roads, schools, colleges, and agricultural farms. With experienced engineers, skilled technicians, over 67 full-time staff and around 350 contract-based workers, KKCPL is committed to delivering high-quality, safe, and cost-effective construction projects on time while maintaining strong standards in quality, safety, and environmental management.
     </p>
-
-    {/* Script tagline + CTA */}
-    <div className="flex flex-wrap items-center gap-5 pt-2">
-      <p className="font-serif italic text-gold text-xl leading-snug">
-        Building a<br />Better Tomorrow
-      </p>
-      <Link to="/projects" className="group inline-flex items-center gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy text-white shadow-md transition-colors duration-300 group-hover:bg-gold">
-          <span className="ml-0.5 text-xs">▶</span>
-        </span>
-        <span className="font-body font-semibold text-navy transition-colors duration-300 group-hover:text-gold">
-          View Our Projects
-        </span>
-        <span className="text-navy text-base leading-none transition-transform duration-300 group-hover:translate-x-1">→</span>
-      </Link>
-    </div>
   </div>
 
   {/* RIGHT IMAGE */}
