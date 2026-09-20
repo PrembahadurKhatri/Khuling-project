@@ -15,16 +15,7 @@ const normalizePayload = (body, file) => {
 };
 
 export const getServices = asyncHandler(async (req, res) => {
-  const filter = {};
-  // Services created before the "group" field existed have no value for it
-  // at all -- treat those as "construction" too, so the original 8 services
-  // keep showing up under Construction without needing a data migration.
-  if (req.query.group === "construction") {
-    filter.$or = [{ group: "construction" }, { group: { $exists: false } }];
-  } else if (req.query.group) {
-    filter.group = req.query.group;
-  }
-  const services = await Service.find(filter).sort("order");
+  const services = await Service.find().sort("order");
   res.json({ success: true, data: services });
 });
 

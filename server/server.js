@@ -27,6 +27,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import equipmentRoutes from "./routes/equipmentRoutes.js";
+import designRoutes from "./routes/designRoutes.js";
 import visitRoutes from "./routes/visitRoutes.js";
 import seoRoutes from "./routes/seoRoutes.js";
 
@@ -144,6 +145,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/equipment", equipmentRoutes);
+app.use("/api/designs", designRoutes);
 app.use("/api/visits", visitRoutes);
 
 // Serve the built React app in production so the frontend and API share one

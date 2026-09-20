@@ -9,12 +9,6 @@ const serviceSchema = new mongoose.Schema(
     heroImage: { type: String },
     shortDescription: { type: String, maxlength: 300 },
     description: { type: String, required: true },
-    // Which top-level services group this belongs to (see the public
-    // /services overview page, which now fans out into Design,
-    // Construction, and Equipment Lease). Everything created before this
-    // field existed defaults to "construction" so the existing 8 services
-    // keep showing up exactly where they always have.
-    group: { type: String, enum: ["construction", "design"], default: "construction" },
     // Links this service to a Project category (see models/Category.js) so
     // the public Service page can offer a "Related Projects" button that
     // deep-links to /projects?category=<this>.

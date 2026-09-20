@@ -5,37 +5,26 @@ import PageHeader from "../components/PageHeader.jsx";
 import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
 
-const COPY = {
-  construction: {
-    seoTitle: "Construction Services",
-    seoDescription: "Six disciplines under one project office — infrastructure, buildings, roads, bridges, and the full range of civil construction capability.",
-    eyebrow: "Capability",
-    title: "Six disciplines under one project office.",
-    kicker: "What We Deliver",
-    intro: "Each discipline runs its own site office, under one project management structure.",
-  },
-  design: {
-    seoTitle: "Design Services",
-    seoDescription: "Architectural, structural, and specialist design services for every stage of a build, from concept through to construction-ready drawings.",
-    eyebrow: "Capability",
-    title: "Design work that construction can actually build from.",
-    kicker: "What We Design",
-    intro: "Every design discipline a project needs, coordinated under one project office instead of scattered across consultants.",
-  },
+const copy = {
+  seoTitle: "Construction Services",
+  seoDescription: "Six disciplines under one project office — infrastructure, buildings, roads, bridges, and the full range of civil construction capability.",
+  eyebrow: "Capability",
+  title: "Six disciplines under one project office.",
+  kicker: "What We Deliver",
+  intro: "Each discipline runs its own site office, under one project management structure.",
 };
 
-const ServiceList = ({ group }) => {
+const ServiceList = () => {
   const { data, isLoading } = useQuery({
-    queryKey: ["services", group],
-    queryFn: () => fetchServices({ group }),
+    queryKey: ["services"],
+    queryFn: () => fetchServices(),
   });
   const services = data?.data || [];
-  const copy = COPY[group];
 
   return (
     <div>
       <Seo title={copy.seoTitle} description={copy.seoDescription} />
-      <PageHeader eyebrow={copy.eyebrow} title={copy.title} crumb={`Home / Services / ${group === "design" ? "Design" : "Construction"}`} />
+      <PageHeader eyebrow={copy.eyebrow} title={copy.title} crumb="Home / Services / Construction" />
 
       <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-12 gap-y-14">
 
@@ -71,7 +60,7 @@ const ServiceList = ({ group }) => {
               ))}
             </div>
           ) : services.length === 0 ? (
-            <p className="text-navy/60 font-body">No {group} services added yet.</p>
+            <p className="text-navy/60 font-body">No construction services added yet.</p>
           ) : (
             <div className="relative">
               {/* Connecting spine — reinforces "one project office" across disciplines */}

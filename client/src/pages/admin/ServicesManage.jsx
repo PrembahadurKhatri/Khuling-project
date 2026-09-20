@@ -7,7 +7,7 @@ import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
 import useToast from "../../hooks/useToast.js";
 
 const emptyForm = {
-  title: "", group: "construction", category: "", shortDescription: "", description: "", benefits: "",
+  title: "", category: "", shortDescription: "", description: "", benefits: "",
   heroImage: "", heroImageFile: null,
 };
 
@@ -107,7 +107,7 @@ const ServicesManage = () => {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-body font-bold">Services</h1>
+        <h1 className="text-2xl font-body font-bold">Construction</h1>
         <button onClick={openCreate} className="btn-primary w-full !py-2.5 sm:w-auto sm:!py-2">+ New Service</button>
       </div>
 
@@ -123,7 +123,6 @@ const ServicesManage = () => {
                   <tr>
                     <th className="px-4 py-3">Image</th>
                     <th className="px-4 py-3">Title</th>
-                    <th className="px-4 py-3">Group</th>
                     <th className="px-4 py-3">Category</th>
                     <th className="px-4 py-3">Short Description</th>
                     <th className="px-4 py-3 text-right">Actions</th>
@@ -132,7 +131,7 @@ const ServicesManage = () => {
                 <tbody>
                   {data?.data?.length === 0 && (
                     <tr>
-                      <td colSpan={6} className={`px-4 py-6 text-center ${mutedClass}`}>
+                      <td colSpan={5} className={`px-4 py-6 text-center ${mutedClass}`}>
                         No services yet.
                       </td>
                     </tr>
@@ -147,7 +146,6 @@ const ServicesManage = () => {
                         )}
                       </td>
                       <td className="px-4 py-3">{service.title}</td>
-                      <td className="px-4 py-3 capitalize">{service.group || "construction"}</td>
                       <td className="px-4 py-3">{service.category || "—"}</td>
                       <td className="max-w-sm truncate px-4 py-3">{service.shortDescription}</td>
                       <td className="px-4 py-3 text-right space-x-3">
@@ -178,8 +176,8 @@ const ServicesManage = () => {
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-semibold">{service.title}</div>
-                    <div className={`mt-0.5 truncate text-xs capitalize ${mutedClass}`}>
-                      {service.group || "construction"} · {service.category || "No linked category"}
+                    <div className={`mt-0.5 truncate text-xs ${mutedClass}`}>
+                      {service.category || "No linked category"}
                     </div>
                     {service.shortDescription && (
                       <p className={`mt-1.5 line-clamp-2 text-sm ${theme === "dark" ? "text-gray-300" : "text-ink"}`}>
@@ -207,17 +205,6 @@ const ServicesManage = () => {
           >
             <h2 className="mb-2 font-heading text-lg font-semibold">{editing ? "Edit Service" : "New Service"}</h2>
             <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputClass} />
-
-            <div>
-              <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>Group</label>
-              <select value={form.group} onChange={(e) => setForm({ ...form, group: e.target.value })} className={inputClass}>
-                <option value="construction">Construction</option>
-                <option value="design">Design</option>
-              </select>
-              <p className={`mt-1 text-xs ${mutedClass}`}>
-                Which /services category this shows up under on the public site.
-              </p>
-            </div>
 
             <div>
               <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>

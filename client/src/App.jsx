@@ -8,6 +8,7 @@ import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Services from "./pages/Services.jsx";
 import ServiceList from "./pages/ServiceList.jsx";
+import DesignList from "./pages/DesignList.jsx";
 import EquipmentLease from "./pages/EquipmentLease.jsx";
 import Projects from "./pages/Projects.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
@@ -39,6 +40,7 @@ import GalleryManage from "./pages/admin/GalleryManage.jsx";
 import TeamManage from "./pages/admin/TeamManage.jsx";
 import MessagesManage from "./pages/admin/MessagesManage.jsx";
 import EquipmentManage from "./pages/admin/EquipmentManage.jsx";
+import DesignManage from "./pages/admin/DesignManage.jsx";
 import SettingsManage from "./pages/admin/SettingsManage.jsx";
 
 function App() {
@@ -51,8 +53,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/services/design" element={<ServiceList group="design" />} />
-          <Route path="/services/construction" element={<ServiceList group="construction" />} />
+          <Route path="/services/design" element={<DesignList />} />
+          <Route path="/services/construction" element={<ServiceList />} />
           <Route path="/services/equipment-lease" element={<EquipmentLease />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<ProjectDetail />} />
@@ -94,6 +96,7 @@ function App() {
           <Route path="team" element={<TeamManage />} />
           <Route path="messages" element={<MessagesManage />} />
           <Route path="equipment" element={<EquipmentManage />} />
+          <Route path="design" element={<DesignManage />} />
           <Route path="settings" element={<SettingsManage />} />
         </Route>
       </Routes>
