@@ -18,7 +18,7 @@ const categories = [
     icon: FaHardHat,
     title: "Construction",
     description: "Six disciplines under one project office — infrastructure, buildings, roads, bridges, and the full range of civil construction capability.",
-    image: "https://i.pinimg.com/1200x/35/23/84/352384a7a5937c38bdf830722eeb1bc0.jpg",
+    image: "/contruction.avif",
     accent: "gold",
   },
   {
@@ -26,7 +26,7 @@ const categories = [
     icon: FaTruckMoving,
     title: "Equipment Lease",
     description: "Sixty-plus pieces of owned heavy equipment available for lease — excavators, loaders, cranes, and more.",
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=900&auto=format&fit=crop",
+    image: "/eqip.avif",
     accent: "navy",
   },
 ];
@@ -42,7 +42,7 @@ const Services = () => (
     <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-12 gap-y-14">
 
       {/* LEFT SIDE */}
-      <div className="md:col-span-4 md:sticky md:top-28 md:self-start space-y-6">
+      <div className="md:col-span-3 md:sticky md:top-28 md:self-start space-y-6">
         <div className="pt-4 space-y-6">
           <div className="flex items-center gap-3">
             <span className="h-px w-8 bg-gold" />
@@ -75,35 +75,38 @@ const Services = () => (
       </div>
 
       {/* RIGHT SIDE */}
-      <div id="service-categories" className="md:col-span-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div id="service-categories" className="md:col-span-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
         {categories.map(({ to, icon: Icon, title, description, image, accent }, i) => {
           const accentBg = accent === "gold" ? "bg-gold" : "bg-navy";
           return (
             <Reveal key={to} delay={i * 0.08} variant="up">
               <Link
                 to={to}
-                className="group relative flex flex-col h-full rounded-2xl border border-line bg-white overflow-hidden
+                className="group relative flex flex-col h-full rounded-2xl border border-line bg-white
                            transition-all duration-300 ease-out hover:-translate-y-1.5
                            hover:shadow-[0_20px_45px_rgba(10,25,47,0.12)]"
               >
-                {/* Photo */}
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={image}
-                    alt={title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                {/* Photo — clipped to the card's rounded top corners; the icon
+                    badge below sits outside this box so it isn't clipped too */}
+                <div className="relative">
+                  <div className="h-44 overflow-hidden rounded-t-2xl">
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
                   {/* Icon badge, overlapping the bottom-left corner of the photo */}
                   <div
-                    className={`absolute -bottom-6 left-5 w-12 h-12 rounded-xl ${accentBg} ring-4 ring-white shadow-lg
-                                flex items-center justify-center`}
+                    className={`absolute -bottom-6 left-6 w-14 h-14 rounded-xl ${accentBg} ring-4 ring-white shadow-lg
+                                flex items-center justify-center z-10`}
                   >
-                    <Icon className="text-white text-lg" />
+                    <Icon className="text-white text-xl" />
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col pt-9 pb-6 px-5 md:px-6">
+                <div className="flex-1 flex flex-col pt-10 pb-6 px-6 md:px-7">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="font-body text-xl text-navy font-bold">{title}</h3>
                     <span className="font-body text-xs text-navy/30 tabular-nums pt-1">
