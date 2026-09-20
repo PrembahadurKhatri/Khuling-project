@@ -39,17 +39,14 @@ const Services = () => (
     />
     <PageHeader eyebrow="Capability" title="What we deliver." crumb="Home / Services" />
 
-    <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-12 gap-y-14">
+    <section className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-x-8 gap-y-14">
 
       {/* LEFT SIDE */}
       <div className="md:col-span-3 md:sticky md:top-28 md:self-start space-y-6">
         <div className="pt-4 space-y-6">
-          <div className="flex items-center gap-3">
-            <span className="h-px w-8 bg-gold" />
-            <span className="font-body text-[11px] font-bold tracking-widest2 uppercase text-teal">
-              Our Services
-            </span>
-          </div>
+          <span className="font-body text-[11px] font-bold tracking-widest2 uppercase text-teal">
+            Our Services
+          </span>
 
           <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2]">
             Tailored solutions
@@ -75,7 +72,7 @@ const Services = () => (
       </div>
 
       {/* RIGHT SIDE */}
-      <div id="service-categories" className="md:col-span-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+      <div id="service-categories" className="md:col-span-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {categories.map(({ to, icon: Icon, title, description, image, accent }, i) => {
           const accentBg = accent === "gold" ? "bg-gold" : "bg-navy";
           return (
@@ -107,12 +104,7 @@ const Services = () => (
 
                 {/* Content */}
                 <div className="flex-1 flex flex-col pt-10 pb-6 px-6 md:px-7">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-body text-xl text-navy font-bold">{title}</h3>
-                    <span className="font-body text-xs text-navy/30 tabular-nums pt-1">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
+                  <h3 className="font-body text-xl text-navy font-bold mb-2">{title}</h3>
                   <p className="text-navy/70 text-sm leading-relaxed font-body flex-1">{description}</p>
 
                   <span className="mt-5 inline-flex items-center gap-2.5">
