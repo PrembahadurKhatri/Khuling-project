@@ -315,9 +315,9 @@ useEffect(() => {
       <img
         src="https://images.unsplash.com/photo-1465447142348-e9952c393450?q=80&w=1200&auto=format&fit=crop"
         alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-25 transition-transform duration-700 group-hover:scale-105"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-white/60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/85 to-white/10" />
       <div className="relative z-10">
         <div className="w-12 h-12 rounded-xl bg-navy/5 ring-1 ring-navy/10 flex items-center justify-center mb-4">
           <FaEye className="text-navy text-lg" />
@@ -329,13 +329,13 @@ useEffect(() => {
       </div>
     </motion.div>
 
-    <div className="lg:col-span-4 grid grid-cols-2 content-center gap-x-6 gap-y-8">
+    <div className="lg:col-span-4 min-h-[280px] grid grid-cols-2 content-between gap-x-6 gap-y-6">
       {trustBadges.map(([Icon, line1, line2]) => (
-        <motion.div key={line2} variants={staggerItem} className="flex flex-col items-center text-center gap-3.5">
-          <div className="w-14 h-14 rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
-            <Icon className="text-gold text-lg" />
+        <motion.div key={line2} variants={staggerItem} className="flex flex-col items-center text-center gap-4">
+          <div className="w-16 h-16 rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
+            <Icon className="text-gold text-2xl" />
           </div>
-          <p className="text-navy text-xs font-body leading-snug">
+          <p className="text-navy text-sm font-body leading-snug">
             {line1}
             <br />
             <span className="text-navy font-semibold">{line2}</span>
