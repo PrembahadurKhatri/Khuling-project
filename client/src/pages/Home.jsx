@@ -188,81 +188,66 @@ useEffect(() => {
   </div>
 </motion.section>
   <motion.section
-    className="container-wide py-24 md:py-28 grid md:grid-cols-12 gap-14 md:gap-16 items-center"
+    className="container-wide py-24 md:py-28"
     initial={{ opacity: 0, y: 28 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-80px" }}
     transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
   >
 
+  <div className="grid md:grid-cols-12 gap-14 md:gap-16 items-center">
+
   {/* LEFT CONTENT */}
   <div className="md:col-span-6 space-y-6">
 
     <div className="pt-4 space-y-3">
-      <div className="flex items-center gap-3">
-        <p className="eyebrow tracking-wider font-body">Our Story</p>
-   
-      </div>
+      <p className="eyebrow tracking-wider font-body">Our Story</p>
 
       <h2 className="font-body text-3xl md:text-4xl text-navy leading-[1.2] max-w-xl">
-        Built for Nepal's infrastructure, <span className="text-gold">one contract</span> at a time.
+        Built for Nepal's infrastructure,
+        <span className="block text-gold">one contract at a time.</span>
       </h2>
-
-  
     </div>
 
     <p className="text-navy/70 leading-relaxed max-w-lg text-lg font-body">
    Khilung Kalika Construction Pvt. Ltd. (KKCPL) was established in 2018 under the Companies Act 2063. The company provides civil and architectural construction services for projects such as hydropower, hospitals, buildings, roads, schools, colleges, and agricultural farms. With experienced engineers, skilled technicians, over 67 full-time staff and around 350 contract-based workers, KKCPL is committed to delivering high-quality, safe, and cost-effective construction projects on time while maintaining strong standards in quality, safety, and environmental management.
     </p>
 
-    {/* MISSION / VISION */}
-    <motion.div
-      className="mt-8 grid sm:grid-cols-2 gap-5"
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
-      variants={staggerContainer}
-    >
-
-      <motion.div variants={staggerItem} className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <div className="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center ring-1 ring-navy/10 group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
-          <FaBullseye className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
-        </div>
-        <p className="text-navy font-bold mt-4 mb-2 font-body text-lg">Our Mission</p>
-        <p className="text-navy/70 text-sm leading-relaxed font-body">
-         Our mission is to deliver high-quality construction services at competitive prices while ensuring customer satisfaction through timely project completion, attention to detail, and professional service. We uphold the highest standards of professionalism, integrity, honesty, and fairness in all our relationships.
-        </p>
-      </motion.div>
-
-      <motion.div variants={staggerItem} className="card group p-6 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <div className="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center ring-1 ring-navy/10 group-hover:ring-gold/40 group-hover:bg-gold/10 transition-all duration-300">
-          <FaEye className="text-navy text-lg group-hover:text-gold transition-colors duration-300" />
-        </div>
-        <p className="text-navy font-bold mt-4 mb-2 font-body text-lg">Our Vision</p>
-        <p className="text-navy/70 text-sm leading-relaxed font-body">
-          To become a reputable and preferred civil contractor who is well known for delivering beyond the client's and project's expectations.
-        </p>
-      </motion.div>
-
-    </motion.div>
+    {/* Script tagline + CTA */}
+    <div className="flex flex-wrap items-center gap-5 pt-2">
+      <p className="font-serif italic text-gold text-xl leading-snug">
+        Building a<br />Better Tomorrow
+      </p>
+      <Link to="/about" className="group inline-flex items-center gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy text-white shadow-md transition-colors duration-300 group-hover:bg-gold">
+          <span className="ml-0.5 text-xs">▶</span>
+        </span>
+        <span className="font-body font-semibold text-navy transition-colors duration-300 group-hover:text-gold">
+          Learn More About Us
+        </span>
+        <span className="text-navy text-base leading-none transition-transform duration-300 group-hover:translate-x-1">→</span>
+      </Link>
+    </div>
   </div>
 
   {/* RIGHT IMAGE */}
   <div className="md:col-span-6">
-    <div className="relative group">
+    <div className="relative">
 
-      {/* soft glow background */}
-      <div className="absolute -inset-2 bg-gradient-to-tr from-gold/20 via-transparent to-navy/10 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition duration-500"></div>
+      {/* offset gold block peeking from behind the photo */}
+      <div className="absolute -top-5 -right-5 h-28 w-28 sm:h-36 sm:w-36 rounded-2xl bg-gold" aria-hidden="true" />
 
-      <motion.div {...wipeReveal} className="img-frame overflow-hidden rounded-2xl shadow-lg relative z-10">
-        <img
-          src="https://i.pinimg.com/1200x/35/23/84/352384a7a5937c38bdf830722eeb1bc0.jpg"
-          alt="Khilung Kalika engineers on site"
-          className="w-full h-[480px] object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+      <div className="relative group">
+        <motion.div {...wipeReveal} className="img-frame overflow-hidden rounded-2xl shadow-lg relative z-10">
+          <img
+            src="https://i.pinimg.com/1200x/35/23/84/352384a7a5937c38bdf830722eeb1bc0.jpg"
+            alt="Khilung Kalika engineers on site"
+            className="w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        </motion.div>
 
-        {/* stat bar overlay */}
-        <div className="absolute inset-x-0 bottom-0 bg-navy/90 backdrop-blur-sm">
+        {/* floating stat bar, overlapping the photo's bottom edge */}
+        <div className="absolute inset-x-5 sm:inset-x-8 -bottom-8 z-20 rounded-xl bg-navy shadow-xl">
           <div className="grid grid-cols-3 divide-x divide-white/15">
             <div className="flex items-center gap-2.5 px-3 py-4 sm:px-5">
               <FaBuilding className="text-gold text-lg sm:text-xl shrink-0" />
@@ -287,21 +272,68 @@ useEffect(() => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
+  </div>
 
-    {/* Trust badges */}
+  </div>
+
+  {/* MISSION / VISION / TRUST BADGES — one row, below both columns */}
+  <motion.div
+    className="mt-20 sm:mt-24 grid lg:grid-cols-12 gap-8 items-stretch"
+    initial="hidden"
+    whileInView="show"
+    viewport={{ once: true, margin: "-60px" }}
+    variants={staggerContainer}
+  >
+
     <motion.div
-      className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8"
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
-      variants={staggerContainer}
+      variants={staggerItem}
+      className="lg:col-span-4 relative overflow-hidden rounded-2xl shadow-lg group min-h-[280px] flex flex-col justify-end p-7"
     >
+      <img
+        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200&auto=format&fit=crop"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/85 to-navy/40" />
+      <div className="relative z-10">
+        <div className="w-12 h-12 rounded-xl bg-gold flex items-center justify-center mb-4">
+          <FaBullseye className="text-navy text-lg" />
+        </div>
+        <p className="text-white font-bold mb-2 font-body text-lg">Our Mission</p>
+        <p className="text-white/80 text-sm leading-relaxed font-body">
+          Our mission is to deliver high-quality construction services at competitive prices while ensuring customer satisfaction through timely project completion, attention to detail, and professional service. We uphold the highest standards of professionalism, integrity, honesty, and fairness in all our relationships.
+        </p>
+      </div>
+    </motion.div>
+
+    <motion.div
+      variants={staggerItem}
+      className="lg:col-span-4 relative overflow-hidden rounded-2xl shadow-lg border border-line group min-h-[280px] flex flex-col justify-end p-7"
+    >
+      <img
+        src="https://images.unsplash.com/photo-1465447142348-e9952c393450?q=80&w=1200&auto=format&fit=crop"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover opacity-25 transition-transform duration-700 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-white/60" />
+      <div className="relative z-10">
+        <div className="w-12 h-12 rounded-xl bg-navy/5 ring-1 ring-navy/10 flex items-center justify-center mb-4">
+          <FaEye className="text-navy text-lg" />
+        </div>
+        <p className="text-navy font-bold mb-2 font-body text-lg">Our Vision</p>
+        <p className="text-navy/70 text-sm leading-relaxed font-body">
+          To become a reputable and preferred civil contractor who is well known for delivering beyond the client's and project's expectations.
+        </p>
+      </div>
+    </motion.div>
+
+    <div className="lg:col-span-4 grid grid-cols-2 content-center gap-x-6 gap-y-8">
       {trustBadges.map(([Icon, line1, line2]) => (
         <motion.div key={line2} variants={staggerItem} className="flex flex-col items-center text-center gap-3.5">
-          <div className="w-16 h-16 rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
-            <Icon className="text-gold text-xl" />
+          <div className="w-14 h-14 rounded-xl bg-gold/10 ring-1 ring-gold/25 flex items-center justify-center">
+            <Icon className="text-gold text-lg" />
           </div>
           <p className="text-navy text-xs font-body leading-snug">
             {line1}
@@ -310,8 +342,9 @@ useEffect(() => {
           </p>
         </motion.div>
       ))}
-    </motion.div>
-  </div>
+    </div>
+
+  </motion.div>
 
 </motion.section>
 
