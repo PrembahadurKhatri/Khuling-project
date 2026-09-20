@@ -102,7 +102,13 @@ const DesignManage = () => {
   };
 
   const addVideo = () => setForm((f) => ({ ...f, videos: [...f.videos, { ...emptyVideo }] }));
-  const setVideo = (i, value) => setForm((f) => ({ ...f, videos: f.videos.map((v, idx) => (idx === i ? value : v)) }));
+  // `next` can be a plain value or an updater function (VideoField passes
+  // an updater so each of its two onChange calls per pick applies on top of
+  // the other, instead of one clobbering the other with stale data).
+  const setVideo = (i, next) => setForm((f) => ({
+    ...f,
+    videos: f.videos.map((v, idx) => (idx === i ? (typeof next === "function" ? next(v) : next) : v)),
+  }));
   const removeVideo = (i) => setForm((f) => ({ ...f, videos: f.videos.filter((_, idx) => idx !== i) }));
 
   const handleSubmit = async (e) => {
