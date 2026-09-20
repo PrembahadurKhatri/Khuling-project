@@ -43,7 +43,10 @@ const DesignList = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {designs.map((item, i) => (
               <Reveal key={item._id} delay={(i % 6) * 0.06} variant="up">
-                <div className="group rounded-2xl border border-line bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-navy/20 hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]">
+                <Link
+                  to={`/services/design/${item.slug || item._id}`}
+                  className="group block rounded-2xl border border-line bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-navy/20 hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]"
+                >
                   {item.images?.[0] ? (
                     <div className="relative h-48 overflow-hidden">
                       <img
@@ -70,10 +73,15 @@ const DesignList = () => {
                   <div className="p-5 md:p-6">
                     <h3 className="font-body text-lg text-navy font-semibold mb-1.5">{item.name}</h3>
                     {item.description && (
-                      <p className="text-navy/70 text-sm leading-relaxed font-body">{item.description}</p>
+                      <p
+                        className="text-navy/70 text-sm leading-relaxed font-body"
+                        style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+                      >
+                        {item.description}
+                      </p>
                     )}
                   </div>
-                </div>
+                </Link>
               </Reveal>
             ))}
           </div>

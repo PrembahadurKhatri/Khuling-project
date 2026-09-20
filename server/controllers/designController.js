@@ -1,23 +1,44 @@
+import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 import Design from "../models/Design.js";
 
 // The admin form sends images two ways at once: `existingImages` (a JSON
 // array of URLs already kept from before, or pasted directly) and `images`
-// (newly uploaded files, via upload.array). Both merge into one list here,
-// capped at 10 -- see DesignManage.jsx.
+// (newly uploaded files, via upload.fields). Both merge into one list here,
+// capped at 10. `videos` arrives as a JSON array of pasted URLs (YouTube/
+// Vimeo links, not uploads). `dpr` is a single document -- an uploaded file
+// wins over a pasted `existingDpr` URL, matching ImageSourceField's
+// URL-or-file convention -- see DesignManage.jsx.
 const normalizePayload = (body, files) => {
   const payload = { ...body };
-  let existing = [];
+
+  let existingImages = [];
   if (body.existingImages) {
     try {
-      existing = JSON.parse(body.existingImages);
+      existingImages = JSON.parse(body.existingImages);
     } catch {
-      existing = [];
+      existingImages = [];
     }
   }
   delete payload.existingImages;
-  const uploaded = (files || []).map((f) => f.path);
-  payload.images = [...existing, ...uploaded].slice(0, 10);
+  const uploadedImages = (files?.images || []).map((f) => f.path);
+  payload.images = [...existingImages, ...uploadedImages].slice(0, 10);
+
+  if (typeof body.videos === "string") {
+    try {
+      payload.videos = JSON.parse(body.videos);
+    } catch {
+      payload.videos = [];
+    }
+  }
+
+  delete payload.existingDpr;
+  if (files?.dpr?.[0]) {
+    payload.dpr = files.dpr[0].path;
+  } else if (body.existingDpr) {
+    payload.dpr = body.existingDpr;
+  }
+
   return payload;
 };
 
@@ -26,6 +47,27 @@ const normalizePayload = (body, files) => {
 export const getDesigns = asyncHandler(async (req, res) => {
   const designs = await Design.find().sort({ order: 1, createdAt: 1 });
   res.json({ success: true, count: designs.length, data: designs });
+});
+
+// @desc   Get a single design by slug (falls back to _id, for designs
+//         created before the slug field existed)
+// @route  GET /api/designs/:slug
+export const getDesignBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  let design = await Design.findOne({ slug });
+  if (!design && mongoose.isValidObjectId(slug)) {
+    design = await Design.findById(slug);
+  }
+  if (!design) {
+    res.status(404);
+    throw new Error("Design not found");
+  }
+
+  const related = design.category
+    ? await Design.find({ category: design.category, _id: { $ne: design._id } }).limit(3)
+    : [];
+
+  res.json({ success: true, data: design, related });
 });
 
 // @desc   Create a design

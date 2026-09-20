@@ -1,7 +1,8 @@
 // A pasted image URL and a manually uploaded file are mutually exclusive —
 // picking one clears the other, and each input disables while the other has
 // a value, so it's unambiguous which source will actually be saved.
-// Used by ProjectsManage.jsx (thumbnail) and ServicesManage.jsx (heroImage).
+// Used by ProjectsManage.jsx (thumbnail), ServicesManage.jsx (heroImage),
+// and DesignManage.jsx (DPR document, via `accept`/`isDocument`).
 const ImageSourceField = ({
   theme,
   label,
@@ -10,6 +11,8 @@ const ImageSourceField = ({
   fileValue,
   onUrlChange,
   onFileChange,
+  accept = "image/*",
+  isDocument = false,
 }) => {
   const inputClass = theme === "dark"
     ? "w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"
@@ -39,7 +42,7 @@ const ImageSourceField = ({
       </label>
       <div className="grid sm:grid-cols-2 gap-3">
         <input
-          placeholder="Paste an image URL"
+          placeholder={isDocument ? "Paste a document URL" : "Paste an image URL"}
           value={urlValue || ""}
           disabled={hasFile}
           onChange={(e) => handleUrlChange(e.target.value)}
@@ -47,7 +50,7 @@ const ImageSourceField = ({
         />
         <input
           type="file"
-          accept="image/*"
+          accept={accept}
           disabled={hasUrl}
           onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
           className={`${inputClass} ${hasUrl ? disabledClass : ""}`}
@@ -57,7 +60,13 @@ const ImageSourceField = ({
         Use a URL or upload a file from your device — not both. Choosing one clears the other.
       </p>
       {preview && (
-        <img src={preview} alt="Preview" className="mt-2 h-32 w-full object-cover rounded-lg" onError={(e) => { e.target.style.display = "none"; }} />
+        isDocument ? (
+          <a href={preview} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs font-semibold text-primary hover:underline">
+            📄 {fileValue?.name || "View current document"}
+          </a>
+        ) : (
+          <img src={preview} alt="Preview" className="mt-2 h-32 w-full object-cover rounded-lg" onError={(e) => { e.target.style.display = "none"; }} />
+        )
       )}
     </div>
   );

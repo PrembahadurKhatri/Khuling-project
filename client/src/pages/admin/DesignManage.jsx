@@ -3,9 +3,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchDesigns, createDesign, updateDesign, deleteDesign } from "../../services/designService.js";
 import MultiImageField from "../../components/admin/MultiImageField.jsx";
+import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
 import useToast from "../../hooks/useToast.js";
 
-const emptyForm = { name: "", category: "", description: "", order: 0, existingImages: [], imageFiles: [] };
+const emptyForm = {
+  name: "", category: "", description: "", order: 0,
+  existingImages: [], imageFiles: [],
+  videos: [],
+  existingDpr: "", dprFile: null,
+};
 
 const DesignManage = () => {
   const queryClient = useQueryClient();
@@ -65,9 +71,21 @@ const DesignManage = () => {
 
   const openEdit = (item) => {
     setEditing(item);
-    setForm({ ...emptyForm, ...item, existingImages: item.images || [], imageFiles: [] });
+    setForm({
+      ...emptyForm,
+      ...item,
+      existingImages: item.images || [],
+      imageFiles: [],
+      videos: item.videos || [],
+      existingDpr: item.dpr || "",
+      dprFile: null,
+    });
     setShowForm(true);
   };
+
+  const addVideo = () => setForm((f) => ({ ...f, videos: [...f.videos, ""] }));
+  const setVideo = (i, value) => setForm((f) => ({ ...f, videos: f.videos.map((v, idx) => (idx === i ? value : v)) }));
+  const removeVideo = (i) => setForm((f) => ({ ...f, videos: f.videos.filter((_, idx) => idx !== i) }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -201,6 +219,44 @@ const DesignManage = () => {
             />
 
             <textarea placeholder="Description" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
+
+            <div>
+              <label className={`mb-1 block text-xs font-medium ${mutedClass}`}>Videos (optional — YouTube/Vimeo links)</label>
+              <div className="space-y-2">
+                {form.videos.map((v, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input
+                      placeholder="https://youtube.com/watch?v=..."
+                      value={v}
+                      onChange={(e) => setVideo(i, e.target.value)}
+                      className={inputClass}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeVideo(i)}
+                      className={`shrink-0 rounded-lg border px-3 text-sm ${theme === "dark" ? "border-gray-700 text-gray-400 hover:text-red-400" : "border-line text-gray-500 hover:text-red-500"}`}
+                      aria-label="Remove"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button type="button" onClick={addVideo} className={`mt-2 text-sm font-semibold ${theme === "dark" ? "text-gold" : "text-navy"} hover:underline`}>
+                + Add video link
+              </button>
+            </div>
+
+            <ImageSourceField
+              theme={theme}
+              label="DPR (Detailed Project Report)"
+              accept="application/pdf,.doc,.docx"
+              isDocument
+              urlValue={form.existingDpr}
+              fileValue={form.dprFile}
+              onUrlChange={(v) => setForm((prev) => ({ ...prev, existingDpr: v }))}
+              onFileChange={(f) => setForm((prev) => ({ ...prev, dprFile: f }))}
+            />
 
             <label className="space-y-1 block">
               <span className={`text-xs ${mutedClass}`}>Display order (lower shows first)</span>

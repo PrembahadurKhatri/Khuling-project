@@ -9,6 +9,7 @@ import About from "./pages/About.jsx";
 import Services from "./pages/Services.jsx";
 import ServiceList from "./pages/ServiceList.jsx";
 import DesignList from "./pages/DesignList.jsx";
+import DesignDetail from "./pages/DesignDetail.jsx";
 import EquipmentLease from "./pages/EquipmentLease.jsx";
 import Projects from "./pages/Projects.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
@@ -54,6 +55,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/design" element={<DesignList />} />
+          <Route path="/services/design/:slug" element={<DesignDetail />} />
           <Route path="/services/construction" element={<ServiceList />} />
           <Route path="/services/equipment-lease" element={<EquipmentLease />} />
           <Route path="/projects" element={<Projects />} />

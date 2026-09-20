@@ -5,11 +5,16 @@ export const fetchDesigns = async () => {
   return data;
 };
 
-// payload.existingImages is the list of image URLs to keep (already-saved
-// or pasted directly); payload.imageFiles is newly selected Files to
-// upload alongside them — see DesignManage.jsx. The two merge server-side
-// (designController.js) into the final `images` array, capped at 10.
-const toFormData = ({ existingImages, imageFiles, ...rest }) => {
+export const fetchDesignBySlug = async (slug) => {
+  const { data } = await api.get(`/designs/${slug}`);
+  return data;
+};
+
+// payload.existingImages/imageFiles: the photo list, split between kept
+// URLs and newly picked Files. payload.videos: pasted video URLs (no
+// upload). payload.existingDpr/dprFile: the DPR document, URL-or-file like
+// ImageSourceField. See DesignManage.jsx.
+const toFormData = ({ existingImages, imageFiles, videos, existingDpr, dprFile, ...rest }) => {
   const form = new FormData();
   Object.entries(rest).forEach(([key, value]) => {
     if (value === undefined || value === null) return;
@@ -17,6 +22,12 @@ const toFormData = ({ existingImages, imageFiles, ...rest }) => {
   });
   form.append("existingImages", JSON.stringify(existingImages || []));
   (imageFiles || []).forEach((file) => form.append("images", file));
+  form.append("videos", JSON.stringify((videos || []).filter(Boolean)));
+  if (dprFile) {
+    form.append("dpr", dprFile);
+  } else if (existingDpr) {
+    form.append("existingDpr", existingDpr);
+  }
   return form;
 };
 
