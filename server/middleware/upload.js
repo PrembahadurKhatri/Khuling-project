@@ -49,6 +49,7 @@ const normalizePaths = (req, res, next) => {
 const upload = {
   single: (field) => [baseUpload.single(field), normalizePaths],
   fields: (fieldsConfig) => [baseUpload.fields(fieldsConfig), normalizePaths],
+  array: (field, maxCount) => [baseUpload.array(field, maxCount), normalizePaths],
 };
 
 export default upload;

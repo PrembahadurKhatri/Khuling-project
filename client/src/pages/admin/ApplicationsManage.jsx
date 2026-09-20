@@ -360,7 +360,9 @@ const ApplicationsManage = () => {
 
             <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3">
               <button type="button" onClick={() => setScheduling(null)} className={`w-full rounded-lg px-4 py-2.5 text-center sm:w-auto ${mutedClass}`}>Cancel</button>
-              <button type="submit" className="btn-primary w-full !py-2.5 sm:w-auto">Save &amp; Notify Applicant</button>
+              <button type="submit" disabled={statusMutation.isPending} className="btn-primary w-full !py-2.5 sm:w-auto">
+                {statusMutation.isPending ? "Saving..." : "Save & Notify Applicant"}
+              </button>
             </div>
           </form>
         </div>

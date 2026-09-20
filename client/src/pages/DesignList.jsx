@@ -44,16 +44,21 @@ const DesignList = () => {
             {designs.map((item, i) => (
               <Reveal key={item._id} delay={(i % 6) * 0.06} variant="up">
                 <div className="group rounded-2xl border border-line bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-navy/20 hover:shadow-[0_20px_45px_rgba(10,25,47,0.10)]">
-                  {item.image ? (
+                  {item.images?.[0] ? (
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={item.image}
+                        src={item.images[0]}
                         alt={item.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       {item.category && (
                         <span className="absolute top-3 right-3 rounded-full bg-navy/90 text-white text-[11px] font-body font-semibold px-3 py-1">
                           {item.category}
+                        </span>
+                      )}
+                      {item.images.length > 1 && (
+                        <span className="absolute bottom-3 right-3 rounded-full bg-black/60 text-white text-[11px] font-body font-semibold px-2.5 py-1">
+                          +{item.images.length - 1} photo{item.images.length > 2 ? "s" : ""}
                         </span>
                       )}
                     </div>

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchDesigns, createDesign, updateDesign, deleteDesign } from "../../services/designService.js";
-import ImageSourceField from "../../components/admin/ImageSourceField.jsx";
+import MultiImageField from "../../components/admin/MultiImageField.jsx";
 import useToast from "../../hooks/useToast.js";
 
-const emptyForm = { name: "", category: "", description: "", order: 0, image: "", imageFile: null };
+const emptyForm = { name: "", category: "", description: "", order: 0, existingImages: [], imageFiles: [] };
 
 const DesignManage = () => {
   const queryClient = useQueryClient();
@@ -65,14 +65,13 @@ const DesignManage = () => {
 
   const openEdit = (item) => {
     setEditing(item);
-    setForm({ ...emptyForm, ...item, imageFile: null });
+    setForm({ ...emptyForm, ...item, existingImages: item.images || [], imageFiles: [] });
     setShowForm(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { imageFile, ...rest } = form;
-    const payload = { ...rest, image: imageFile || form.image };
+    const payload = form;
     if (editing) {
       await updateMutation.mutateAsync({ id: editing._id, payload });
     } else {
@@ -124,14 +123,17 @@ const DesignManage = () => {
                   {data?.data?.map((item) => (
                     <tr key={item._id} className={`border-t ${rowClass}`}>
                       <td className="px-4 py-3">
-                        {item.image ? (
-                          <img src={item.image} alt={item.name} className="h-10 w-10 rounded-lg object-cover" />
+                        {item.images?.[0] ? (
+                          <img src={item.images[0]} alt={item.name} className="h-10 w-10 rounded-lg object-cover" />
                         ) : (
                           <div className={`h-10 w-10 rounded-lg ${theme === "dark" ? "bg-gray-800" : "bg-stone"}`} />
                         )}
                       </td>
                       <td className="px-4 py-3">{item.name}</td>
-                      <td className="px-4 py-3">{item.category || "—"}</td>
+                      <td className="px-4 py-3">
+                        {item.category || "—"}
+                        {item.images?.length > 1 && <span className={`ml-2 text-xs ${mutedClass}`}>+{item.images.length - 1} more</span>}
+                      </td>
                       <td className="px-4 py-3 text-right space-x-3">
                         <button onClick={() => openEdit(item)} className="text-primary hover:underline">Edit</button>
                         <button onClick={() => handleDelete(item._id)} className="text-red-400 hover:underline">Delete</button>
@@ -153,14 +155,17 @@ const DesignManage = () => {
             {data?.data?.map((item) => (
               <div key={item._id} className={`rounded-2xl border p-4 ${cardClass}`}>
                 <div className="flex items-start gap-3">
-                  {item.image ? (
-                    <img src={item.image} alt={item.name} className="h-14 w-14 shrink-0 rounded-xl object-cover" />
+                  {item.images?.[0] ? (
+                    <img src={item.images[0]} alt={item.name} className="h-14 w-14 shrink-0 rounded-xl object-cover" />
                   ) : (
                     <div className={`h-14 w-14 shrink-0 rounded-xl ${theme === "dark" ? "bg-gray-800" : "bg-stone"}`} />
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-semibold">{item.name}</div>
-                    <div className={`mt-0.5 truncate text-xs ${mutedClass}`}>{item.category || "No category"}</div>
+                    <div className={`mt-0.5 truncate text-xs ${mutedClass}`}>
+                      {item.category || "No category"}
+                      {item.images?.length > 1 && ` · +${item.images.length - 1} more`}
+                    </div>
                   </div>
                 </div>
                 <div className={`mt-4 flex gap-2 border-t pt-3 ${rowClass}`}>
@@ -185,13 +190,14 @@ const DesignManage = () => {
               <input placeholder="Category (e.g. Architectural Design)" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass} />
             </div>
 
-            <ImageSourceField
+            <MultiImageField
               theme={theme}
-              label="Image"
-              urlValue={form.image}
-              fileValue={form.imageFile}
-              onUrlChange={(v) => setForm((prev) => ({ ...prev, image: v }))}
-              onFileChange={(f) => setForm((prev) => ({ ...prev, imageFile: f }))}
+              label="Images"
+              urls={form.existingImages}
+              files={form.imageFiles}
+              onUrlsChange={(urls) => setForm((prev) => ({ ...prev, existingImages: urls }))}
+              onFilesChange={(files) => setForm((prev) => ({ ...prev, imageFiles: files }))}
+              max={10}
             />
 
             <textarea placeholder="Description" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
@@ -208,7 +214,9 @@ const DesignManage = () => {
 
             <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3">
               <button type="button" onClick={() => setShowForm(false)} className={`w-full rounded-lg px-4 py-2.5 text-center sm:w-auto ${mutedClass}`}>Cancel</button>
-              <button type="submit" className="btn-primary w-full !py-2.5 sm:w-auto sm:!py-2">{editing ? "Save Changes" : "Create Design"}</button>
+              <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="btn-primary w-full !py-2.5 sm:w-auto sm:!py-2">
+                {createMutation.isPending || updateMutation.isPending ? "Uploading..." : editing ? "Save Changes" : "Create Design"}
+              </button>
             </div>
           </form>
         </div>

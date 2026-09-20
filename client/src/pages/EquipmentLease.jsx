@@ -4,6 +4,7 @@ import { fetchEquipment } from "../services/equipmentService.js";
 import PageHeader from "../components/PageHeader.jsx";
 import Reveal from "../components/Reveal.jsx";
 import Seo from "../components/Seo.jsx";
+import ReadMoreText from "../components/ReadMoreText.jsx";
 
 const EquipmentLease = () => {
   const { data, isLoading } = useQuery({ queryKey: ["equipment"], queryFn: fetchEquipment });
@@ -64,9 +65,12 @@ const EquipmentLease = () => {
                   )}
                   <div className="p-5 md:p-6">
                     <h3 className="font-body text-lg text-navy font-semibold mb-1.5">{item.name}</h3>
-                    {item.description && (
-                      <p className="text-navy/70 text-sm leading-relaxed font-body">{item.description}</p>
-                    )}
+                    <ReadMoreText
+                      text={item.description}
+                      lines={3}
+                      className="text-navy/70 text-sm leading-relaxed font-body"
+                      linkClassName="mt-1.5 text-xs font-semibold text-navy/60 hover:text-teal transition-colors duration-300 font-body"
+                    />
                   </div>
                 </div>
               </Reveal>

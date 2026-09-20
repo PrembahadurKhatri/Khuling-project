@@ -6,8 +6,8 @@ import upload from "../middleware/upload.js";
 const router = express.Router();
 
 router.get("/", getDesigns);
-router.post("/", protect, authorize("admin", "editor"), upload.single("image"), createDesign);
-router.put("/:id", protect, authorize("admin", "editor"), upload.single("image"), updateDesign);
+router.post("/", protect, authorize("admin", "editor"), upload.array("images", 10), createDesign);
+router.put("/:id", protect, authorize("admin", "editor"), upload.array("images", 10), updateDesign);
 router.delete("/:id", protect, authorize("admin"), deleteDesign);
 
 export default router;

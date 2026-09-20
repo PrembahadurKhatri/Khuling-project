@@ -1,9 +1,23 @@
 import asyncHandler from "express-async-handler";
 import Design from "../models/Design.js";
 
-const normalizePayload = (body, file) => {
+// The admin form sends images two ways at once: `existingImages` (a JSON
+// array of URLs already kept from before, or pasted directly) and `images`
+// (newly uploaded files, via upload.array). Both merge into one list here,
+// capped at 10 -- see DesignManage.jsx.
+const normalizePayload = (body, files) => {
   const payload = { ...body };
-  if (file) payload.image = file.path;
+  let existing = [];
+  if (body.existingImages) {
+    try {
+      existing = JSON.parse(body.existingImages);
+    } catch {
+      existing = [];
+    }
+  }
+  delete payload.existingImages;
+  const uploaded = (files || []).map((f) => f.path);
+  payload.images = [...existing, ...uploaded].slice(0, 10);
   return payload;
 };
 
@@ -17,14 +31,14 @@ export const getDesigns = asyncHandler(async (req, res) => {
 // @desc   Create a design
 // @route  POST /api/designs
 export const createDesign = asyncHandler(async (req, res) => {
-  const design = await Design.create(normalizePayload(req.body, req.file));
+  const design = await Design.create(normalizePayload(req.body, req.files));
   res.status(201).json({ success: true, data: design });
 });
 
 // @desc   Update a design
 // @route  PUT /api/designs/:id
 export const updateDesign = asyncHandler(async (req, res) => {
-  const design = await Design.findByIdAndUpdate(req.params.id, normalizePayload(req.body, req.file), {
+  const design = await Design.findByIdAndUpdate(req.params.id, normalizePayload(req.body, req.files), {
     new: true,
     runValidators: true,
   });

@@ -236,7 +236,9 @@ const ServicesManage = () => {
 
             <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3">
               <button type="button" onClick={() => setShowForm(false)} className={`w-full rounded-lg px-4 py-2.5 text-center sm:w-auto ${mutedClass}`}>Cancel</button>
-              <button type="submit" className="btn-primary w-full !py-2.5 sm:w-auto sm:!py-2">{editing ? "Save Changes" : "Create Service"}</button>
+              <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="btn-primary w-full !py-2.5 sm:w-auto sm:!py-2">
+                {createMutation.isPending || updateMutation.isPending ? "Uploading..." : editing ? "Save Changes" : "Create Service"}
+              </button>
             </div>
           </form>
         </div>

@@ -107,7 +107,9 @@ const CategoriesManage = () => {
           onChange={(e) => setName(e.target.value)}
           className={`${inputClass} !py-2.5`}
         />
-        <button type="submit" className="btn-primary w-full shrink-0 !py-2.5 sm:w-auto sm:!py-2">+ Add</button>
+        <button type="submit" disabled={createMutation.isPending} className="btn-primary w-full shrink-0 !py-2.5 sm:w-auto sm:!py-2">
+          {createMutation.isPending ? "Adding..." : "+ Add"}
+        </button>
       </form>
 
       {isLoading ? (

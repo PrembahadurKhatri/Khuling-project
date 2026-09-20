@@ -5,14 +5,18 @@ export const fetchDesigns = async () => {
   return data;
 };
 
-// payload.image may be a pasted URL (string) or an uploaded File — the admin
-// form only ever sends one or the other (see DesignManage.jsx).
-const toFormData = (payload) => {
+// payload.existingImages is the list of image URLs to keep (already-saved
+// or pasted directly); payload.imageFiles is newly selected Files to
+// upload alongside them — see DesignManage.jsx. The two merge server-side
+// (designController.js) into the final `images` array, capped at 10.
+const toFormData = ({ existingImages, imageFiles, ...rest }) => {
   const form = new FormData();
-  Object.entries(payload).forEach(([key, value]) => {
+  Object.entries(rest).forEach(([key, value]) => {
     if (value === undefined || value === null) return;
     form.append(key, value);
   });
+  form.append("existingImages", JSON.stringify(existingImages || []));
+  (imageFiles || []).forEach((file) => form.append("images", file));
   return form;
 };
 

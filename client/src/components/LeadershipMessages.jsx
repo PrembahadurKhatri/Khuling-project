@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FaQuoteLeft } from "react-icons/fa";
+import ReadMoreText from "./ReadMoreText.jsx";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -87,9 +88,12 @@ const LeadershipMessages = ({ messages }) => {
                 {/* Message */}
                 <div className="p-8 md:p-10 flex flex-col justify-center relative">
                   <FaQuoteLeft className="text-gold/25 text-4xl md:text-5xl mb-4" aria-hidden="true" />
-                  <p className="text-navy/80 leading-relaxed text-[15px] md:text-lg font-body whitespace-pre-line">
-                    {msg.message}
-                  </p>
+                  <ReadMoreText
+                    text={msg.message}
+                    lines={4}
+                    className="text-navy/80 leading-relaxed text-[15px] md:text-lg font-body whitespace-pre-line"
+                    linkClassName="mt-2 text-sm font-semibold text-gold hover:text-navy transition-colors duration-300 font-body"
+                  />
                   <div className="mt-6 pt-6 border-t border-line">
                     <p className="font-body font-semibold text-navy text-lg">{msg.name}</p>
                     {msg.designation && (
