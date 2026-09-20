@@ -25,7 +25,7 @@ import testimonialRoutes from "./routes/testimonialRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
-import mdMessageRoutes from "./routes/mdMessageRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import visitRoutes from "./routes/visitRoutes.js";
 import seoRoutes from "./routes/seoRoutes.js";
 
@@ -141,7 +141,7 @@ app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/team", teamRoutes);
-app.use("/api/md-message", mdMessageRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/api/visits", visitRoutes);
 
 // Serve the built React app in production so the frontend and API share one

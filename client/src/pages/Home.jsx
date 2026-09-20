@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 import { fetchProjects } from "../services/projectService.js";
 import { fetchSettings } from "../services/settingsService.js";
 import { fetchTestimonials } from "../services/testimonialService.js";
-import { fetchMdMessage } from "../services/mdMessageService.js";
+import { fetchMessages } from "../services/messageService.js";
 import api from "../services/api.js";
 import Hero from "../components/Hero.jsx";
 import ProjectCard from "../components/ProjectCard.jsx";
-import MdCeoMessage from "../components/MdCeoMessage.jsx";
+import LeadershipMessages from "../components/LeadershipMessages.jsx";
 import Counter from "../components/Counter.jsx";
 import { FaBullseye, FaEye, FaBuilding, FaUsers, FaHardHat, FaShieldAlt, FaThumbsUp, FaHandshake } from "react-icons/fa";
 import Seo from "../components/Seo.jsx";
@@ -122,7 +122,7 @@ const Home = () => {
     queryKey: ["home-testimonials"],
     queryFn: () => fetchTestimonials({ featured: true }),
   });
-  const { data: mdMessageData } = useQuery({ queryKey: ["public-md-message"], queryFn: fetchMdMessage });
+  const { data: messagesData } = useQuery({ queryKey: ["home-messages"], queryFn: fetchMessages });
 
   const [tIndex, setTIndex] = useState(0);
   const projects = projectsData?.data || [];
@@ -383,7 +383,7 @@ useEffect(() => {
 
 </motion.section>
 
-<MdCeoMessage mdMessage={mdMessageData?.data} />
+<LeadershipMessages messages={messagesData?.data} />
 
     <motion.section
       className="relative overflow-hidden"
